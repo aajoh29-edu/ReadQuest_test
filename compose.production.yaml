@@ -1,0 +1,17 @@
+services:
+  db:
+    profiles: ["local-production-database"]
+
+  migrate:
+    image: ${READQUEST_API_IMAGE:?Set READQUEST_API_IMAGE}
+    build: null
+    restart: "no"
+    depends_on: []
+
+  api:
+    image: ${READQUEST_API_IMAGE:?Set READQUEST_API_IMAGE}
+    build: null
+    restart: unless-stopped
+    environment:
+      READQUEST_ENV: production
+      READQUEST_DATABASE_URL: ${READQUEST_DATABASE_URL:?Set READQUEST_DATABASE_URL}

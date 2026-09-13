@@ -1,0 +1,87 @@
+digraph ReadQuestERD {
+  graph [rankdir=LR, bgcolor="white", pad="0.25", nodesep="0.45", ranksep="0.85", splines=ortho];
+  node [shape=plain, fontname="Arial"];
+  edge [color="#61758A", penwidth=1.2, arrowsize=0.7, fontname="Arial", fontsize=9];
+
+  users [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="5" COLOR="#17365D">
+    <TR><TD BGCOLOR="#17365D"><FONT COLOR="white"><B>users</B></FONT></TD></TR>
+    <TR><TD ALIGN="LEFT">PK id : uuid</TD></TR><TR><TD ALIGN="LEFT">email : citext UQ</TD></TR>
+    <TR><TD ALIGN="LEFT">password_hash : varchar</TD></TR><TR><TD ALIGN="LEFT">role : user_role</TD></TR>
+    <TR><TD ALIGN="LEFT">status : user_status</TD></TR>
+  </TABLE>>];
+  child_profiles [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="5" COLOR="#17365D">
+    <TR><TD BGCOLOR="#17365D"><FONT COLOR="white"><B>child_profiles</B></FONT></TD></TR>
+    <TR><TD ALIGN="LEFT">PK id : uuid</TD></TR><TR><TD ALIGN="LEFT">FK user_id : uuid UQ</TD></TR>
+    <TR><TD ALIGN="LEFT">display_name : varchar</TD></TR><TR><TD ALIGN="LEFT">grade_level : smallint</TD></TR>
+  </TABLE>>];
+  guardian_children [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="5" COLOR="#17365D">
+    <TR><TD BGCOLOR="#17365D"><FONT COLOR="white"><B>guardian_children</B></FONT></TD></TR>
+    <TR><TD ALIGN="LEFT">PK/FK guardian_id : uuid</TD></TR><TR><TD ALIGN="LEFT">PK/FK child_id : uuid</TD></TR>
+    <TR><TD ALIGN="LEFT">relationship_label : varchar</TD></TR>
+  </TABLE>>];
+  classes [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="5" COLOR="#17365D">
+    <TR><TD BGCOLOR="#17365D"><FONT COLOR="white"><B>classes</B></FONT></TD></TR>
+    <TR><TD ALIGN="LEFT">PK id : uuid</TD></TR><TR><TD ALIGN="LEFT">FK teacher_id : uuid</TD></TR>
+    <TR><TD ALIGN="LEFT">name : varchar</TD></TR><TR><TD ALIGN="LEFT">join_code : varchar UQ</TD></TR>
+  </TABLE>>];
+  enrollments [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="5" COLOR="#17365D">
+    <TR><TD BGCOLOR="#17365D"><FONT COLOR="white"><B>enrollments</B></FONT></TD></TR>
+    <TR><TD ALIGN="LEFT">PK/FK class_id : uuid</TD></TR><TR><TD ALIGN="LEFT">PK/FK child_id : uuid</TD></TR>
+    <TR><TD ALIGN="LEFT">enrolled_at : timestamptz</TD></TR>
+  </TABLE>>];
+  skills [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="5" COLOR="#2E74B5">
+    <TR><TD BGCOLOR="#2E74B5"><FONT COLOR="white"><B>skills</B></FONT></TD></TR>
+    <TR><TD ALIGN="LEFT">PK id : uuid</TD></TR><TR><TD ALIGN="LEFT">code : varchar UQ</TD></TR>
+    <TR><TD ALIGN="LEFT">name, category : varchar</TD></TR><TR><TD ALIGN="LEFT">level : smallint</TD></TR>
+  </TABLE>>];
+  lessons [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="5" COLOR="#2E74B5">
+    <TR><TD BGCOLOR="#2E74B5"><FONT COLOR="white"><B>lessons</B></FONT></TD></TR>
+    <TR><TD ALIGN="LEFT">PK id : uuid</TD></TR><TR><TD ALIGN="LEFT">title : varchar</TD></TR>
+    <TR><TD ALIGN="LEFT">status : content_status</TD></TR><TR><TD ALIGN="LEFT">sequence : integer</TD></TR>
+  </TABLE>>];
+  activities [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="5" COLOR="#2E74B5">
+    <TR><TD BGCOLOR="#2E74B5"><FONT COLOR="white"><B>activities</B></FONT></TD></TR>
+    <TR><TD ALIGN="LEFT">PK id : uuid</TD></TR><TR><TD ALIGN="LEFT">FK lesson_id : uuid</TD></TR>
+    <TR><TD ALIGN="LEFT">type : activity_type</TD></TR><TR><TD ALIGN="LEFT">difficulty : smallint</TD></TR>
+  </TABLE>>];
+  activity_skills [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="5" COLOR="#2E74B5">
+    <TR><TD BGCOLOR="#2E74B5"><FONT COLOR="white"><B>activity_skills</B></FONT></TD></TR>
+    <TR><TD ALIGN="LEFT">PK/FK activity_id : uuid</TD></TR><TR><TD ALIGN="LEFT">PK/FK skill_id : uuid</TD></TR>
+    <TR><TD ALIGN="LEFT">weight : numeric(4,3)</TD></TR>
+  </TABLE>>];
+  attempts [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="5" COLOR="#C69214">
+    <TR><TD BGCOLOR="#C69214"><FONT COLOR="white"><B>attempts</B></FONT></TD></TR>
+    <TR><TD ALIGN="LEFT">PK id : uuid</TD></TR><TR><TD ALIGN="LEFT">FK child_id : uuid</TD></TR>
+    <TR><TD ALIGN="LEFT">FK activity_id : uuid</TD></TR><TR><TD ALIGN="LEFT">is_correct : boolean</TD></TR>
+    <TR><TD ALIGN="LEFT">response_ms : integer</TD></TR><TR><TD ALIGN="LEFT">occurred_at : timestamptz</TD></TR>
+  </TABLE>>];
+  skill_mastery [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="5" COLOR="#C69214">
+    <TR><TD BGCOLOR="#C69214"><FONT COLOR="white"><B>skill_mastery</B></FONT></TD></TR>
+    <TR><TD ALIGN="LEFT">PK/FK child_id : uuid</TD></TR><TR><TD ALIGN="LEFT">PK/FK skill_id : uuid</TD></TR>
+    <TR><TD ALIGN="LEFT">score : numeric(5,4)</TD></TR><TR><TD ALIGN="LEFT">band, confidence : enum</TD></TR>
+    <TR><TD ALIGN="LEFT">attempt_count, version : integer</TD></TR>
+  </TABLE>>];
+  recommendations [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="5" COLOR="#C69214">
+    <TR><TD BGCOLOR="#C69214"><FONT COLOR="white"><B>recommendations</B></FONT></TD></TR>
+    <TR><TD ALIGN="LEFT">PK id : uuid</TD></TR><TR><TD ALIGN="LEFT">FK child_id : uuid</TD></TR>
+    <TR><TD ALIGN="LEFT">FK activity_id : uuid</TD></TR><TR><TD ALIGN="LEFT">priority_score : numeric(5,4)</TD></TR>
+    <TR><TD ALIGN="LEFT">reason_code : varchar</TD></TR><TR><TD ALIGN="LEFT">created_at : timestamptz</TD></TR>
+  </TABLE>>];
+
+  users -> child_profiles [label="1 to 0..1", arrowhead=none];
+  users -> guardian_children [label="guardian 1 to many", arrowhead=none];
+  child_profiles -> guardian_children [label="child 1 to many", arrowhead=none];
+  users -> classes [label="teacher 1 to many", arrowhead=none];
+  classes -> enrollments [label="1 to many", arrowhead=none];
+  child_profiles -> enrollments [label="1 to many", arrowhead=none];
+  lessons -> activities [label="1 to many", arrowhead=none];
+  activities -> activity_skills [label="1 to many", arrowhead=none];
+  skills -> activity_skills [label="1 to many", arrowhead=none];
+  child_profiles -> attempts [label="1 to many", arrowhead=none];
+  activities -> attempts [label="1 to many", arrowhead=none];
+  child_profiles -> skill_mastery [label="1 to many", arrowhead=none];
+  skills -> skill_mastery [label="1 to many", arrowhead=none];
+  child_profiles -> recommendations [label="1 to many", arrowhead=none];
+  activities -> recommendations [label="1 to many", arrowhead=none];
+}
+
