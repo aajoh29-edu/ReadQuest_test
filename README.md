@@ -61,4 +61,4 @@ pytest
 
 See [`docs/BUILD_PROCESS.md`](docs/BUILD_PROCESS.md) for the complete sequence and collaboration gates.
 
-For a code-learning walkthrough, read [`docs/learning/REMAINING_BUILD_PROCESSES.md`](docs/learning/REMAINING_BUILD_PROCESSES.md). Complete [`docs/learning/TEAM_REVIEW_CHECKLIST.md`](docs/learning/TEAM_REVIEW_CHECKLIST.md) before merging or releasing.
+New to this codebase? Start with [`docs/learning/CODEBASE_WALKTHROUGH.md`](docs/learning/CODEBASE_WALKTHROUGH.md) — a file-by-file training guide to what each part of the backend does and why, including the latest security review's findings. Then read [`docs/learning/REMAINING_BUILD_PROCESSES.md`](docs/learning/REMAINING_BUILD_PROCESSES.md) as a hands-on study checklist. Complete [`docs/learning/TEAM_REVIEW_CHECKLIST.md`](docs/learning/TEAM_REVIEW_CHECKLIST.md) before merging or releasing.

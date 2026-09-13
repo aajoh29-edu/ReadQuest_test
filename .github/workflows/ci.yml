@@ -5,6 +5,12 @@ on:
   push:
     branches: [main]
 
+# Least privilege by default: none of these jobs publish packages or write
+# repository content, so the workflow token only needs read access. Override
+# per-job if a future job genuinely needs to write (e.g. posting PR comments).
+permissions:
+  contents: read
+
 jobs:
   backend-quality:
     runs-on: ubuntu-latest

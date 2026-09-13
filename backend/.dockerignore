@@ -1,0 +1,17 @@
+# Defense in depth: the Dockerfile only COPYs named paths (app, alembic,
+# alembic.ini, pyproject.toml), so none of this should ever reach an image
+# build. This file protects the build if that Dockerfile ever changes to a
+# broader `COPY . .` and keeps the build context small either way.
+.venv/
+.venv_review/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.coverage
+htmlcov/
+*.egg-info/
+tests/
+.env
+.git/
