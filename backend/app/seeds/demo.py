@@ -17,6 +17,7 @@ from app.db.session import SessionFactory
 from app.models.curriculum import Activity, ActivitySkill, Lesson, Skill
 from app.models.enums import ActivityType, ContentStatus, UserRole
 from app.models.identity import ChildProfile, GuardianChild, User
+from app.models.learning import Attempt, Recommendation, SkillMastery  # noqa: F401 -- registers mappers
 
 DEMO_PASSWORD_HASH = "DEMO_AUTH_NOT_CONFIGURED"
 
