@@ -1,0 +1,43 @@
+#! migrate-deployment.yaml
+# Generated code, do not edit
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+    name: migrate
+    namespace: readquest-test
+    labels:
+        com.docker.compose.project: readquest_test
+        com.docker.compose.service: migrate
+spec:
+    replicas: 1
+    selector:
+        matchLabels:
+            com.docker.compose.project: readquest_test
+            com.docker.compose.service: migrate
+    strategy:
+        type: Recreate
+    template:
+        metadata:
+            labels:
+                com.docker.compose.project: readquest_test
+                com.docker.compose.service: migrate
+                com.docker.compose.network.default: "true"
+        spec:
+            containers:
+                - name: migrate
+                  image: readquest_test-migrate
+                  imagePullPolicy: IfNotPresent
+                  args:
+                    - alembic
+                    - upgrade
+                    - head
+                  env:
+                    - name: READQUEST_DATABASE_URL
+                      value: "postgresql+psycopg://readquest:readquest@db:5432/readquest"
+                    - name: READQUEST_ENV
+                      value: "development"
+                    - name: READQUEST_LOG_LEVEL
+                      value: "INFO"
+                  ports:
+                    - name: migrate-8000
+                      containerPort: 8000

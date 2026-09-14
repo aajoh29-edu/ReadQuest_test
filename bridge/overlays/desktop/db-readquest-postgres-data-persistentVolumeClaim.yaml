@@ -1,0 +1,9 @@
+#! db-readquest-postgres-data-persistentVolumeClaim.yaml
+# Generated code, do not edit
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+    name: db-readquest-postgres-data
+    namespace: readquest-test
+spec:
+    storageClassName: "hostpath" # see docker/desktop-storage-provisioner

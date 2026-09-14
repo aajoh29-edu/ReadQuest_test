@@ -57,5 +57,42 @@ services:
       timeout: 3s
       retries: 5
 
+  frontend:
+    build:
+      context: ./frontend
+    ports:
+      - "8080:80"
+    depends_on:
+      api:
+        condition: service_healthy
+
+  # Ephemeral database used only by the `test` service below. Kept separate
+  # from `db` (no volume, own container) so test runs never touch dev data
+  # and the integration suite's "database name must end in _test" guard is
+  # satisfied for free.
+  test-db:
+    image: postgres:16-alpine
+    profiles: ["test"]
+    environment:
+      POSTGRES_DB: readquest_test
+      POSTGRES_USER: readquest
+      POSTGRES_PASSWORD: readquest
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U readquest -d readquest_test"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  test:
+    profiles: ["test"]
+    build:
+      context: ./backend
+      target: test
+    environment:
+      READQUEST_ENV: development
+    depends_on:
+      test-db:
+        condition: service_healthy
+
 volumes:
   readquest_postgres_data:

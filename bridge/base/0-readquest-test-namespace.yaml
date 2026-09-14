@@ -1,0 +1,8 @@
+#! 0-readquest-test-namespace.yaml
+# Generated code, do not edit
+apiVersion: v1
+kind: Namespace
+metadata:
+    name: readquest-test
+    labels:
+        com.docker.compose.project: readquest_test

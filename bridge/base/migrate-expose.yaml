@@ -1,0 +1,18 @@
+#! migrate-expose.yaml
+# Generated code, do not edit
+apiVersion: v1
+kind: Service
+metadata:
+    name: migrate
+    namespace: readquest-test
+    labels:
+        com.docker.compose.project: readquest_test
+        com.docker.compose.service: migrate
+spec:
+    selector:
+        com.docker.compose.project: readquest_test
+        com.docker.compose.service: migrate
+    ports:
+        - name: migrate-8000
+          port: 8000
+          targetPort: migrate-8000

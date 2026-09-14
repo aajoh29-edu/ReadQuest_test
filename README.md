@@ -2,7 +2,7 @@
 
 ReadQuest is an adaptive children's reading platform for Morgan State University's COSC 512 Software Engineering course.
 
-This repository begins with the shared architecture foundation. It intentionally keeps domain features small until the team approves the database ERD and API contracts.
+This repository began with the shared architecture foundation. For local sample testing, the demo API and frontend now provide a complete database-backed slice while the production authentication and team-owned feature work remain explicit future work.
 
 ## Architecture
 
@@ -27,12 +27,17 @@ Docker, CI/CD, deployment (Member 3; team verifies)
 2. Run `docker compose up --build`.
 3. Open `http://localhost:8000/health`.
 4. Open API documentation at `http://localhost:8000/docs`.
+5. Open the demo frontend at `http://localhost:8080`.
 
 Load deterministic demonstration data:
 
 ```bash
 docker compose --profile seed run --rm seed
 ```
+
+The demo frontend uses the seeded child profile and calls `/demo/activities`
+and `/demo/attempts` so you can test the frontend, API, PostgreSQL,
+mastery calculation, and recommendation transaction together.
 
 Run the algorithms without the database:
 

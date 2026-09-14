@@ -1,7 +1,9 @@
 import logging
 
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 
+from app.api.routes.demo import router as demo_router
 from app.api.routes.health import router as health_router
 from app.core.config import get_settings
 
@@ -22,7 +24,21 @@ def create_app() -> FastAPI:
         redoc_url=None if is_production else "/redoc",
         openapi_url=None if is_production else "/openapi.json",
     )
+    if not is_production:
+        application.add_middleware(
+            CORSMiddleware,
+            allow_origins=[
+                "http://localhost:8080",
+                "http://127.0.0.1:8080",
+                "http://localhost:5173",
+                "http://127.0.0.1:5173",
+            ],
+            allow_credentials=False,
+            allow_methods=["GET", "POST", "OPTIONS"],
+            allow_headers=["*"],
+        )
     application.include_router(health_router)
+    application.include_router(demo_router)
     return application
 
 

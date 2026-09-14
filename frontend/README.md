@@ -1,12 +1,17 @@
 # Frontend workspace
 
-Member 2 owns the React/Vite implementation in this directory.
+This directory contains the ReadQuest demo frontend used for local end-to-end
+testing. It intentionally calls only the demo API routes; production
+authentication and role-based flows still belong in the backend before release.
 
-## Collaboration gate before scaffolding
+Run it with the full stack:
 
-- Member 2 proposes route structure, build command, development port, and accessibility baseline.
-- Member 1 confirms the initial API base URL and authentication flow.
-- Member 3 updates `compose.yaml` and CI only after the frontend commands are agreed.
+```bash
+docker compose up --build
+docker compose --profile seed run --rm seed
+```
 
-Do not duplicate mastery or recommendation rules in the browser. The frontend displays the API's score, band, activity, and explanation fields.
+Open `http://localhost:8080`.
 
+The browser displays the API's mastery score, band, recommendation, and
+explanation fields. It does not duplicate the adaptive rules.

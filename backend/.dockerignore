@@ -1,7 +1,11 @@
-# Defense in depth: the Dockerfile only COPYs named paths (app, alembic,
-# alembic.ini, pyproject.toml), so none of this should ever reach an image
-# build. This file protects the build if that Dockerfile ever changes to a
-# broader `COPY . .` and keeps the build context small either way.
+# Defense in depth: the Dockerfile's runtime stage only COPYs named paths
+# (app, alembic, alembic.ini, pyproject.toml), so none of this should ever
+# reach the runtime image. This file protects that stage if it's ever changed
+# to a broader `COPY . .` and keeps the build context small either way.
+#
+# tests/ is intentionally NOT excluded: the Dockerfile's `test` stage needs
+# it, and the runtime stage never inherits from `test`, so it still never
+# ships to production images.
 .venv/
 .venv_review/
 __pycache__/
@@ -12,6 +16,5 @@ __pycache__/
 .coverage
 htmlcov/
 *.egg-info/
-tests/
 .env
 .git/

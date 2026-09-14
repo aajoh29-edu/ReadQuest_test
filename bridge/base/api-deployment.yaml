@@ -1,0 +1,45 @@
+#! api-deployment.yaml
+# Generated code, do not edit
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+    name: api
+    namespace: readquest-test
+    labels:
+        com.docker.compose.project: readquest_test
+        com.docker.compose.service: api
+spec:
+    replicas: 1
+    selector:
+        matchLabels:
+            com.docker.compose.project: readquest_test
+            com.docker.compose.service: api
+    strategy:
+        type: Recreate
+    template:
+        metadata:
+            labels:
+                com.docker.compose.project: readquest_test
+                com.docker.compose.service: api
+                com.docker.compose.network.default: "true"
+        spec:
+            containers:
+                - name: api
+                  image: readquest_test-api
+                  imagePullPolicy: IfNotPresent
+                  env:
+                    - name: READQUEST_DATABASE_URL
+                      value: "postgresql+psycopg://readquest:readquest@db:5432/readquest"
+                    - name: READQUEST_ENV
+                      value: "development"
+                    - name: READQUEST_LOG_LEVEL
+                      value: "INFO"
+                  livenessProbe:
+                    exec:
+                        command: ['python -c import urllib.request; urllib.request.urlopen(''http://localhost:8000/health'')']
+                    periodSeconds: 10
+                    timeoutSeconds: 3
+                    failureThreshold: 5
+                  ports:
+                    - name: api-8000
+                      containerPort: 8000

@@ -1,0 +1,16 @@
+#! kustomization.yaml
+# Generated code, do not edit
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+    - 0-readquest-test-namespace.yaml
+    - api-deployment.yaml
+    - api-expose.yaml
+    - api-service.yaml
+    - db-deployment.yaml
+    - db-expose.yaml
+    - db-readquest-postgres-data-persistentVolumeClaim.yaml
+    - db-service.yaml
+    - default-network-policy.yaml
+    - migrate-deployment.yaml
+    - migrate-expose.yaml
