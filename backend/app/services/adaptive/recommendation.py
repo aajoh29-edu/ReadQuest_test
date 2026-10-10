@@ -103,4 +103,8 @@ def rank_activities(
             )
         )
 
-    return sorted(ranked, key=lambda item: (-item.priority_score, str(item.activity_id)))
+    ordered = sorted(ranked, key=lambda item: (-item.priority_score, str(item.activity_id), str(item.skill_id)))
+    unique: dict[UUID, RankedRecommendation] = {}
+    for item in ordered:
+        unique.setdefault(item.activity_id, item)
+    return list(unique.values())

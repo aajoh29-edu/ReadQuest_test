@@ -1,6 +1,6 @@
 # ReadQuest data dictionary — ERD v1
 
-This is the logical schema for review. PostgreSQL types and constraint names will be finalized during Build Process 3.
+This dictionary describes migrations 0001–0002 and the implemented ORM. The exact field diagram is in docs/models/ERD.md.
 
 ## Shared conventions
 
@@ -137,10 +137,10 @@ This is the logical schema for review. PostgreSQL types and constraint names wil
 | is_correct | boolean | No | MVP scoring input. |
 | response_ms | integer | Yes | Check `0 <= response_ms <= 3600000`. Not part of mastery score in MVP. |
 | answer | jsonb | Yes | Minimal response evidence; must not contain secrets. |
-| occurred_at | timestamptz | No | Client event time validated against acceptable bounds. |
+| occurred_at | timestamptz | No | Server-authored event time. |
 | created_at | timestamptz | No | Server persistence time. |
 
-**Indexes:** `(child_id, occurred_at DESC)`; `(child_id, activity_id)`; `activity_id`.
+**Indexes:** `(child_id, occurred_at)`; `(child_id, activity_id)`; `activity_id`.
 
 ## skill_mastery
 
@@ -174,5 +174,13 @@ This is the logical schema for review. PostgreSQL types and constraint names wil
 | status | recommendation_status enum | No | `served`, `accepted`, `dismissed`, `expired`. |
 | created_at | timestamptz | No | Default current UTC time. |
 
-**Indexes:** `(child_id, created_at DESC)`; `(child_id, status)`; `triggering_attempt_id`.
+**Indexes:** `(child_id, created_at)`; `(child_id, status)`; `triggering_attempt_id`.
 
+
+## auth_sessions
+
+`token_hash varchar(64)` primary key is the SHA-256 digest of a random opaque cookie token; `user_id uuid` references users with CASCADE and an index; `expires_at timestamptz` is required. Logout/password change/deactivation delete session rows. Token plaintext is never persisted.
+
+## login_throttles
+
+`email varchar(254)` primary key is normalized lowercase; `failures integer` and `window_start timestamptz` are required. Per-account advisory locks serialize login attempts; five failures block login for the remainder of a fifteen-minute window. These tables contain authentication metadata, not passwords or child evidence.

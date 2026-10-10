@@ -21,3 +21,5 @@ This matrix proves that the proposed schema supports the MVP described in the Re
 
 Every MVP workflow maps to at least one entity. No stretch-goal schema has been added for speech recognition, text-to-speech, generative AI, offline sync, multiplayer challenges, or a content marketplace. This protects semester scope.
 
+
+| Revocable authentication and brute-force guard | auth_sessions, login_throttles, users | token_hash, expires_at, failures, window_start | Auth integration tests |

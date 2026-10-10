@@ -4,6 +4,7 @@ from dataclasses import dataclass
 from datetime import UTC, datetime
 from uuid import UUID, uuid4
 
+from sqlalchemy import text
 from sqlalchemy.orm import Session
 
 from app.models.learning import Attempt, Recommendation, SkillMastery
@@ -42,6 +43,11 @@ def submit_attempt(session: Session, command: SubmitAttemptCommand) -> AdaptiveO
     if command.response_ms is not None and not 0 <= command.response_ms <= 3_600_000:
         raise ValueError("response_ms must be between 0 and 3600000")
 
+    if not 1 <= command.learner_level <= 10:
+        raise ValueError("learner_level must be between 1 and 10")
+    # Serialize the whole child workflow so cross-skill recommendations see one history.
+    session.execute(text("SELECT pg_advisory_xact_lock(hashtextextended(:key, 0))"),
+                    {"key": f"child:{command.child_id}"})
     repository = AdaptiveRepository(session)
     attempt = Attempt(
         id=uuid4(),
@@ -59,7 +65,7 @@ def submit_attempt(session: Session, command: SubmitAttemptCommand) -> AdaptiveO
         raise ValueError("activity must map to at least one skill")
 
     mastery_records: list[SkillMastery] = []
-    for skill_id in skill_ids:
+    for skill_id in sorted(skill_ids, key=str):
         repository.lock_adaptive_key(command.child_id, skill_id)
         evidence = repository.recent_attempts_for_skill(command.child_id, skill_id)
         mastery_records.append(

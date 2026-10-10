@@ -10,6 +10,8 @@ from pathlib import Path
 
 ARCHITECTURE_DIR = Path(__file__).resolve().parents[1] / "docs" / "architecture"
 EXPECTED_ENTITIES = {
+    "auth_sessions",
+    "login_throttles",
     "users",
     "child_profiles",
     "guardian_children",

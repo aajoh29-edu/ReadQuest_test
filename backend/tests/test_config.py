@@ -26,6 +26,7 @@ class SettingsProductionGuardTests(TestCase):
         settings = Settings(
             _env_file=None,
             environment="production",
+            allowed_origins=["https://reading.example.org"],
             database_url="postgresql+psycopg://app:strong-secret@prod-host:5432/readquest",
         )
         self.assertEqual(settings.environment, "production")
