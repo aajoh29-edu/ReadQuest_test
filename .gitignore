@@ -13,3 +13,7 @@ dist/
 .vscode/
 *.log
 
+
+*.egg-info/
+frontend/test-results/
+frontend/playwright-report/

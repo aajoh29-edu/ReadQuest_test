@@ -162,6 +162,7 @@ class ActivityView(BaseModel):
     sequence: int
     status: ContentStatus
     skills: list[SkillView]
+    skill_weights: list[SkillWeight]
 
 
 class AttemptInput(Input):

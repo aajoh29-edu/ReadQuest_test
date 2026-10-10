@@ -1297,7 +1297,7 @@
           },
           "skills": {
             "items": {
-              "$ref": "#/components/schemas/SkillWeight"
+              "$ref": "#/components/schemas/SkillWeight-Input"
             },
             "type": "array",
             "maxItems": 20,
@@ -1460,6 +1460,13 @@
             },
             "type": "array",
             "title": "Skills"
+          },
+          "skill_weights": {
+            "items": {
+              "$ref": "#/components/schemas/SkillWeight-Output"
+            },
+            "type": "array",
+            "title": "Skill Weights"
           }
         },
         "type": "object",
@@ -1473,7 +1480,8 @@
           "difficulty",
           "sequence",
           "status",
-          "skills"
+          "skills",
+          "skill_weights"
         ],
         "title": "ActivityView"
       },
@@ -2162,7 +2170,7 @@
         ],
         "title": "SkillView"
       },
-      "SkillWeight": {
+      "SkillWeight-Input": {
         "properties": {
           "skill_id": {
             "type": "string",
@@ -2180,6 +2188,26 @@
                 "type": "string"
               }
             ],
+            "title": "Weight"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "skill_id",
+          "weight"
+        ],
+        "title": "SkillWeight"
+      },
+      "SkillWeight-Output": {
+        "properties": {
+          "skill_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Skill Id"
+          },
+          "weight": {
+            "type": "string",
             "title": "Weight"
           }
         },

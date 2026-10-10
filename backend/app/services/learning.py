@@ -5,7 +5,7 @@ from fastapi import HTTPException
 from sqlalchemy import select
 from sqlalchemy.orm import Session, selectinload
 
-from app.api.schemas import ActivityView, MasteryView, RecommendationView, SkillView
+from app.api.schemas import ActivityView, MasteryView, RecommendationView, SkillView, SkillWeight
 from app.models.curriculum import Activity, ActivitySkill, Lesson, Skill
 from app.models.enums import ContentStatus
 from app.models.learning import SkillMastery
@@ -43,7 +43,8 @@ def activity_view(row: Activity, *, answer_key: bool = False) -> ActivityView:
     return ActivityView(id=row.id, lesson_id=row.lesson_id, title=row.title,
         activity_type=row.activity_type, prompt=row.prompt, content=content,
         difficulty=row.difficulty, sequence=row.sequence, status=row.status,
-        skills=[SkillView.model_validate(link.skill) for link in row.skill_links])
+        skills=[SkillView.model_validate(link.skill) for link in row.skill_links],
+        skill_weights=[SkillWeight(skill_id=link.skill_id, weight=link.weight) for link in row.skill_links])
 
 
 def mastery_views(session: Session, child_id: UUID) -> list[MasteryView]:

@@ -1,3 +1,4 @@
+const escapeHTML = value => String(value).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;", "'":"&#39;"}[c]));
 const apiBase = window.READQUEST_API_BASE_URL || "http://localhost:8000";
 
 const els = {
@@ -44,7 +45,10 @@ function renderActivities() {
     const button = document.createElement("button");
     button.type = "button";
     button.className = `activity-button ${selectedActivity?.id === activity.id ? "active" : ""}`;
-    button.innerHTML = `${activity.title}<span>${activity.skills.map((skill) => skill.name).join(", ")}</span>`;
+    button.textContent = activity.title;
+    const label = document.createElement("span");
+    label.textContent = activity.skills.map(skill => skill.name).join(", ");
+    button.appendChild(label);
     button.addEventListener("click", () => selectActivity(activity));
     els.activities.appendChild(button);
   });
@@ -86,7 +90,7 @@ async function load() {
     }
   } catch (error) {
     setStatus("API offline", "fail");
-    setResult(`Could not load demo data: ${error.message}`, true);
+    setResult(`Could not load demo data: ${escapeHTML(error.message)}`, true);
   }
 }
 
@@ -110,15 +114,15 @@ async function submitAttempt(isCorrect) {
     const mastery = result.mastery
       .map(
         (item) =>
-          `<li><strong>${item.band.replaceAll("_", " ")}</strong>: ${(item.score * 100).toFixed(0)}% confidence ${item.confidence}</li>`,
+          `<li><strong>${escapeHTML(item.band.replaceAll("_", " "))}</strong>: ${(item.score * 100).toFixed(0)}% confidence ${escapeHTML(item.confidence)}</li>`,
       )
       .join("");
     const recommendation = result.recommendation
-      ? `<p><strong>Next recommendation:</strong> ${result.recommendation.reason_code.replaceAll("_", " ")} at ${(result.recommendation.priority_score * 100).toFixed(0)}% priority.</p>`
+      ? `<p><strong>Next recommendation:</strong> ${escapeHTML(result.recommendation.reason_code.replaceAll("_", " "))} at ${(result.recommendation.priority_score * 100).toFixed(0)}% priority.</p>`
       : "<p><strong>Next recommendation:</strong> none available.</p>";
     setResult(`<ul>${mastery}</ul>${recommendation}`);
   } catch (error) {
-    setResult(`Attempt failed: ${error.message}`, true);
+    setResult(`Attempt failed: ${escapeHTML(error.message)}`, true);
   } finally {
     els.correct.disabled = false;
     els.incorrect.disabled = false;

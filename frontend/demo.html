@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>ReadQuest Demo</title>
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <main class="shell">
+      <section class="topbar" aria-labelledby="page-title">
+        <div>
+          <p class="eyebrow">ReadQuest sample</p>
+          <h1 id="page-title">Adaptive reading practice</h1>
+        </div>
+        <div class="status-panel">
+          <span id="api-status" class="status">Checking API</span>
+          <button id="refresh" type="button">Refresh</button>
+        </div>
+      </section>
+
+      <section class="workspace">
+        <aside class="activity-list" aria-labelledby="activity-heading">
+          <h2 id="activity-heading">Activities</h2>
+          <div id="activities" class="list" aria-live="polite"></div>
+        </aside>
+
+        <section class="practice" aria-labelledby="practice-heading">
+          <div class="practice-header">
+            <div>
+              <p id="skill-label" class="eyebrow">Select an activity</p>
+              <h2 id="practice-heading">Ready when you are</h2>
+            </div>
+            <span id="difficulty" class="pill">Difficulty -</span>
+          </div>
+
+          <p id="prompt" class="prompt">Load the demo seed, pick an activity, and submit a sample answer.</p>
+          <div id="choices" class="choices"></div>
+
+          <div class="actions">
+            <button id="correct" type="button" disabled>Submit correct</button>
+            <button id="incorrect" type="button" disabled>Submit incorrect</button>
+          </div>
+
+          <div id="result" class="result" aria-live="polite"></div>
+        </section>
+      </section>
+    </main>
+    <script src="/app.js"></script>
+  </body>
+</html>

@@ -67,6 +67,10 @@ def seed_users(session: Session) -> dict[str, User]:
     for number, email, role in rows:
         user = session.scalar(select(User).where(User.email == email))
         if user is None:
+            user = session.get(User, uid(number))
+            if user is not None and user.email.endswith("@readquest.local"):
+                user.email = email
+        if user is None:
             user = User(id=uid(number), email=email, password_hash=DEMO_PASSWORD_HASH, role=role)
             session.add(user)
         password = os.environ.get("READQUEST_DEMO_PASSWORD")
@@ -150,6 +154,9 @@ def seed_curriculum(session: Session) -> None:
                 )
                 session.add(activity)
                 session.flush()
+            if activity.content.get("choices") == ["Sample A", "Sample B", "Sample C"]:
+                activity.prompt = DEMO_CONTENT[code][0]
+                activity.content = {"choices": DEMO_CONTENT[code][1], "correct_index": 0}
             if session.get(ActivitySkill, (activity.id, skills[code].id)) is None:
                 session.add(
                     ActivitySkill(
