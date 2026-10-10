@@ -128,6 +128,10 @@ def test_parent_child_creation_and_teacher_scope(api):
     assert client.delete(f"/classes/{classroom['id']}/children/{child_id}").status_code == 204
     assert client.get(f"/children/{child_id}/progress").status_code == 404
     assert client.patch(f"/classes/{classroom['id']}", json={"status": "archived"}).status_code == 200
+    assert client.get(f"/classes/{classroom['id']}/children").json() == []
+    assert client.patch(f"/classes/{uid(20)}", json={"status":"archived"}).status_code == 200
+    assert client.get(f"/classes/{uid(20)}/children").json() == []
+    assert client.get(f"/children/{uid(10)}/progress").status_code == 404
 
 
 def test_admin_account_deactivation_revokes_token(api):
@@ -135,6 +139,7 @@ def test_admin_account_deactivation_revokes_token(api):
     token = client.cookies[COOKIE_NAME]
     login(api, "admin")
     assert client.patch(f"/admin/users/{uid(3)}", json={"status": "disabled"}).status_code == 200
+    assert client.get(f"/classes/{uid(20)}/children").json() == []
     client.cookies.set(COOKIE_NAME, token)
     assert client.get("/auth/me").status_code == 401
     client.cookies.clear()

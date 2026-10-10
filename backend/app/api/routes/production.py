@@ -31,7 +31,7 @@ from app.api.schemas import (
 from app.core.security import hash_password
 from app.models.auth import AuthSession
 from app.models.curriculum import Activity, ActivitySkill, Lesson, Skill
-from app.models.enums import ClassStatus, ContentStatus, EnrollmentStatus, UserRole
+from app.models.enums import ClassStatus, ContentStatus, EnrollmentStatus, UserRole, UserStatus
 from app.models.identity import ChildProfile, Classroom, Enrollment, GuardianChild, User
 from app.models.learning import Attempt
 from app.repositories.access import AccessRepository
@@ -161,9 +161,12 @@ def class_status(class_id: UUID, payload: ClassStatusInput, user: User = Depends
 
 @router.get("/classes/{class_id}/children", response_model=list[ChildView])
 def class_children(class_id: UUID, user: User = Depends(teacher), session: Session = Depends(transaction_session, scope="function")):
-    owned_class(session, user, class_id)
-    return list(session.scalars(select(ChildProfile).join(Enrollment).where(
-        Enrollment.class_id == class_id, Enrollment.status == EnrollmentStatus.ACTIVE)))
+    room = owned_class(session, user, class_id)
+    if room.status != ClassStatus.ACTIVE:
+        return []
+    return list(session.scalars(select(ChildProfile).join(Enrollment).join(User, User.id == ChildProfile.user_id).where(
+        Enrollment.class_id == class_id, Enrollment.status == EnrollmentStatus.ACTIVE,
+        User.status == UserStatus.ACTIVE)))
 
 
 @router.post("/children/{child_id}/enrollments", response_model=ClassView, status_code=201)
