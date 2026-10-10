@@ -23,7 +23,7 @@ ReadQuest must persist role-based relationships, curriculum, learning attempts, 
 - Member 2 must approve dashboard and activity fields needed by the UI.
 - All three members must approve privacy, scoring inputs, and the open-question decisions.
 
-After approval, change this ADR to **Accepted**, note the review date, and begin Build Process 3.
+The user approved these design gates for this test run. The ADR is accepted; models and migrations are implemented and tested.
 
 ## Consequences
 

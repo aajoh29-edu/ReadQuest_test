@@ -68,13 +68,15 @@ Bands are recalculated from the last ten attempts and may move in either directi
 
 ```mermaid
 stateDiagram-v2
+  state Evaluate <<choice>>
   [*] --> Unassessed
-  Unassessed --> HighPriority: first score below 0.60
-  Unassessed --> Mastered: first score at least 0.90, low confidence
-  HighPriority --> AdditionalPractice: score in [0.60, 0.75)
-  AdditionalPractice --> NormalReview: score in [0.75, 0.90)
-  NormalReview --> Mastered: score at least 0.90
-  Mastered --> NormalReview: score drops below 0.90
-  NormalReview --> AdditionalPractice: score drops below 0.75
-  AdditionalPractice --> HighPriority: score drops below 0.60
+  Unassessed --> Evaluate: first answer
+  HighPriority --> Evaluate: new answer
+  AdditionalPractice --> Evaluate: new answer
+  NormalReview --> Evaluate: new answer
+  Mastered --> Evaluate: new answer
+  Evaluate --> HighPriority: score below 0.60
+  Evaluate --> AdditionalPractice: score in [0.60, 0.75)
+  Evaluate --> NormalReview: score in [0.75, 0.90)
+  Evaluate --> Mastered: score at least 0.90
 ```

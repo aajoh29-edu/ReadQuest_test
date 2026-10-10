@@ -1,35 +1,45 @@
-# ReadQuest Member 3 verification report
+# ReadQuest local verification report
 
-**Review date:** September 13, 2026
+Branch: `test/codex-full-run`. All application changes are local commits; no push, hosted merge, tag, registry publication or provider deployment is claimed.
 
-## Passed in the build workspace
+| Check | Executed outcome |
+|---|---|
+| Frozen host setup | Python 3.12 virtual environment synchronized to 46 hash-pinned dev packages; Node 24 `npm ci` and Vite build pass |
+| Backend unit suite | 41 passed, 19 integration cases deselected |
+| PostgreSQL suite | 19 passed, 41 unit cases deselected; no required skips |
+| Combined coverage | 92.86%, above the 75% gate; measured across the sequential suites in one Docker test container |
+| Ruff | Backend and scripts pass |
+| Frontend component/API suite | 10 passed under patched Vitest 5 |
+| Browser suite | 7 passed using installed Chromium through Nginx: all roles, child answer/next activity/logout, guardian enrollment, admin draft authoring/editing, mobile layout and automated WCAG A/AA child scan |
+| Migrations | Clean 0001→0002 upgrade, disposable full downgrade/upgrade and `alembic check` pass; all fourteen ORM tables match migration metadata |
+| Seed | Repeated counts/evidence are stable; five named cases; default hashes unusable; opt-in rotation revokes sessions; production seed refused |
+| Adaptive transaction | Server scoring, SQL constraints, cooldown boundary, rollback and concurrent evidence/audit persistence pass |
+| Algorithms | Exact band/confidence boundaries, all 1,024 ten-answer windows, deterministic ranking/reason codes and no-candidate behavior pass |
+| Adaptive CLI | Executed in API image: score 0.54, high_priority/high confidence; weak-skill then spaced-review recommendations |
+| Docker images | API, migration, seed, test and React/Nginx images build with verified hashes/TLS and readable non-root runtime files |
+| Compose startup | `docker compose up --build -d --wait db api frontend` passes after cloud DOCKER_CONFIG/COMPOSE_FILE initialization; DB/API/frontend healthy; migration exits 0 |
+| Functional smoke | Authenticated answer persists and returns mastery/recommendation through the frontend `/api` proxy; readiness and frontend assets pass |
+| Empty-volume instance | Separate `readquest_fresh_validation` project, fresh DB volume, reused verified images: migrations 0001/0002, seed and authenticated smoke pass |
+| Legacy demo | Development API contract retained; `/demo.html`, `/app.js` and `/styles.css` readable; production routes absent |
+| Production configuration | Compose override validates with non-secret fixture values; no fixed production password; explicit HTTPS origins/database/images required |
+| Dependency audits | Runtime Python lock: no known vulnerabilities; complete frontend npm tree: no known vulnerabilities |
+| Models/contracts | ERD/dictionary/traceability validation passes for fourteen tables; generated Mermaid, Graphviz and OpenAPI are current |
+| GitHub access | Existing proxy-backed Git read succeeds; branch-protection API read returns Forbidden |
 
-- Python 3.12 package installation from `backend/pyproject.toml`.
-- Ruff lint checks for backend, tests, and Alembic code.
-- Python bytecode compilation for application, tests, and scripts.
-- 19 non-database automated tests.
-- 77.93% measured application coverage; CI minimum is 75%.
-- All 12 SQLAlchemy mappers configure successfully.
-- All 12 ERD entities and expected columns appear in SQLAlchemy metadata.
-- ERD/data-dictionary/requirements structural validation passes.
-- Alembic offline SQL generation succeeds and emits 12 application tables plus `alembic_version`.
-- Adaptive demonstration ranks a weak skill ahead of a higher-mastery but overdue skill.
-- Docker Compose and both GitHub Actions files parse as YAML and contain required jobs/services.
+The marker deselections are complementary suite selection, not skipped coverage. The repository suppresses warning details; each backend invocation reports one third-party warning. No passing result is inferred from an exit-zero run with zero tests.
 
-## Requires execution in GitHub Actions or a machine with Docker/PostgreSQL
+## Diagnosed setup failures
 
-- Live PostgreSQL migration upgrade and downgrade.
-- `alembic check` against the migrated database.
-- Idempotent seed integration test.
-- Attempt → mastery → recommendation persistence test.
-- Container build, health check, and Compose startup-order test.
-- Container registry publication and deployment-provider smoke test.
+The default cloud Docker build could not resolve package destinations or the platform proxy and lacked the platform CA. `scripts/cloud_compose_override.py` provides host build networking, current proxy hostname/IP mappings and a public CA secret mount; initialize COMPOSE_FILE before ordinary Compose commands. No verification was disabled. Ordinary developer/GitHub networks were not simulated; hosted jobs remain unrun.
 
-The project includes automated jobs for these checks. They remain a release gate and must not be recorded as passed until the GitHub workflow succeeds.
+Source file modes from the checkout initially prevented the non-root migration/static servers from reading files; image-local read permissions fix this. Nginx's localhost probe preferred IPv6 while its listener used IPv4; the probe now uses IPv4 loopback. The cloud's Docker VFS backend consumed the 32 GB filesystem through repeated intermediate copies; disposable image/build cache pruning freed 20 GB, preserving development data. An accidentally overlapping pair of DB test runs was rejected as evidence; the reported result comes from one clean sequential run.
 
-## Collaboration items still open
+Chromium download was denied by CDN policy; the already-installed system Chromium supported real browser tests. Automated accessibility scanning covered the child screen and does not establish complete human accessibility certification.
 
-- Member 1: API schemas, auth identity, role checks, transaction boundary, CORS, and production error handling.
-- Member 2: frontend container/build contract, dashboard fields, explanation wording, and user-state handling.
-- Full team: mastery/recommendation formula approval, ERD open questions, child-data policy, and release rehearsal.
+## External / unrun gates
 
+DO05: no configured production provider, secure database credentials, TLS origin or release tag. Hosted image/traffic/database rollback, publication and real-child retention/consent approval remain outside local validation.
+
+DO06: GitHub API Forbidden; hosted branch protection, required checks, Actions execution and merge to main are unverified. Local workflow commands pass; YAML alone does not enforce repository merge policy.
+
+No live Kubernetes cluster was used. bridge is an archived generated development reference with explicit limitations. A published environment snapshot and restoration in a new Codex task have not been verified. Updated install_script/start_skill were saved as a draft; the user must review/save/publish in environment settings to activate the reusable environment configuration.

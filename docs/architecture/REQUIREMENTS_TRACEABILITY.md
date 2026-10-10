@@ -4,7 +4,7 @@ This matrix proves that the proposed schema supports the MVP described in the Re
 
 | Requirement / workflow | Primary entities | Important fields | Collaborator validation |
 |---|---|---|---|
-| Secure login and four roles | users | email, password_hash, role, status | Member 1 owns auth/RBAC and must approve. |
+| Secure login and four roles | users, auth_sessions, login_throttles | email, password_hash, role, status, expiry | Approved; auth/RBAC integration tests pass. |
 | Child profile | users, child_profiles | user_id, display_name, grade_level, current_level | Members 1 and 2 confirm profile/API/UI fields. |
 | Parent views permitted children | guardian_children | guardian_id, child_id | Member 1 validates authorization query. |
 | Teacher manages a class | classes, enrollments | teacher_id, class_id, child_id, status | Members 1 and 2 validate class workflows. |

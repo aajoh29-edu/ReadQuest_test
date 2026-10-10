@@ -1,6 +1,6 @@
 # ADR-0003: Adaptive transaction and concurrency
 
-**Status:** Proposed — Member 1 review required before API merge
+**Status:** Accepted — authorized test run; concurrency integration tests pass
 
 ## Context
 
@@ -9,13 +9,13 @@ Two activity submissions for the same child and skill can arrive close together.
 ## Decision
 
 - Insert the attempt, update affected mastery rows, and store the selected recommendation within one database transaction.
-- Acquire a PostgreSQL transaction-scoped advisory lock using the child ID and skill ID before reading mastery evidence.
+- Acquire a transaction-scoped per-child advisory lock before writes, then child-skill locks in sorted order before reading evidence.
 - Keep the `skill_mastery.version` column as an additional optimistic-concurrency signal.
 - Let the service caller own commit/rollback so Member 1 can align transaction scope with the FastAPI request.
 
 ## Consequences
 
-- Concurrent updates for different learners or skills continue independently.
+- Different learners proceed independently. All submissions for one child serialize so cross-skill recommendations see consistent evidence.
 - Updates for the same child-skill pair serialize until the first transaction completes.
 - The repository is intentionally PostgreSQL-specific at the concurrency boundary.
 - Integration and load tests must confirm acceptable wait times and absence of lost updates.
@@ -26,3 +26,5 @@ Two activity submissions for the same child and skill can arrive close together.
 - Member 3 writes a two-transaction concurrency test before declaring the adaptive endpoint production-ready.
 - The full team accepts this PostgreSQL dependency as part of the project architecture.
 
+
+The two-transaction test verifies no lost evidence and two committed recommendation audits. Exception injection verifies complete rollback. Load testing under provider-scale traffic remains a deployment concern; these tests do not establish a production latency SLA.

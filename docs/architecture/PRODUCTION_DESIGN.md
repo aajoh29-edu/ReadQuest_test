@@ -43,3 +43,5 @@ One role per account; children may join multiple classes. Use display names rath
 ## bridge purpose
 
 bridge/base and bridge/overlays/desktop were generated from Compose for Docker Desktop Kubernetes. They contain development credentials, local image names, a hostpath PVC and no frontend; they are not the production deployment path. The migration Deployment restarts a one-time command, probes were generated incorrectly, and the database is publicly exposed by the desktop overlay. Treat this folder as an archived development reference; production uses managed PostgreSQL and the reviewed Compose override/provider process. See bridge/README.md for explicit limitations.
+
+These scores summarize recent demonstration evidence; they are not a validated reading assessment. Automated checks establish the implemented behavior, not an educational outcome.
