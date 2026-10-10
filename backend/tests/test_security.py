@@ -20,6 +20,7 @@ def test_password_hash_and_invalid_hash_are_safe():
     assert verify_password(password, encoded)
     assert not verify_password("incorrect", encoded)
     assert not verify_password(password, "DEMO_AUTH_NOT_CONFIGURED")
+    assert not verify_password("unusable-login-timing-padding", "DEMO_AUTH_NOT_CONFIGURED")
     assert not verify_password(password, "$argon2id$malformed")
     assert len(token_digest("opaque")) == 64
 
@@ -32,7 +33,7 @@ def test_production_requires_https_explicit_origins(origins):
 
 
 def test_production_hides_demo_and_introspection(monkeypatch):
-    monkeypatch.setenv("READQUEST_ENVIRONMENT", "production")
+    monkeypatch.setenv("READQUEST_ENV", "production")
     monkeypatch.setenv("READQUEST_DATABASE_URL", "postgresql+psycopg://app:password@db/reading")
     monkeypatch.setenv("READQUEST_ALLOWED_ORIGINS", '["https://reading.example.org"]')
     get_settings.cache_clear()
@@ -83,3 +84,18 @@ def test_multi_skill_recommendations_are_unique_and_deterministic():
     now = datetime.now(UTC)
     assert rank_activities(candidates, now=now) == rank_activities(candidates[::-1], now=now)
     assert len(rank_activities(candidates, now=now)) == 1
+
+
+def test_readquest_env_alias(monkeypatch):
+    monkeypatch.setenv("READQUEST_ENV", "production")
+    settings = Settings(_env_file=None, allowed_origins=[], database_url="postgresql+psycopg://app:password@db/reading")
+    assert settings.environment == "production"
+
+
+def test_production_seed_is_prohibited(monkeypatch):
+    from types import SimpleNamespace
+
+    from app.seeds.demo import run_seed
+    monkeypatch.setattr("app.seeds.demo.get_settings", lambda: SimpleNamespace(environment="production"))
+    with pytest.raises(ValueError, match="prohibited"):
+        run_seed()

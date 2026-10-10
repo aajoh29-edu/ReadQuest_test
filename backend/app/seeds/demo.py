@@ -3,8 +3,9 @@
 Run inside the backend container:
     python -m app.seeds.demo
 
-Authentication belongs to Member 1. The placeholder hashes created here cannot
-be used to log in until Member 1 replaces them through the authentication flow.
+Seeded accounts cannot sign in unless READQUEST_DEMO_PASSWORD is explicitly
+supplied in development. Password changes revoke sessions; repeated identical
+seeds preserve sessions. Production seeding is refused.
 """
 
 import os
@@ -12,12 +13,13 @@ from datetime import UTC, datetime, timedelta
 from decimal import Decimal
 from uuid import UUID
 
-from sqlalchemy import select
+from sqlalchemy import delete, select
 from sqlalchemy.orm import Session
 
 from app.core.config import get_settings
-from app.core.security import hash_password
+from app.core.security import hash_password, verify_password
 from app.db.session import SessionFactory
+from app.models.auth import AuthSession
 from app.models.curriculum import Activity, ActivitySkill, Lesson, Skill
 from app.models.enums import ActivityType, ContentStatus, UserRole
 from app.models.identity import ChildProfile, Classroom, Enrollment, GuardianChild, User
@@ -77,7 +79,9 @@ def seed_users(session: Session) -> dict[str, User]:
         if password:
             if not 12 <= len(password) <= 128:
                 raise ValueError("READQUEST_DEMO_PASSWORD must contain 12–128 characters")
-            user.password_hash = hash_password(password)
+            if not verify_password(password, user.password_hash):
+                user.password_hash = hash_password(password)
+                session.execute(delete(AuthSession).where(AuthSession.user_id == user.id))
         users[role.value] = user
     session.flush()
     return users
@@ -87,7 +91,7 @@ def seed_child_relationship(session: Session, users: dict[str, User]) -> ChildPr
     child = session.scalar(select(ChildProfile).where(ChildProfile.user_id == users["child"].id))
     if child is None:
         child = ChildProfile(
-            id=uid(10), user_id=users["child"].id, display_name="Demo Reader", grade_level=2
+            id=uid(10), user_id=users["child"].id, display_name="Demo Reader", grade_level=2, current_level=2
         )
         session.add(child)
         session.flush()

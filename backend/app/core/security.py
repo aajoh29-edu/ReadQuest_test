@@ -13,7 +13,9 @@ def hash_password(password: str) -> str:
 
 def verify_password(password: str, encoded: str) -> bool:
     try:
-        return _hasher.verify(encoded if encoded.startswith("$argon2id$") else _dummy, password)
+        recognized = encoded.startswith("$argon2id$")
+        matched = _hasher.verify(encoded if recognized else _dummy, password)
+        return recognized and matched
     except (VerificationError, InvalidHashError):
         return False
 

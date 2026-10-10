@@ -215,3 +215,62 @@ def test_concurrent_attempts_preserve_all_evidence(api):
         mastery = session.get(SkillMastery, (uid(10), uid(108)))
         assert mastery.attempt_count == 2 and mastery.score == 1
         assert session.scalar(select(func.count()).select_from(Recommendation).where(Recommendation.triggering_attempt_id.in_(ids))) == 2
+
+
+def test_cooldown_boundary_and_database_constraints(api):
+    from sqlalchemy.exc import IntegrityError
+    now = datetime.now(UTC)
+    with SessionFactory.begin() as session:
+        row = Attempt(child_id=uid(10), activity_id=uid(381), is_correct=True,
+                      occurred_at=now-timedelta(hours=4))
+        session.add(row)
+        session.flush()
+        repo = AdaptiveRepository(session)
+        assert uid(381) not in {c.activity_id for c in repo.recommendation_candidates(uid(10), learner_level=2, now=now)}
+        row.occurred_at -= timedelta(microseconds=1)
+        session.flush()
+        assert uid(381) in {c.activity_id for c in repo.recommendation_candidates(uid(10), learner_level=2, now=now)}
+    with pytest.raises(IntegrityError):
+        with SessionFactory.begin() as session:
+            session.add(Attempt(child_id=uid(10), activity_id=uid(381), is_correct=True,
+                                occurred_at=now, response_ms=-1))
+            session.flush()
+
+
+def test_admin_provisioning_and_cross_guardian_denial(api):
+    client = login(api, "admin")
+    result = client.post("/admin/users", json={"email":"other@example.org", "password":"test-only-other-password", "role":"child", "display_name":"Other reader"})
+    assert result.status_code == 201 and "password_hash" not in result.json()
+    other_child = next(c for c in client.get("/children").json() if c["display_name"]=="Other reader")
+    assert client.get("/admin/skills").status_code == 200
+    skill = client.get("/admin/skills").json()[0]
+    skill_id = skill.pop("id")
+    skill["name"] = "Reviewed skill"
+    assert client.put(f"/admin/skills/{skill_id}", json=skill).status_code == 200
+    lesson = client.get("/admin/lessons").json()[0]
+    lesson_id = lesson.pop("id")
+    lesson["description"] = "Reviewed lesson"
+    assert client.put(f"/admin/lessons/{lesson_id}", json=lesson).status_code == 200
+    assert client.patch(f"/admin/users/{uid(4)}", json={"status":"disabled"}).status_code == 409
+    login(api,"parent")
+    assert client.get(f"/children/{other_child['id']}/progress").status_code == 404
+    assert client.post(f"/children/{other_child['id']}/enrollments", json={"join_code":"readquest-demo"}).status_code == 404
+    assert client.post("/admin/users", json={"email":"bad@example.org","password":"test-only-password","role":"admin"}).status_code == 403
+
+
+def test_seeded_accounts_remain_unusable_without_opt_in(api):
+    with SessionFactory.begin() as session:
+        session.get(User, uid(3)).password_hash = "DEMO_AUTH_NOT_CONFIGURED"
+    client, _ = api
+    assert client.post("/auth/login",json={"email":"child@readquest.example.org","password":"unusable-login-timing-padding"}).status_code == 401
+
+
+def test_opt_in_seed_password_rotation_revokes_sessions(api, monkeypatch):
+    client = login(api)
+    monkeypatch.setenv("READQUEST_DEMO_PASSWORD", api[1])
+    run_seed()
+    assert client.get("/auth/me").status_code == 200
+    monkeypatch.setenv("READQUEST_DEMO_PASSWORD", "rotated-test-only-password")
+    run_seed()
+    assert client.get("/auth/me").status_code == 401
+    assert client.post("/auth/login", json={"email":"child@readquest.example.org", "password":"rotated-test-only-password"}).status_code == 200

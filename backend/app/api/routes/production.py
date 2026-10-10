@@ -279,11 +279,11 @@ def save_activity(session, payload, row=None):
     values = payload.model_dump(exclude={"skills"}, exclude_none=True)
     if row is not None and session.scalar(select(Attempt.id).where(Attempt.activity_id == row.id).limit(1)):
         if any(getattr(row, key) != value for key, value in values.items() if key != "status"):
-            raise HTTPException(409, "activity has evidence; archive and create a new activity")
+            raise HTTPException(409, "This activity has answers. Archive it and create a new one.")
         # Mapping changes are also forbidden once evidence exists.
         old = {(link.skill_id, link.weight) for link in row.skill_links}
         if old != {(link.skill_id, link.weight) for link in payload.skills}:
-            raise HTTPException(409, "activity has evidence; mappings are immutable")
+            raise HTTPException(409, "This activity has answers. Its reading skills cannot be changed.")
         row.status = payload.status
         return row
     if row is None:
