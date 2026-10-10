@@ -22,6 +22,7 @@ services:
       READQUEST_ENV: ${READQUEST_ENV:-development}
       READQUEST_DATABASE_URL: ${READQUEST_DATABASE_URL:-postgresql+psycopg://readquest:readquest@db:5432/readquest}
       READQUEST_LOG_LEVEL: ${READQUEST_LOG_LEVEL:-INFO}
+      READQUEST_ALLOWED_ORIGINS: ${READQUEST_ALLOWED_ORIGINS:-["http://localhost:8080", "http://127.0.0.1:8080", "http://localhost:5173", "http://127.0.0.1:5173"]}
     command: ["alembic", "upgrade", "head"]
     depends_on:
       db:
@@ -32,6 +33,7 @@ services:
       context: ./backend
     profiles: ["seed"]
     environment:
+      READQUEST_DEMO_PASSWORD: ${READQUEST_DEMO_PASSWORD:-}
       READQUEST_ENV: ${READQUEST_ENV:-development}
       READQUEST_DATABASE_URL: ${READQUEST_DATABASE_URL:-postgresql+psycopg://readquest:readquest@db:5432/readquest}
     command: ["python", "-m", "app.seeds.demo"]
@@ -46,6 +48,7 @@ services:
       READQUEST_ENV: ${READQUEST_ENV:-development}
       READQUEST_DATABASE_URL: ${READQUEST_DATABASE_URL:-postgresql+psycopg://readquest:readquest@db:5432/readquest}
       READQUEST_LOG_LEVEL: ${READQUEST_LOG_LEVEL:-INFO}
+      READQUEST_ALLOWED_ORIGINS: ${READQUEST_ALLOWED_ORIGINS:-["http://localhost:8080", "http://127.0.0.1:8080", "http://localhost:5173", "http://127.0.0.1:5173"]}
     ports:
       - "8000:8000"
     depends_on:
@@ -62,6 +65,11 @@ services:
       context: ./frontend
     ports:
       - "8080:80"
+    healthcheck:
+      test: ["CMD", "wget", "-q", "-O", "/dev/null", "http://127.0.0.1/"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
     depends_on:
       api:
         condition: service_healthy
