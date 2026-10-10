@@ -190,6 +190,8 @@ function CurriculumAdmin() {
   const [skills, setSkills] = useState([]); const [lessons, setLessons] = useState([]); const [activities, setActivities] = useState([]);
   const [error, setError] = useState(""); const [notice, setNotice] = useState(""); const [busy, setBusy] = useState(false);
   const [edit, setEdit] = useState(null);
+  const [mappings, setMappings] = useState([]);
+  useEffect(() => { if (!mappings.length && skills.length) setMappings([{skill_id:skills[0].id,weight:1}]); }, [skills, mappings.length]);
   const load = useCallback(async () => {
     try { const [s,l,a] = await Promise.all([request("/admin/skills"), request("/admin/lessons"), request("/admin/activities")]); setSkills(s); setLessons(l); setActivities(a); }
     catch (err) { setError(err.message); }
@@ -197,24 +199,22 @@ function CurriculumAdmin() {
   useEffect(() => { load(); }, [load]);
   async function save(path, method, data, form) {
     setBusy(true); setError(""); setNotice("");
-    try { await request(path, { method, body: data }); await load(); if (form) form.reset(); setEdit(null); setNotice("Curriculum saved."); }
+    try { await request(path, { method, body: data }); await load(); if (form) form.reset(); setEdit(null); setMappings(skills[0] ? [{skill_id:skills[0].id,weight:1}] : []); setNotice("Curriculum saved."); }
     catch (err) { setError(err.message); } finally { setBusy(false); }
   }
   function activitySubmit(e) {
     e.preventDefault(); const form=e.currentTarget; const values=Object.fromEntries(new FormData(form));
     const choices=values.choices.split("\n").map(s => s.trim()).filter(Boolean);
-    let mappings;
-    try { mappings=JSON.parse(values.mappings); } catch { setError("Skill mappings must be a JSON list of skill_id and weight."); return; }
     const data={ lesson_id: values.lesson_id, title: values.title, activity_type: values.activity_type, prompt: values.prompt,
       content: { choices, correct_index: Number(values.correct_index), ...(values.passage ? { passage: values.passage } : {}) },
-      difficulty: Number(values.difficulty), sequence: Number(values.sequence), status: values.status, skills: mappings };
+      difficulty: Number(values.difficulty), sequence: Number(values.sequence), status: values.status, skills: mappings.map(link => ({skill_id:link.skill_id,weight:Number(link.weight)})) };
     save(`/admin/activities${edit ? `/${edit.id}` : ""}`, edit ? "PUT" : "POST", data, form);
   }
   return <section><h2>Curriculum</h2><Message error={error} notice={notice} busy={busy} />
     <details><summary>Add a skill</summary><form aria-label="Add skill" onSubmit={e => { e.preventDefault(); const form=e.currentTarget; const data=Object.fromEntries(new FormData(form)); data.level=Number(data.level); save("/admin/skills", "POST", data, form); }}>
       <label>Code<input name="code" pattern="[A-Z][A-Z0-9_]{0,49}" required /></label><label>Skill name<input name="name" maxLength="120" required /></label><label>Category<input name="category" maxLength="60" required /></label><label>Level<input name="level" type="number" min="1" max="10" defaultValue="1" required /></label><StatusSelect /><button disabled={busy}>Add skill</button>
     </form></details>
-    <ul>{skills.map(row => <li key={row.id}>{row.name} · {row.status} <code>{row.id}</code> <button className="secondary" disabled={busy} onClick={() => { const {id,...data}=row; save(`/admin/skills/${id}`, "PUT", {...data,status: row.status === "published" ? "archived" : "published"}); }}>{row.status === "published" ? "Archive" : "Publish"} skill {row.name}</button></li>)}</ul>
+    <ul>{skills.map(row => <li key={row.id}>{row.name} · {row.status} <button className="secondary" disabled={busy} onClick={() => { const {id,...data}=row; save(`/admin/skills/${id}`, "PUT", {...data,status: row.status === "published" ? "archived" : "published"}); }}>{row.status === "published" ? "Archive" : "Publish"} skill {row.name}</button></li>)}</ul>
     <details><summary>Add a lesson</summary><form aria-label="Add lesson" onSubmit={e => { e.preventDefault(); const form=e.currentTarget; const data=Object.fromEntries(new FormData(form)); data.sequence=Number(data.sequence); save("/admin/lessons", "POST", data, form); }}>
       <label>Lesson title<input name="title" maxLength="160" required /></label><label>Description<textarea name="description" maxLength="5000" /></label><label>Order<input name="sequence" type="number" min="0" defaultValue="1" required /></label><StatusSelect /><button disabled={busy}>Add lesson</button>
     </form></details>
@@ -230,9 +230,14 @@ function CurriculumAdmin() {
       <label>Correct choice index (first choice is 0)<input name="correct_index" type="number" min="0" max="7" defaultValue={edit?.content.correct_index || 0} required /></label>
       <label>Difficulty<input name="difficulty" type="number" min="1" max="10" defaultValue={edit?.difficulty || 1} required /></label>
       <label>Order in lesson<input name="sequence" type="number" min="0" defaultValue={edit?.sequence || 0} required /></label>
-      <label>Skill mappings (JSON; positive weights total 1)<textarea name="mappings" defaultValue={JSON.stringify(edit?.skill_weights || (skills[0] ? [{skill_id:skills[0].id,weight:1}] : []))} required /></label>
-      <StatusSelect value={edit?.status} /><button disabled={busy}>Save activity</button>{edit && <button className="secondary" type="button" onClick={() => setEdit(null)}>Cancel edit</button>}
-    </form><ul>{activities.map(a => <li key={a.id}>{a.title} · {a.status} <button className="secondary" disabled={busy} onClick={() => setEdit(a)}>Edit {a.title}</button></li>)}</ul>
+      <fieldset disabled={busy}><legend>Reading skills</legend><p>Choose the skills this activity practices. Their weights must total 1.</p>
+        {mappings.map((link,index) => <div key={index} className="card"><label>Skill {index+1}<select value={link.skill_id} onChange={e => setMappings(rows=>rows.map((r,i)=>i===index ? {...r,skill_id:e.target.value}:r))}>{skills.map(s=><option key={s.id} value={s.id}>{s.name}</option>)}</select></label>
+          <label>Weight for skill {index+1}<input type="number" min="0.001" max="1" step="0.001" value={link.weight} required onChange={e=>setMappings(rows=>rows.map((r,i)=>i===index ? {...r,weight:e.target.value}:r))} /></label>
+          <button type="button" className="secondary" disabled={mappings.length===1} onClick={()=>setMappings(rows=>rows.filter((_,i)=>i!==index))}>Remove skill {index+1}</button></div>)}
+        <button type="button" className="secondary" disabled={mappings.length>=skills.length} onClick={()=>setMappings(rows=>[...rows,{skill_id:skills.find(s=>!rows.some(r=>r.skill_id===s.id)).id,weight:0.5}])}>Add another skill</button>
+      </fieldset>
+      <StatusSelect value={edit?.status} /><button disabled={busy}>Save activity</button>{edit && <button className="secondary" type="button" onClick={() => {setEdit(null);setMappings(skills[0] ? [{skill_id:skills[0].id,weight:1}] : []);}}>Cancel edit</button>}
+    </form><ul>{activities.map(a => <li key={a.id}>{a.title} · {a.status} <button className="secondary" disabled={busy} onClick={() => {setEdit(a);setMappings(a.skill_weights);}}>Edit {a.title}</button></li>)}</ul>
   </section>;
 }
 
