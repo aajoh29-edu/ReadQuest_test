@@ -59,3 +59,27 @@ Use `docker compose -f compose.yaml -f /workspace/readquest-cloud.yaml up --buil
 Start with [system models](docs/models/WORKFLOWS.md), [exact ERD](docs/models/ERD.md), [production design](docs/architecture/PRODUCTION_DESIGN.md), [API contract](docs/architecture/API_CONTRACT.md), [task tracker](docs/TASK_TRACKER.md) and [verification](docs/VERIFICATION_REPORT.md). The learning guide explains each backend layer and security findings. `bridge/` is an archived Docker Desktop Kubernetes export, not the production target; see [its limitations](bridge/README.md).
 
 Production setup and rollback are described in [infra/DEPLOYMENT.md](infra/DEPLOYMENT.md). Provision the first admin explicitly with `python -m app.cli.create_admin`. Do not seed production. The local test run does not publish a release, configure a hosting provider or enable hosted branch protection.
+
+### Setup failure recovery
+
+In this cloud, run `source scripts/cloud-compose-env.sh` before ordinary Compose
+commands; the Python helper generates YAML and must not itself be sourced.
+Run `bash scripts/docker-cache-cleanup.sh` after builds finish to remove only
+old dangling images and build cache; development volumes and tagged images remain.
+`make test` and `make test-unit` now share a checkout-local flock for the entire
+Compose test lifecycle. Do not bypass this wrapper with concurrent raw pytest
+commands against its database. For installed Chromium, set
+`PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD=1` and `READQUEST_BROWSER_PATH=/usr/bin/chromium`
+before installing frontend dependencies and omit `playwright install`.
+
+The production deployment template is `.github/workflows/deploy.yml`. It remains
+disabled until repository variable `ENABLE_PRODUCTION_DEPLOY=true` is configured.
+It creates a tag only after successful main push CI, publishes both images directly,
+and deploys to a preprovisioned SSH Compose host behind a TLS reverse proxy.
+Configure production environment protections, the workflow's secrets/variables,
+matching reviewed Compose files on the host, private GHCR pull access if needed,
+and a rehearsed migration/rollback plan before activating it. Hosted execution and
+rollback remain unverified; the template does not provision a provider or TLS.
+`bash scripts/github-protection.sh OWNER/REPO` applies the documented full branch
+policy using an authenticated repository administrator; inspect existing policy
+and actual hosted check names before executing it.

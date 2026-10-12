@@ -18,14 +18,10 @@ seed:
 	$(COMPOSE) --profile seed run --rm seed
 
 test:
-	$(COMPOSE) --profile test build test
-	$(COMPOSE) --profile test run --rm test sh -ec 'python -m pytest -m "not integration" --cov=app --cov-report=term && READQUEST_DATABASE_URL=$(TEST_DB_URL) READQUEST_TEST_DATABASE_URL=$(TEST_DB_URL) python -m pytest -m integration --cov=app --cov-append --cov-report=term --cov-fail-under=75'
-	$(COMPOSE) rm -fsv test test-db
+	READQUEST_COMPOSE_COMMAND='$(COMPOSE)' bash scripts/test-backend.sh
 
 test-unit:
-	$(COMPOSE) --profile test build test
-	$(COMPOSE) --profile test run --rm test python -m pytest -m "not integration"
-	$(COMPOSE) rm -fsv test test-db
+	READQUEST_COMPOSE_COMMAND='$(COMPOSE)' bash scripts/test-backend.sh unit
 frontend-test:
 	npm --prefix frontend ci
 	npm --prefix frontend test

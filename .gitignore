@@ -17,3 +17,5 @@ dist/
 *.egg-info/
 frontend/test-results/
 frontend/playwright-report/
+
+.readquest-db-tests.lock
