@@ -1,17 +1,40 @@
+# Managed database and externally terminated HTTPS. Never seed production.
 services:
   db:
     profiles: ["local-production-database"]
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:?Set POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER:?Set POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD}
+    ports: !reset []
 
   migrate:
     image: ${READQUEST_API_IMAGE:?Set READQUEST_API_IMAGE}
-    build: null
+    build: !reset null
     restart: "no"
-    depends_on: []
+    depends_on: !reset []
+    environment:
+      READQUEST_ENV: production
+      READQUEST_DATABASE_URL: ${READQUEST_DATABASE_URL:?Set READQUEST_DATABASE_URL}
+      READQUEST_ALLOWED_ORIGINS: ${READQUEST_ALLOWED_ORIGINS:?Set HTTPS origins as JSON}
 
   api:
     image: ${READQUEST_API_IMAGE:?Set READQUEST_API_IMAGE}
-    build: null
+    build: !reset null
     restart: unless-stopped
     environment:
       READQUEST_ENV: production
       READQUEST_DATABASE_URL: ${READQUEST_DATABASE_URL:?Set READQUEST_DATABASE_URL}
+      READQUEST_ALLOWED_ORIGINS: ${READQUEST_ALLOWED_ORIGINS:?Set HTTPS origins as JSON}
+    ports: !override ["127.0.0.1:8000:8000"]
+
+  frontend:
+    image: ${READQUEST_FRONTEND_IMAGE:?Set READQUEST_FRONTEND_IMAGE}
+    build: !reset null
+    restart: unless-stopped
+
+  seed:
+    environment:
+      READQUEST_ENV: production
+      READQUEST_DATABASE_URL: ${READQUEST_DATABASE_URL:?Set READQUEST_DATABASE_URL}
+      READQUEST_ALLOWED_ORIGINS: ${READQUEST_ALLOWED_ORIGINS:?Set HTTPS origins as JSON}

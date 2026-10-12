@@ -1,6 +1,6 @@
 # ReadQuest build process and collaboration gates
 
-The team should finish each process in order. A process is complete only when its technical exit criterion and collaboration gate are both satisfied.
+This test run has pre-approved team/design gates. Processes 1–9 are locally validated; Process 10 workflow implementation is validated locally but hosted branch protection/runs are external; Process 11 provider release/rollback remains BLOCKED. Current evidence and per-task status are in TASK_TRACKER.md and VERIFICATION_REPORT.md. A local result does not establish hosted publication.
 
 ## Process 1 — Repository foundation and architecture
 
@@ -16,7 +16,7 @@ The team should finish each process in order. A process is complete only when it
 
 ## Process 2 — Requirements-to-ERD mapping
 
-**Status:** Draft complete; awaiting the Member 1, Member 2, and full-team collaboration gate.
+**Status:** DONE locally; design/team review approved for this test run.
 
 **Member 3 work:** Translate user stories into entities, relationships, constraints, indexes, data dictionary, and deletion rules.
 
@@ -32,7 +32,7 @@ The team should finish each process in order. A process is complete only when it
 
 ## Process 3 — SQLAlchemy models and Alembic migrations
 
-**Status:** Implementation complete; awaiting collaboration review and PostgreSQL CI.
+**Status:** DONE locally; design/team review approved for this test run.
 
 **Member 3 work:** Implement typed models, relationships, constraints, indexes, initial migration, and upgrade/downgrade tests.
 
@@ -45,7 +45,7 @@ The team should finish each process in order. A process is complete only when it
 
 ## Process 4 — Repository/data-access layer
 
-**Status:** Adaptive repositories complete; Member 1 must review service boundaries.
+**Status:** DONE locally; design/team review approved for this test run.
 
 **Member 3 work:** Implement task-focused repositories and transaction utilities for attempts, mastery, and recommendations.
 
@@ -58,7 +58,7 @@ The team should finish each process in order. A process is complete only when it
 
 ## Process 5 — Deterministic seed data
 
-**Status:** Implementation complete; awaiting authentication/content review and PostgreSQL CI.
+**Status:** DONE locally; design/team review approved for this test run.
 
 **Member 3 work:** Create idempotent seeds for skills, lessons, activities, users, and named learner histories.
 
@@ -72,7 +72,7 @@ The team should finish each process in order. A process is complete only when it
 
 ## Process 6 — Mastery engine
 
-**Status:** Implementation complete; formula requires full-team approval.
+**Status:** DONE locally; design/team review approved for this test run.
 
 **Member 3 work:** Implement pure scoring functions, confidence handling, bands, configuration, and unit/property tests.
 
@@ -86,7 +86,7 @@ The team should finish each process in order. A process is complete only when it
 
 ## Process 7 — Recommendation engine
 
-**Status:** Implementation complete; explanation wording requires Member 2 review.
+**Status:** DONE locally; design/team review approved for this test run.
 
 **Member 3 work:** Implement candidate filters, ranking components, deterministic tie-breaking, cooldowns, and reason codes.
 
@@ -100,7 +100,7 @@ The team should finish each process in order. A process is complete only when it
 
 ## Process 8 — End-to-end adaptive transaction
 
-**Status:** Implementation complete; Member 1 must review endpoint integration and transaction ownership.
+**Status:** DONE locally; design/team review approved for this test run.
 
 **Member 3 work:** Guarantee that attempt persistence, mastery update, and recommendation audit commit or roll back together; test concurrency.
 
@@ -114,7 +114,7 @@ The team should finish each process in order. A process is complete only when it
 
 ## Process 9 — Docker Compose development environment
 
-**Status:** Backend/data services complete; frontend service awaits Member 2's Docker contract.
+**Status:** DONE locally; design/team review approved for this test run.
 
 **Member 3 work:** Add migration, seed, API, database, and frontend services with health checks and named profiles.
 
@@ -128,7 +128,7 @@ The team should finish each process in order. A process is complete only when it
 
 ## Process 10 — GitHub Actions CI
 
-**Status:** Backend, PostgreSQL, architecture, and container jobs complete; frontend job awaits Member 2.
+**Status:** Workflow code implemented; hosted activation/release BLOCKED (see tracker DO05/DO06).
 
 **Member 3 work:** Add lint, unit, PostgreSQL integration, migration, build, security, and smoke-test jobs.
 
@@ -142,7 +142,7 @@ The team should finish each process in order. A process is complete only when it
 
 ## Process 11 — Deployment and release
 
-**Status:** Container publication and optional deploy hook complete; provider configuration and team rehearsal remain.
+**Status:** Workflow code implemented; hosted activation/release BLOCKED (see tracker DO05/DO06).
 
 **Member 3 work:** Configure protected environments, secrets, production migration, image deployment, health verification, rollback, and tagged release.
 

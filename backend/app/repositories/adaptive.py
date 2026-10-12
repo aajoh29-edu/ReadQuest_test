@@ -5,7 +5,7 @@ from uuid import UUID
 from sqlalchemy import select, text
 from sqlalchemy.orm import Session
 
-from app.models.curriculum import Activity, ActivitySkill
+from app.models.curriculum import Activity, ActivitySkill, Lesson, Skill
 from app.models.enums import ContentStatus, RecommendationStatus
 from app.models.learning import Attempt, Recommendation, SkillMastery
 from app.services.adaptive.mastery import AttemptResult, MasteryResult
@@ -93,6 +93,8 @@ class AdaptiveRepository:
                 SkillMastery.last_practiced_at,
             )
             .join(ActivitySkill, ActivitySkill.activity_id == Activity.id)
+            .join(Lesson, Lesson.id == Activity.lesson_id)
+            .join(Skill, Skill.id == ActivitySkill.skill_id)
             .outerjoin(
                 SkillMastery,
                 (SkillMastery.child_id == child_id)
@@ -100,6 +102,9 @@ class AdaptiveRepository:
             )
             .where(
                 Activity.status == ContentStatus.PUBLISHED,
+                Lesson.status == ContentStatus.PUBLISHED,
+                Skill.status == ContentStatus.PUBLISHED,
+                ~Activity.skill_links.any(ActivitySkill.skill.has(Skill.status != ContentStatus.PUBLISHED)),
                 Activity.id.not_in(recent_activity_ids),
             )
         )
@@ -118,7 +123,7 @@ class AdaptiveRepository:
     def save_recommendation(
         self,
         child_id: UUID,
-        triggering_attempt_id: UUID,
+        triggering_attempt_id: UUID | None,
         ranked: RankedRecommendation,
     ) -> Recommendation:
         record = Recommendation(

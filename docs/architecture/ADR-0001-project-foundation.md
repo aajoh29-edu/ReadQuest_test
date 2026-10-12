@@ -1,6 +1,6 @@
 # ADR-0001: Project foundation
 
-**Status:** Proposed — requires Member 1 and full-team review
+**Status:** Accepted — design gate pre-approved for this test run
 
 ## Context
 
@@ -20,5 +20,5 @@ ReadQuest needs a structure that separates HTTP concerns, database access, adapt
 - Member 1 can build routes/services without owning database lifecycle code.
 - Member 2 receives API contracts and does not reproduce adaptive logic.
 - Member 3 can test algorithms independently and later connect them to transactional repositories.
-- The team must review interface changes before merging dependent work.
+- API contracts and role workflows are documented and tested; hosted merge policy remains an external setting.
 

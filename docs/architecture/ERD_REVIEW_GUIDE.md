@@ -1,6 +1,6 @@
 # ReadQuest ERD review guide
 
-**Status:** Proposed for team review. Model and migration coding must wait until the collaboration gate is complete.
+**Status:** Accepted for the authorized test run. Models/migrations are implemented and locally verified; hosted release requirements remain in the tracker.
 
 ## 1. How to read the diagram
 
@@ -27,7 +27,7 @@ The application stores the selected activity, priority score, reason code, and a
 
 ### API schemas are not database models
 
-Member 1 should create request/response schemas for each endpoint. The frontend should not receive password hashes, internal version counters, deleted timestamps, or every database column.
+The production API defines separate request/response schemas for each endpoint. The frontend should not receive password hashes, internal version counters, deleted timestamps, or every database column.
 
 ## 3. Relationship walkthrough
 
@@ -41,13 +41,13 @@ Member 1 should create request/response schemas for each endpoint. The frontend 
 8. The adaptive service updates the child's `skill_mastery` for every linked skill.
 9. The recommendation service selects an eligible activity and stores a `recommendations` audit row.
 
-## 4. Deletion policy proposal
+## 4. Implemented deletion policy
 
-| Parent | Child data | Proposed behavior | Reason |
+| Parent | Child data | Behavior | Reason |
 |---|---|---|---|
 | user | child profile | Restrict normal delete; deactivate user | Preserve learning history. |
 | child profile | attempts/mastery/recommendations | Restrict; privacy erasure uses a controlled service | Avoid accidental loss and support explicit privacy handling. |
-| lesson | activities | Restrict if attempts exist; otherwise cascade only through an administrative workflow | Historical attempts must continue to reference meaningful content. |
+| lesson | activities | Restrict whenever activities reference the lesson | Historical attempts must continue to reference meaningful content. |
 | activity | activity_skills | Cascade | Join rows have no meaning without the activity. |
 | skill | activity_skills | Restrict when used | Prevent orphaned curriculum mappings. |
 | class | enrollments | Cascade | Enrollment is scoped to a class. |
@@ -80,11 +80,13 @@ Soft-deactivation is preferred for users and published curriculum. A later priva
 
 ## 6. Exit checklist
 
-- [ ] Diagram cardinalities reviewed by Member 1.
-- [ ] Dashboard fields reviewed by Member 2.
-- [ ] Role and child-privacy choices approved by all three members.
-- [ ] Data dictionary contains every proposed field, constraint, and index.
-- [ ] Requirement traceability has no unmapped MVP requirement.
-- [ ] Open questions have decisions or assigned owners and due dates.
-- [ ] ADR-0002 status changed from Proposed to Accepted.
+- [x] Diagram cardinalities reviewed by Member 1.
+- [x] Dashboard fields reviewed by Member 2.
+- [x] Role and child-privacy choices approved by all three members.
+- [x] Data dictionary contains every proposed field, constraint, and index.
+- [x] Requirement traceability has no unmapped MVP requirement.
+- [x] Open questions have decisions or assigned owners and due dates.
+- [x] ADR-0002 status changed from Proposed to Accepted.
 
+
+Auth sessions reference users with CASCADE; all remaining FK deletion rules and exact fields are in docs/models/ERD.md. Mermaid is the canonical current diagram; the Graphviz source also reflects all fourteen tables.

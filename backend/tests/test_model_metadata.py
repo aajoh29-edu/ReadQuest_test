@@ -1,12 +1,15 @@
 from sqlalchemy import CheckConstraint, ForeignKeyConstraint
 from sqlalchemy.orm import configure_mappers
 
+import app.models.auth  # noqa: F401
 import app.models.curriculum  # noqa: F401
 import app.models.identity  # noqa: F401
 import app.models.learning  # noqa: F401
 from app.db.base import Base
 
 EXPECTED_TABLES = {
+    "auth_sessions",
+    "login_throttles",
     "users",
     "child_profiles",
     "guardian_children",
@@ -22,6 +25,8 @@ EXPECTED_TABLES = {
 }
 
 EXPECTED_COLUMNS = {
+    "auth_sessions": {"token_hash", "user_id", "expires_at"},
+    "login_throttles": {"email", "failures", "window_start"},
     "users": {"id", "email", "password_hash", "role", "status", "created_at", "updated_at"},
     "child_profiles": {
         "id",
@@ -96,7 +101,7 @@ def test_every_table_contains_expected_columns() -> None:
 
 def test_all_relationship_mappers_configure() -> None:
     configure_mappers()
-    assert len(Base.registry.mappers) == 12
+    assert len(Base.registry.mappers) == 14
 
 
 def test_all_foreign_keys_have_explicit_delete_behavior() -> None:

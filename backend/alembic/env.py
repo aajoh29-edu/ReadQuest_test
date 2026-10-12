@@ -2,6 +2,7 @@ from logging.config import fileConfig
 
 from sqlalchemy import engine_from_config, pool
 
+import app.models.auth  # noqa: F401
 import app.models.curriculum  # noqa: F401 -- registers tables with Base.metadata
 import app.models.identity  # noqa: F401
 import app.models.learning  # noqa: F401

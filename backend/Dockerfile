@@ -1,29 +1,34 @@
+# syntax=docker/dockerfile:1
 FROM python:3.12-slim AS base
-
-ENV PYTHONDONTWRITEBYTECODE=1 \
-    PYTHONUNBUFFERED=1
-
+ENV PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1
 WORKDIR /app
-COPY pyproject.toml ./
+COPY pyproject.toml requirements.lock requirements-dev.lock ./
+
+FROM base AS runtime-deps
+RUN --mount=type=secret,id=cloud_ca,target=/tmp/cloud-ca.pem \
+    if [ -s /tmp/cloud-ca.pem ]; then export PIP_CERT=/tmp/cloud-ca.pem; fi; \
+    pip install --no-cache-dir --require-hashes -r requirements.lock
+
+FROM base AS test-deps
+RUN --mount=type=secret,id=cloud_ca,target=/tmp/cloud-ca.pem \
+    if [ -s /tmp/cloud-ca.pem ]; then export PIP_CERT=/tmp/cloud-ca.pem; fi; \
+    pip install --no-cache-dir --require-hashes -r requirements-dev.lock
+
+FROM test-deps AS test
 COPY app ./app
 COPY alembic.ini ./
 COPY alembic ./alembic
-
-# Test stage: adds dev dependencies (pytest, ruff, ...) and the test suite.
-# Never reachable from the runtime stage below, so it never ships to prod.
-FROM base AS test
 COPY tests ./tests
-RUN pip install --no-cache-dir -e '.[dev]'
-CMD ["pytest", "-v"]
+COPY tests_helper.py ./
+RUN pip install --no-deps --no-build-isolation -e .
+CMD ["python", "-m", "pytest", "-v"]
 
-# Runtime stage: the default build target (last stage wins when --target is
-# omitted), so `docker build ./backend` and `docker compose build api` are
-# unaffected. Only the paths listed above are ever copied in - no tests.
-FROM base AS runtime
+FROM runtime-deps AS runtime
 RUN addgroup --system readquest && adduser --system --ingroup readquest readquest
-RUN pip install --no-cache-dir .
-
+COPY app ./app
+COPY alembic.ini ./
+COPY alembic ./alembic
+RUN pip install --no-deps --no-build-isolation . && chmod -R a+rX /app
 USER readquest
 EXPOSE 8000
-
 CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]

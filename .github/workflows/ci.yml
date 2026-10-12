@@ -1,16 +1,10 @@
 name: ReadQuest CI
-
 on:
   pull_request:
   push:
     branches: [main]
-
-# Least privilege by default: none of these jobs publish packages or write
-# repository content, so the workflow token only needs read access. Override
-# per-job if a future job genuinely needs to write (e.g. posting PR comments).
 permissions:
   contents: read
-
 jobs:
   backend-quality:
     runs-on: ubuntu-latest
@@ -23,12 +17,13 @@ jobs:
         with:
           python-version: "3.12"
           cache: pip
-      - name: Install backend
-        run: python -m pip install -e ".[dev]"
-      - name: Lint
-        run: ruff check .
-      - name: Test
-        run: pytest -m "not integration" --cov=app --cov-report=term-missing --cov-fail-under=75
+          cache-dependency-path: backend/requirements-dev.lock
+      - run: python -m pip install --require-hashes -r requirements-dev.lock
+      - run: python -m pip install --no-deps --no-build-isolation -e .
+      - run: ruff check .
+      - run: python -m pytest -m "not integration"
+      - run: python ../scripts/validate_erd_docs.py
+      - run: python ../scripts/export_contract.py && git diff --exit-code -- ../docs/architecture/openapi.json ../docs/models/ERD.md ../docs/architecture/ERD.md
 
   postgres-integration:
     runs-on: ubuntu-latest
@@ -39,46 +34,88 @@ jobs:
           POSTGRES_DB: readquest_test
           POSTGRES_USER: readquest
           POSTGRES_PASSWORD: readquest
-        ports:
-          - 5432:5432
+        ports: ["5432:5432"]
         options: >-
           --health-cmd "pg_isready -U readquest -d readquest_test"
-          --health-interval 5s
-          --health-timeout 3s
-          --health-retries 10
+          --health-interval 5s --health-timeout 3s --health-retries 10
     defaults:
       run:
         working-directory: backend
-    env:
-      READQUEST_DATABASE_URL: postgresql+psycopg://readquest:readquest@localhost:5432/readquest_test
-      READQUEST_TEST_DATABASE_URL: postgresql+psycopg://readquest:readquest@localhost:5432/readquest_test
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
           cache: pip
-      - run: python -m pip install -e ".[dev]"
-      - name: Migration upgrade and downgrade tests
-        run: pytest -m integration
-      - name: Verify models match migrations
+          cache-dependency-path: backend/requirements-dev.lock
+      - run: python -m pip install --require-hashes -r requirements-dev.lock
+      - run: python -m pip install --no-deps --no-build-isolation -e .
+      - run: python -m pytest -m "not integration" --cov=app --cov-report=term
+      - name: PostgreSQL tests and combined coverage gate
+        env:
+          READQUEST_DATABASE_URL: postgresql+psycopg://readquest:readquest@localhost:5432/readquest_test
+          READQUEST_TEST_DATABASE_URL: postgresql+psycopg://readquest:readquest@localhost:5432/readquest_test
+        run: python -m pytest -m integration --cov=app --cov-append --cov-report=term-missing --cov-fail-under=75
+      - name: Verify migration/model consistency
+        env:
+          READQUEST_DATABASE_URL: postgresql+psycopg://readquest:readquest@localhost:5432/readquest_test
         run: alembic upgrade head && alembic check
 
-  architecture-docs:
+  frontend-quality:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - run: npm ci
+      - run: npm test
+      - run: npm run build
+      - run: npm audit --audit-level=moderate
+
+  python-security:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-      - name: Validate ERD documentation coverage
-        run: python scripts/validate_erd_docs.py
+      - run: python -m pip install pip-audit
+      - run: pip-audit --disable-pip --no-deps -r backend/requirements.lock
 
-  container-build:
+  compose-smoke:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Validate Compose
-        run: docker compose config --quiet
-      - name: Build API image
-        run: docker compose build api
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+      - name: Create disposable development password
+        run: |
+          python - <<'PY'
+          import os, secrets
+          with open(os.environ["GITHUB_ENV"], "a") as stream:
+              stream.write("READQUEST_DEMO_PASSWORD=" + secrets.token_urlsafe(24) + "\n")
+          PY
+      - run: docker compose config --quiet
+      - run: docker compose --profile test build
+      - run: docker compose up -d --wait db api frontend
+      - run: docker compose --profile seed run --rm seed
+      - run: python scripts/smoke.py
+      - run: npm ci --prefix frontend
+      - run: cd frontend && npx playwright install --with-deps chromium
+      - name: Browser workflows through Nginx
+        env:
+          READQUEST_E2E_URL: http://127.0.0.1:8080
+        run: READQUEST_E2E_PASSWORD="$READQUEST_DEMO_PASSWORD" npm --prefix frontend run test:e2e
+      - name: Logs on failure
+        if: failure()
+        run: docker compose logs --tail=80
+      - name: Stop disposable CI services
+        if: always()
+        run: docker compose down -v

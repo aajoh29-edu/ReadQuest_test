@@ -10,7 +10,7 @@ metadata:
         com.docker.compose.volume: readquest_postgres_data
 spec:
     accessModes:
-        # TODO would need to check which services use this volume
+        # Database pod only; see bridge/README.md
         - ReadWriteOnce
     volumeMode: Filesystem
     resources:

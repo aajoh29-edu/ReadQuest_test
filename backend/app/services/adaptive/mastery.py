@@ -74,6 +74,8 @@ def calculate_mastery(
     if window_size < 1:
         raise ValueError("window_size must be at least 1")
 
+    if any(item.occurred_at.tzinfo is None for item in attempts):
+        raise ValueError("occurred_at must be timezone-aware")
     ordered = sorted(attempts, key=lambda item: item.occurred_at)
     window = ordered[-window_size:]
     attempt_count = len(window)

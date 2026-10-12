@@ -1,4 +1,6 @@
-# Team Member 3 remaining build processes
+# Completed build processes and remaining hosted gates
+
+The coding/learning exercises below describe the now-implemented stack. See the task tracker for DONE/BLOCKED status. Local auth, React, PostgreSQL, migration, algorithm, Compose and CI command checks pass; hosted policy, release publication and provider rollback remain external.
 
 Use this as a coding and collaboration study guide. For each process, understand its responsibility, trace one example through the code, run the tests, and make one small controlled change.
 
@@ -28,7 +30,7 @@ docker compose run --rm api alembic check
 
 **Run:** `docker compose --profile seed run --rm seed`.
 
-**Collaborate:** Member 1 replaces placeholder hashes through the authentication flow. Member 2 confirms the learner/activity data supports planned screens. The full team reviews age appropriateness and demo wording.
+**Collaborate:** An explicit development-only seed password enables demo login; otherwise seeded hashes remain unusable. Member 2 confirms the learner/activity data supports planned screens. The full team reviews age appropriateness and demo wording.
 
 **Done when:** Two runs produce exactly 4 users, 8 skills, and 16 activities without duplicates.
 

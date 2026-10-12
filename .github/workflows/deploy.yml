@@ -1,0 +1,106 @@
+name: Deploy production (SSH Compose template)
+on:
+  workflow_run:
+    workflows: ["ReadQuest CI"]
+    types: [completed]
+    branches: [main]
+permissions:
+  contents: read
+concurrency:
+  group: readquest-production
+  cancel-in-progress: false
+jobs:
+  release:
+    if: >-
+      vars.ENABLE_PRODUCTION_DEPLOY == 'true' &&
+      github.event.workflow_run.conclusion == 'success' &&
+      github.event.workflow_run.event == 'push'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      packages: write
+    outputs:
+      tag: ${{ steps.version.outputs.tag }}
+      registry: ${{ steps.version.outputs.registry }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.workflow_run.head_sha }}
+          persist-credentials: false
+      - name: Create unique release tag for the tested main commit
+        id: version
+        env:
+          GH_TOKEN: ${{ github.token }}
+          COMMIT: ${{ github.event.workflow_run.head_sha }}
+        run: |
+          set -euo pipefail
+          tag="v$(date -u +%Y.%m.%d)-${GITHUB_RUN_ID}"
+          registry="ghcr.io/${GITHUB_REPOSITORY_OWNER,,}"
+          gh api "repos/$GITHUB_REPOSITORY/git/refs" -f ref="refs/tags/$tag" -f sha="$COMMIT"
+          echo "tag=$tag" >> "$GITHUB_OUTPUT"
+          echo "registry=$registry" >> "$GITHUB_OUTPUT"
+      # Token-created tags do not trigger release.yml; publish explicitly here.
+      - uses: docker/setup-buildx-action@v3
+      - uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - uses: docker/build-push-action@v6
+        with:
+          context: backend
+          push: true
+          tags: ${{ steps.version.outputs.registry }}/readquest-api:${{ steps.version.outputs.tag }}
+      - uses: docker/build-push-action@v6
+        with:
+          context: frontend
+          push: true
+          tags: ${{ steps.version.outputs.registry }}/readquest-frontend:${{ steps.version.outputs.tag }}
+  deploy:
+    needs: release
+    runs-on: ubuntu-latest
+    environment: production
+    env:
+      READQUEST_API_IMAGE: ${{ needs.release.outputs.registry }}/readquest-api:${{ needs.release.outputs.tag }}
+      READQUEST_FRONTEND_IMAGE: ${{ needs.release.outputs.registry }}/readquest-frontend:${{ needs.release.outputs.tag }}
+      READQUEST_DATABASE_URL: ${{ secrets.READQUEST_DATABASE_URL }}
+      READQUEST_ALLOWED_ORIGINS: ${{ vars.READQUEST_ALLOWED_ORIGINS }}
+      POSTGRES_DB: ${{ vars.POSTGRES_DB }}
+      POSTGRES_USER: ${{ vars.POSTGRES_USER }}
+      POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
+      PRODUCTION_URL: ${{ vars.PRODUCTION_URL }}
+    steps:
+      - name: Validate configured production inputs
+        run: |
+          set -euo pipefail
+          : "${READQUEST_DATABASE_URL:?Missing production DB URL}"
+          : "${READQUEST_ALLOWED_ORIGINS:?Missing HTTPS origins JSON}"
+          : "${POSTGRES_DB:?Missing DB name}"
+          : "${POSTGRES_USER:?Missing DB user}"
+          : "${POSTGRES_PASSWORD:?Missing DB password}"
+          [[ "$PRODUCTION_URL" == https://* ]]
+      # Provider template: provision a Docker host and a TLS reverse proxy first.
+      # /srv/readquest must contain reviewed Compose files from this release.
+      # Preconfigure read-only GHCR pull access on the host for private images.
+      # SSH fingerprint is mandatory; do not disable host verification.
+      - uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ secrets.DEPLOY_HOST }}
+          username: ${{ secrets.DEPLOY_USER }}
+          key: ${{ secrets.DEPLOY_SSH_KEY }}
+          fingerprint: ${{ secrets.DEPLOY_HOST_FINGERPRINT }}
+          envs: READQUEST_API_IMAGE,READQUEST_FRONTEND_IMAGE,READQUEST_DATABASE_URL,READQUEST_ALLOWED_ORIGINS,POSTGRES_DB,POSTGRES_USER,POSTGRES_PASSWORD
+          script: |
+            set -eu
+            cd /srv/readquest
+            export COMPOSE_FILE=compose.yaml:compose.production.yaml
+            docker compose config --quiet
+            docker compose pull api migrate frontend
+            docker compose run --rm --no-deps migrate
+            docker compose up -d --no-deps --wait api frontend
+      - name: Verify externally terminated TLS and API readiness
+        run: |
+          curl --fail --silent --show-error --retry 8 --retry-all-errors "$PRODUCTION_URL/api/health"
+# Rollback: redeploy the previous image tag only after verifying DB schema
+# backward compatibility or rehearsing restore against a protected backup.
+# DO05 remains blocked until provider provisioning and rollback are validated.

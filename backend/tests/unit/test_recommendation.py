@@ -48,3 +48,20 @@ class RecommendationTests(TestCase):
     def test_naive_datetime_is_rejected(self) -> None:
         with self.assertRaises(ValueError):
             rank_activities([candidate(1)], now=datetime(2026, 9, 13))
+
+
+def test_review_and_difficulty_reason_codes():
+    ranked = rank_activities([candidate(1, mastery_score=1.0, last_practiced_at=NOW-timedelta(days=60))], now=NOW)
+    assert ranked[0].reason_code == "SPACED_REVIEW_DUE"
+    ranked = rank_activities([candidate(1, mastery_score=1.0, last_practiced_at=NOW)], now=NOW)
+    assert ranked[0].reason_code == "MATCHED_DIFFICULTY"
+    ranked = rank_activities([candidate(1, difficulty=10, mastery_score=1.0, last_practiced_at=NOW)], now=NOW)
+    assert ranked[0].reason_code == "VARIETY_ROTATION"
+    assert rank_activities([candidate(1, accessible=False)], now=NOW) == []
+
+
+def test_invalid_scores_and_levels():
+    import pytest
+    for changes in [{"mastery_score": -0.1}, {"mastery_score": 1.1}, {"difficulty": 0}, {"learner_level": 11}, {"last_practiced_at": datetime(2026, 1, 1)}]:
+        with pytest.raises(ValueError):
+            rank_activities([candidate(1, **changes)], now=NOW)
