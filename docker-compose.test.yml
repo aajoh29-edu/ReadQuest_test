@@ -1,0 +1,53 @@
+version: '3.8'
+
+services:
+  # 1. Containerized PostgreSQL Database
+  db:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_USER: readquest_test
+      POSTGRES_PASSWORD: test_password
+      POSTGRES_DB: readquest_test_db
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U readquest_test -d readquest_test_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  # 2. Backend API Service
+  backend:
+    build: 
+      context: ./backend
+      dockerfile: Dockerfile.test
+    environment:
+      - DATABASE_URL=postgresql://readquest_test:test_password@db:5432/readquest_test_db
+      # Matches the explicit seed password required by the E2E tests
+      - DEMO_SEED_PASSWORD=${READQUEST_E2E_PASSWORD}
+    ports:
+      - "8000:8000"
+    depends_on:
+      db:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/api/health"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  # 3. Frontend Service (Using Vite for dev/test execution)
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.test
+    ports:
+      - "5173:5173"
+    environment:
+      - VITE_API_URL=http://backend:8000
+    depends_on:
+      backend:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5173"]
+      interval: 5s
+      timeout: 5s
+      retries: 5 
