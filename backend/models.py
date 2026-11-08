@@ -8,9 +8,6 @@ import uuid
 # Import the engine from your database config and all models
 from database import engine, Base
 
-# Assuming Base = declarative_base() from your database.py
-from .database import Base
-
 class AdultRole(str, enum.Enum):
     GUARDIAN = "guardian"
     TEACHER = "teacher"
