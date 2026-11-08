@@ -7,7 +7,6 @@ import uuid
 
 # Import the engine from your database config and all models
 from database import engine, Base
-from . import models
 
 # Creates the tables on startup if they don't already exist
 @app.on_event("startup")
