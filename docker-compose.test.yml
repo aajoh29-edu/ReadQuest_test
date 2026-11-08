@@ -21,6 +21,7 @@ services:
       dockerfile: Dockerfile.test
     environment:
       - DATABASE_URL=postgresql://readquest_test:test_password@db:5432/readquest_test_db
+      - READQUEST_DATABASE_URL=postgresql+psycopg://readquest_test:test_password@db:5432/readquest_test_db
       # Matches the explicit seed password required by the E2E tests
       - DEMO_SEED_PASSWORD=${READQUEST_E2E_PASSWORD}
     ports:
@@ -29,7 +30,7 @@ services:
       db:
         condition: service_healthy
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8000/api/health"]
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/api/health')"]
       interval: 5s
       timeout: 5s
       retries: 5

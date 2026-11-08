@@ -5,7 +5,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import text
 
 # Import the database dependency you created in backend/database.py
-from .database import get_db
+from database import get_db
 
 app = FastAPI(title="ReadQuest API")
 
