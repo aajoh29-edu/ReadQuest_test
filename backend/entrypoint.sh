@@ -5,6 +5,8 @@ set -e
 echo "Running Alembic database migrations..."
 alembic upgrade head
 
+echo "Seeding deterministic demo data..."
+python seed.py
+
 echo "Starting FastAPI server..."
-# 'exec' replaces the shell process with uvicorn, ensuring it handles stop signals correctly
 exec uvicorn main:app --host 0.0.0.0 --port 8000

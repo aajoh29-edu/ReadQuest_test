@@ -6,7 +6,7 @@ from sqlalchemy.dialects.postgresql import UUID
 import uuid
 
 # Import the engine from your database config and all models
-from .database import engine, Base
+from database import engine, Base
 from . import models
 
 # Creates the tables on startup if they don't already exist
