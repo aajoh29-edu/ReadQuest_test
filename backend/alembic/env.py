@@ -36,7 +36,7 @@ def run_migrations_online() -> None:
     
     # 2. HARDCODE the correct Docker credentials using the psycopg driver
     configuration["sqlalchemy.url"] = "postgresql+psycopg://readquest_test:test_password@localhost:5432/readquest_test_db"
-    
+        
     # 3. Pass the overridden configuration to the engine
     connectable = engine_from_config(
         configuration,
