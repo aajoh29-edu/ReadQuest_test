@@ -31,13 +31,7 @@ def run_migrations_offline() -> None:
 
 
 def run_migrations_online() -> None:
-    # 1. Grab the configuration dictionary
     configuration = config.get_section(config.config_ini_section, {})
-    
-    # 2. HARDCODE the correct Docker credentials using the psycopg driver
-    configuration["sqlalchemy.url"] = "postgresql+psycopg://readquest_test:test_password@localhost:5432/readquest_test_db"
-        
-    # 3. Pass the overridden configuration to the engine
     connectable = engine_from_config(
         configuration,
         prefix="sqlalchemy.",
@@ -47,10 +41,11 @@ def run_migrations_online() -> None:
         context.configure(
             connection=connection,
             target_metadata=target_metadata,
-            compare_type=True, # Catches column type changes (e.g., String to Integer)
+            compare_type=True,
         )
         with context.begin_transaction():
             context.run_migrations()
+
 
 if context.is_offline_mode():
     run_migrations_offline()
