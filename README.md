@@ -87,7 +87,7 @@ npx playwright test
 
 Tests create fictitious child/class records in the development database; use a disposable demo instance. The suite covers all roles, enrollment, mobile layout and an automated WCAG A/AA scan.
 
-## Codex cloud networking
+## Networking
 
 The cloud machine's Docker configuration directory must be writable. Export `DOCKER_CONFIG=/workspace/.readquest-docker`, create that directory, and run `python scripts/cloud_compose_override.py`. The helper writes a cloud-only override outside the checkout with platform proxy DNS mappings, host build networking and an existing public CA bundle. It writes no credentials and preserves TLS and package integrity verification.
 
