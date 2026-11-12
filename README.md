@@ -7,14 +7,41 @@ ReadQuest is an adaptive children's reading platform for Morgan State University
 Requirements: Docker Engine with BuildKit and Compose 2.24.4+, or Python 3.12 and Node 24 for host development.
 
 1. Copy `.env.example` to `.env`. Choose a throwaway 12–128 character `READQUEST_DEMO_PASSWORD` locally. Never commit the filled file. Leave it blank if demo users should not be able to sign in.
-2. Run `docker compose up --build`.
-3. In another terminal run `docker compose --profile seed run --rm seed`.
-4. Open the frontend on port 8080. Sign in as `child@readquest.example.org`, `parent@readquest.example.org`, `teacher@readquest.example.org` or `admin@readquest.example.org`, using the password you supplied.
+2. Run `docker compose up --build`. Wait until `docker compose ps` shows `api` and `frontend` as `healthy` and `migrate` as `Exited (0)`.
+3. In another terminal run `docker compose --profile seed run --rm seed`. The seed reads `READQUEST_DEMO_PASSWORD` from `.env` (or the shell). Seeding again is safe.
+4. Open the frontend at **http://localhost:8080** (or the `FRONTEND_PORT` in `.env`). Sign in as `child@readquest.example.org`, `parent@readquest.example.org`, `teacher@readquest.example.org` or `admin@readquest.example.org`, using the password you supplied.
 5. As a child, select an answer and choose **Check my answer**. View server-scored correctness, skill progress and **Try …** for the next recommendation. Parents see linked children; teachers see enrolled readers and classes; admins manage accounts and curriculum.
 
 The seed creates four fictitious accounts, one reader/class, eight skills, sixteen reading activities, and five deterministic per-skill histories: low, improving, inconsistent, mastered and overdue review. Seeding twice does not duplicate evidence. Rotating the opt-in password revokes sessions. The anonymous legacy sample remains at `/demo.html` and the development `/demo` API contract remains available. These API routes are absent in production.
 
 API liveness/readiness are on port 8000 at `/health` and `/ready`; development API documentation is at `/docs`. The frontend proxies `/api` to the backend, so no browser API hostname configuration is required. Production requires HTTPS termination and exact allowed origins.
+
+## Manual GUI test
+
+Use this procedure to test the frontend by hand against the real API and PostgreSQL. It needs Docker Desktop (or Docker Engine) running and a `.env` file with `READQUEST_DEMO_PASSWORD` set.
+
+```bash
+[ -f .env ] || cp .env.example .env                    # create .env only if missing; then set READQUEST_DEMO_PASSWORD
+docker compose up -d --build
+docker compose --profile seed run --rm seed
+docker compose ps                                      # api and frontend: healthy; migrate: Exited (0)
+curl http://localhost:8080/api/health                  # {"status":"ok","service":"readquest-api"}
+```
+
+Open **http://localhost:8080** in a browser and check each role. Use the seeded emails and the `READQUEST_DEMO_PASSWORD` value.
+
+| Sign in as | Check |
+|---|---|
+| `child@readquest.example.org` | "Hello, Demo Reader!" appears. Choose an activity, pick an answer, click **Check my answer**. "Great reading!" or "Good try…" appears, and "Reading progress" updates. **Try …** loads the next recommendation. **Sign out** returns to the sign-in form. |
+| `parent@readquest.example.org` | "Your family" lists Demo Reader, and the progress grid shows "Letter Sounds". |
+| `teacher@readquest.example.org` | "Your readers" lists Demo Reader, and "Demo reading class" appears under Classes. |
+| `admin@readquest.example.org` | Accounts list with the create-account form, and the curriculum tools for skills, lessons and activities. |
+
+A wrong password shows "The email or password did not match." This checks the error state.
+
+Stop the stack with `docker compose down`. This keeps the development database. `docker compose down -v` deletes it, so use it only when you want a fresh database.
+
+On Windows, `make` is not installed by default. Run the `docker compose` and `npm` commands in this README directly. `scripts/test-backend.sh` also needs `flock` and `make`, so run it from WSL2.
 
 ## Test and build
 
@@ -26,6 +53,8 @@ make smoke                    # requires READQUEST_DEMO_PASSWORD in process envi
 make demo                     # pure adaptive CLI
 make verify
 ```
+
+The `make` targets are shorthand for the commands in them. If `make` is unavailable, run the underlying command directly.
 
 `make test` tears down only test services; development data is preserved. Test failures leave test services available for diagnosis. Run `docker compose rm -fsv test test-db` afterward. Integration tests require a database whose name ends in `_test` and never use development data.
 
@@ -44,9 +73,19 @@ npm ci
 npm run dev
 ```
 
-The host database URL defaults to the local development Compose database; the root `.env` contains the container hostname `db` and is not the backend's host configuration. For host seeding, supply the demo password securely in that command's environment. Vite runs on port 5173 and proxies `/api`. Use `python -m pytest` from `backend/` to import the checkout without needing an editable install.
+The `db` service is published on `127.0.0.1:${POSTGRES_PORT:-5432}`, so host tools reach it at `localhost:5432`. The host database URL defaults to the local development Compose database; the root `.env` contains the container hostname `db` and is not the backend's host configuration. For host seeding, supply the demo password securely in that command's environment. Vite runs on port 5173 and proxies `/api`. Use `python -m pytest` from `backend/` to import the checkout without needing an editable install.
 
-Browser checks: from `frontend/`, install Chromium with `npx playwright install chromium`, then run `READQUEST_E2E_URL=<frontend-origin> READQUEST_E2E_PASSWORD=<your-local-demo-password> npm run test:e2e`. Supply the password through your shell environment rather than storing it in a script. A preinstalled Chromium can be selected with `READQUEST_BROWSER_PATH`. Tests create fictitious child/class records in the development database; use a disposable demo instance. The suite covers all roles, enrollment, mobile layout and an automated WCAG A/AA scan.
+Browser checks: from `frontend/`, install Chromium with `npx playwright install chromium`, then run `READQUEST_E2E_URL=<frontend-origin> READQUEST_E2E_PASSWORD=<your-local-demo-password> npm run test:e2e`. Supply the password through your shell environment rather than storing it in a script. A preinstalled Chromium can be selected with `READQUEST_BROWSER_PATH`. `READQUEST_E2E_PASSWORD` must equal the `READQUEST_DEMO_PASSWORD` used for the last seed run. On Windows with Chrome installed, skip the `npx playwright install` step and run in Git Bash:
+
+```bash
+cd frontend
+READQUEST_E2E_URL=http://localhost:8080 \
+READQUEST_E2E_PASSWORD='<your-demo-password>' \
+READQUEST_BROWSER_PATH="/c/Program Files/Google/Chrome/Application/chrome.exe" \
+npx playwright test
+```
+
+Tests create fictitious child/class records in the development database; use a disposable demo instance. The suite covers all roles, enrollment, mobile layout and an automated WCAG A/AA scan.
 
 ## Codex cloud networking
 
