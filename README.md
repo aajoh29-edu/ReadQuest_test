@@ -7,7 +7,7 @@ ReadQuest is an adaptive children's reading platform for Morgan State University
 Requirements: Docker Engine with BuildKit and Compose 2.24.4+, or Python 3.12 and Node 24 for host development.
 
 1. Copy `.env.example` to `.env`. Choose a throwaway 12–128 character `READQUEST_DEMO_PASSWORD` locally. Never commit the filled file. Leave it blank if demo users should not be able to sign in.
-2. Run `docker compose up --build`. Wait until `docker compose ps` shows `api` and `frontend` as `healthy` and `migrate` as `Exited (0)`.
+2. Run `docker compose up -d --build`. Wait until `docker compose ps` shows `api` and `frontend` as `healthy` and `migrate` as `Exited (0)`.
 3. In another terminal run `docker compose --profile seed run --rm seed`. The seed reads `READQUEST_DEMO_PASSWORD` from `.env` (or the shell). Seeding again is safe.
 4. Open the frontend at **http://localhost:8080** (or the `FRONTEND_PORT` in `.env`). Sign in as `child@readquest.example.org`, `parent@readquest.example.org`, `teacher@readquest.example.org` or `admin@readquest.example.org`, using the password you supplied.
 5. As a child, select an answer and choose **Check my answer**. View server-scored correctness, skill progress and **Try …** for the next recommendation. Parents see linked children; teachers see enrolled readers and classes; admins manage accounts and curriculum.
