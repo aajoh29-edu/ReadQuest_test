@@ -1,2 +1,2 @@
-setuptools>=75
+setuptools>=84.1.0
 wheel>=0.45

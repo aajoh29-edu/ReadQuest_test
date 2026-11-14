@@ -1,9 +1,10 @@
 import os
 import uuid
-import jwt  # pyright: ignore[reportMissingImports]  # Requires: pip install pyjwt
+
 import fastapi  # pyright: ignore[reportMissingImports]
-from sqlalchemy.ext.asyncio import AsyncSession  # pyright: ignore[reportMissingImports]
+import jwt  # pyright: ignore[reportMissingImports]  # Requires: pip install pyjwt
 from sqlalchemy import select  # pyright: ignore[reportMissingImports]  # Requires: pip install sqlalchemy
+from sqlalchemy.ext.asyncio import AsyncSession  # pyright: ignore[reportMissingImports]
 
 from database import get_db
 from models import AdultAccount, ChildReader
@@ -41,7 +42,7 @@ async def get_current_user(request: fastapi.Request, db: AsyncSession = fastapi.
         raise fastapi.HTTPException(
             status_code=fastapi.status.HTTP_401_UNAUTHORIZED,
             detail="Session expired or invalid"
-        )
+        ) from None
 
     if account_type == "adult":
         stmt = select(AdultAccount).where(AdultAccount.id == user_id)

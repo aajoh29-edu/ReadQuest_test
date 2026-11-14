@@ -1,10 +1,12 @@
 import asyncio
 import uuid
-from datetime import datetime, timezone
+from datetime import UTC, datetime
+
 from sqlalchemy import select
 
 from database import AsyncSessionLocal
 from models import AdultAccount, AdultRole, ChildReader
+
 
 async def seed_data():
     async with AsyncSessionLocal() as session:
@@ -23,7 +25,7 @@ async def seed_data():
                 password_hash="demo_bypass",  # login endpoint handles auth natively
                 full_name="Demo Teacher",
                 role=AdultRole.TEACHER,
-                consent_verified_at=datetime.now(timezone.utc)
+                consent_verified_at=datetime.now(UTC)
             )
             session.add(teacher)
             await session.flush()

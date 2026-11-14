@@ -1,14 +1,16 @@
 import enum
-from datetime import datetime, timezone
-from sqlalchemy import Integer, String, ForeignKey, DateTime, Boolean, Enum, text
-from sqlalchemy.orm import Mapped, mapped_column, relationship
-from sqlalchemy.dialects.postgresql import UUID
 import uuid
+from datetime import UTC, datetime
+
+from sqlalchemy import DateTime, Enum, ForeignKey, Integer, String
+from sqlalchemy.dialects.postgresql import UUID
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 # Import the engine from your database config and all models
-from database import engine, Base
+from database import Base
 
-class AdultRole(str, enum.Enum):
+
+class AdultRole(str, enum.Enum):  # noqa: UP042
     GUARDIAN = "guardian"
     TEACHER = "teacher"
     ADMIN = "admin"
@@ -27,7 +29,7 @@ class AdultAccount(Base):
     
     # COPPA Requirement: Record of verifiable parental consent
     consent_verified_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=True)
-    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(UTC))
 
     # Relationships
     children: Mapped[list["ChildReader"]] = relationship("ChildReader", back_populates="guardian", cascade="all, delete-orphan")
@@ -47,7 +49,7 @@ class ChildReader(Base):
     anonymous_username: Mapped[str] = mapped_column(String(50), unique=True, index=True, nullable=False)
     avatar_id: Mapped[str] = mapped_column(String(50), nullable=False, default="default_hero")
     
-    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(UTC))
 
     # Relationships
     guardian: Mapped["AdultAccount"] = relationship("AdultAccount", back_populates="children")
@@ -75,7 +77,7 @@ class ClassroomEnrollment(Base):
 
     classroom_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("classrooms.id", ondelete="CASCADE"), primary_key=True)
     child_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("child_readers.id", ondelete="CASCADE"), primary_key=True)
-    joined_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
+    joined_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(UTC))
 
     classroom: Mapped["Classroom"] = relationship("Classroom", back_populates="enrollments")
     child: Mapped["ChildReader"] = relationship("ChildReader", back_populates="enrollments")
@@ -91,6 +93,6 @@ class ReadingMastery(Base):
     child_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("child_readers.id", ondelete="CASCADE"), nullable=False)
     skill_key: Mapped[str] = mapped_column(String(100), nullable=False)
     mastery_score: Mapped[int] = mapped_column(Integer, default=0)
-    updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))
+    updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(UTC), onupdate=lambda: datetime.now(UTC))
 
     child: Mapped["ChildReader"] = relationship("ChildReader", back_populates="mastery_records")

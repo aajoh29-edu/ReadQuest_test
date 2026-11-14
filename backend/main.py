@@ -1,11 +1,12 @@
 import os
 import uuid
+from datetime import UTC, datetime, timedelta
+
 import jwt
-from datetime import datetime, timedelta, timezone
-from fastapi import FastAPI, Response, Request, HTTPException, status, Depends
+from fastapi import Depends, FastAPI, HTTPException, Request, Response, status
 from pydantic import BaseModel
-from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import text
+from sqlalchemy.ext.asyncio import AsyncSession
 
 # Assuming uvicorn is run from the backend directory, standard imports work best
 from database import get_db
@@ -50,7 +51,7 @@ async def login(credentials: LoginRequest, response: Response):
     demo_uuid = str(uuid.uuid5(uuid.NAMESPACE_DNS, credentials.username))
     
     # 3. Create the JWT payload required by dependencies.py
-    expire = datetime.now(timezone.utc) + timedelta(hours=1)
+    expire = datetime.now(UTC) + timedelta(hours=1)
     payload = {
         "sub": demo_uuid,
         "type": account_type,
@@ -98,6 +99,6 @@ async def get_dashboard(request: Request):
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Invalid session token"
-        )
+        ) from None
         
     raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Role not recognized")
