@@ -1,0 +1,153 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    /* Primary Brand Tokens */
+    --rq-purple: #7C65E8;
+    --rq-purple-deep: #5843C4;
+    --rq-lavender: #EEE9FF;
+    --rq-navy: #171B3A;
+    --rq-sky: #72C7F5;
+    --rq-mint: #65D7B2;
+    --rq-yellow: #FFD76A;
+    --rq-peach: #FFAE80;
+    --rq-pink: #FFB5D2;
+    --rq-white: #FFFFFF;
+    --rq-bg: #FAF9FF;
+
+    /* Legacy variable aliases for backward compatibility across views */
+    --bg-primary: #FAF9FF;
+    --bg-secondary: #EAF5F7;
+    --color-purple: #7C65E8;
+    --color-purple-light: #EEE9FF;
+    --color-navy: #171B3A;
+    --color-peach: #FFAE80;
+    --color-peach-hover: #FA9D68;
+    --color-mint: #65D7B2;
+    --color-card: #FFFFFF;
+    --color-text-body: #34364B;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    font-family: 'Nunito', 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+    background-color: var(--rq-bg);
+    color: var(--color-text-body);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* Accessible focus indicators */
+  :focus-visible {
+    outline: 3px solid #7C65E8;
+    outline-offset: 3px;
+  }
+
+  /* Headings typography */
+  h1, h2, h3, h4, h5, h6 {
+    color: #171B3A;
+    font-family: 'Nunito', 'Plus Jakarta Sans', system-ui, sans-serif;
+    text-wrap: balance;
+  }
+}
+
+/* Warm Off-White Canvas with Subtle Pastel Atmosphere */
+.readquest-bg {
+  background-color: #FAF9FF;
+  background-image:
+    radial-gradient(circle at 8% 12%, rgba(238, 233, 255, 0.75) 0%, transparent 42%),
+    radial-gradient(circle at 92% 8%, rgba(114, 199, 245, 0.16) 0%, transparent 38%),
+    radial-gradient(circle at 85% 75%, rgba(101, 215, 178, 0.12) 0%, transparent 42%),
+    radial-gradient(circle at 12% 85%, rgba(255, 174, 128, 0.14) 0%, transparent 36%);
+}
+
+/* Tabular Numbers for Dashboard Stats */
+.tabular-nums {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Peach CTA Button with Midnight Navy text */
+.btn-peach {
+  background-color: #FFAE80;
+  color: #171B3A;
+  font-weight: 800;
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.btn-peach:hover:not(:disabled) {
+  background-color: #FA9D68;
+  transform: translateY(-1px);
+  box-shadow: 0 8px 20px -4px rgba(255, 174, 128, 0.5);
+}
+
+/* Purple Progress Card Gradient */
+.bg-purple-panel {
+  background: linear-gradient(135deg, #7C65E8 0%, #5843C4 100%);
+  box-shadow: 0 14px 32px -8px rgba(124, 101, 232, 0.32);
+}
+
+/* Carousel scrollbar hide helper */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* Custom Soft Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #FAF9FF;
+}
+::-webkit-scrollbar-thumb {
+  background: #DED5FF;
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #7C65E8;
+}
+
+/* Subtle Tactile Pop & Menu Animations */
+@keyframes badge-pop {
+  0% {
+    transform: scale(0.88);
+    opacity: 0.7;
+  }
+  60% {
+    transform: scale(1.06);
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes menu-pop {
+  0% {
+    opacity: 0;
+    transform: translateY(-4px) scale(0.97);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Respect Reduced Motion Preferences */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

@@ -1,0 +1,6 @@
+{
+  "name": "ReadQuest - Children's Adaptive Reading",
+  "description": "An engaging, accessible adaptive reading platform for children featuring letter sounds, phonics blending, sight words, and comprehension.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
