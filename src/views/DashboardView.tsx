@@ -55,17 +55,24 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
   const [showAdultExplanation, setShowAdultExplanation] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
+  const [loadError, setLoadError] = useState<string | null>(null);
+
   const loadData = async () => {
+    if (!profile?.id) {
+      setIsLoading(false);
+      return;
+    }
     setIsLoading(true);
+    setLoadError(null);
     try {
-      const learnerId = profile?.id || 'learner-demo-1';
+      const learnerId = profile.id;
       const [cats, rec, active, summary, lessons, adaptRec, assignments] = await Promise.all([
         questRepository.getCategories(),
-        questRepository.getRecommendedLesson(),
+        questRepository.getRecommendedLesson(learnerId),
         questRepository.getActiveSession(),
-        questRepository.getProgressSummary(),
+        questRepository.getProgressSummary(learnerId),
         questRepository.getAllLessons(),
-        questRepository.getAdaptiveRecommendation(),
+        questRepository.getAdaptiveRecommendation(learnerId),
         questRepository.getAssignments(undefined, learnerId),
       ]);
       setCategories(cats);
@@ -77,6 +84,9 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
       setPendingAssignments(
         assignments.filter((a) => !a.completedLearnerIds.includes(learnerId))
       );
+    } catch (err) {
+      console.error('Failed to load dashboard data:', err);
+      setLoadError('Unable to load your reading dashboard right now. Please try again.');
     } finally {
       setIsLoading(false);
     }
@@ -103,10 +113,42 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
     }
   };
 
-  if (isLoading || !profile || !progressSummary) {
+  if (isLoading) {
     return (
       <div className="min-h-[400px] flex items-center justify-center p-8">
         <div className="w-10 h-10 border-4 border-[#8274D8] border-t-transparent rounded-full animate-spin" />
+      </div>
+    );
+  }
+
+  if (!profile) {
+    return (
+      <div className="max-w-lg mx-auto px-4 py-14 text-center space-y-4">
+        <div className="bg-white border-2 border-[#DED5FF] rounded-3xl p-8 shadow-xs space-y-3">
+          <h1 className="text-2xl font-black text-[#171B37]">Add a Child Reader Profile</h1>
+          <p className="text-sm font-semibold text-[#6B6E8A]">
+            Create a parent-managed reader profile to start quests, earn badges, and track reading progress.
+          </p>
+          <Button variant="peach" size="md" onClick={() => navigate('/account')}>
+            Go to Account Settings
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
+  if (loadError || !progressSummary) {
+    return (
+      <div className="max-w-lg mx-auto px-4 py-14 text-center space-y-4">
+        <div className="bg-white border-2 border-[#DED5FF] rounded-3xl p-8 shadow-xs space-y-3">
+          <h1 className="text-xl font-black text-[#171B37]">Unable to Load Quests</h1>
+          <p className="text-sm font-semibold text-[#6B6E8A]">
+            {loadError || 'Progress details could not be loaded.'}
+          </p>
+          <Button variant="primary" size="sm" onClick={loadData}>
+            Retry
+          </Button>
+        </div>
       </div>
     );
   }

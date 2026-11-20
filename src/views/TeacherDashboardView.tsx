@@ -39,7 +39,7 @@ export const TeacherDashboardView: React.FC = () => {
   // Teacher & Class State
   const [teacher, setTeacher] = useState<TeacherProfile | null>(null);
   const [classes, setClasses] = useState<Classroom[]>([]);
-  const [selectedClassId, setSelectedClassId] = useState<string>('class-room-104');
+  const [selectedClassId, setSelectedClassId] = useState<string>('');
   const [activeClass, setActiveClass] = useState<Classroom | null>(null);
 
   // Matrix and Roster Data
@@ -75,11 +75,13 @@ export const TeacherDashboardView: React.FC = () => {
 
   // UI state
   const [isLoading, setIsLoading] = useState(true);
+  const [loadError, setLoadError] = useState<string | null>(null);
   const [isExporting, setIsExporting] = useState(false);
   const [assignmentSuccessMsg, setAssignmentSuccessMsg] = useState('');
 
   const loadData = async () => {
     setIsLoading(true);
+    setLoadError(null);
     try {
       const [teacherProfile, teacherClasses, allSkills, allLessons] = await Promise.all([
         questRepository.getTeacherProfile(),
@@ -93,12 +95,20 @@ export const TeacherDashboardView: React.FC = () => {
       setSkills(allSkills);
       setLessons(allLessons);
 
-      const targetClassId = teacherClasses[0]?.id || 'class-room-104';
+      const targetClassId = teacherClasses[0]?.id || '';
       setSelectedClassId(targetClassId);
       const cls = teacherClasses.find((c) => c.id === targetClassId) || null;
       setActiveClass(cls);
 
-      await refreshClassData(targetClassId);
+      if (targetClassId) {
+        await refreshClassData(targetClassId);
+      } else {
+        setMatrixData([]);
+        setAssignments([]);
+      }
+    } catch (err) {
+      console.error('Failed to load teacher portal:', err);
+      setLoadError('Unable to load classroom mastery data right now.');
     } finally {
       setIsLoading(false);
     }
@@ -183,7 +193,7 @@ export const TeacherDashboardView: React.FC = () => {
     await questRepository.createAssignment({
       title: newAssignTitle || `Assignment: ${targetLesson?.title}`,
       classId: selectedClassId,
-      teacherId: teacher?.id || 'teacher-clara-martinez',
+      teacherId: teacher?.id,
       lessonId: newAssignLessonId,
       lessonTitle: targetLesson?.title || 'Assigned Lesson',
       skillId: targetLesson?.activities[0]?.primarySkillId,
@@ -224,6 +234,20 @@ export const TeacherDashboardView: React.FC = () => {
       <div className="max-w-6xl mx-auto px-4 py-12 text-center">
         <div className="w-12 h-12 border-4 border-[#8274D8] border-t-transparent rounded-full animate-spin mx-auto mb-4" />
         <p className="text-base font-bold text-[#171B37]">Loading Teacher Portal...</p>
+      </div>
+    );
+  }
+
+  if (loadError) {
+    return (
+      <div className="max-w-lg mx-auto px-4 py-14 text-center space-y-4">
+        <div className="bg-white border-2 border-[#DED5FF] rounded-3xl p-8 shadow-xs space-y-3">
+          <h1 className="text-xl font-black text-[#171B37]">Unable to Load Classroom Portal</h1>
+          <p className="text-sm font-semibold text-[#6B6E8A]">{loadError}</p>
+          <Button variant="primary" size="sm" onClick={loadData}>
+            Retry
+          </Button>
+        </div>
       </div>
     );
   }
@@ -333,7 +357,7 @@ export const TeacherDashboardView: React.FC = () => {
             {totalQuests}
           </div>
           <div className="text-[11px] text-[#6B6E8A] font-semibold">
-            Completed across all 6 students
+            Completed across enrolled learners
           </div>
         </div>
 

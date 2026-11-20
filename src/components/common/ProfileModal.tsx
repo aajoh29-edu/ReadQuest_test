@@ -84,7 +84,7 @@ export const ProfileModal: React.FC<ProfileModalProps> = ({
               maxLength={24}
               required
               className="w-full px-4 py-2.5 rounded-2xl border-2 border-[#DED5FF] focus:border-[#7C3AED] focus:outline-hidden text-[#151D42] font-semibold"
-              placeholder="e.g. Leo Explorer"
+              placeholder="e.g. Reader Nickname"
             />
           </div>
 

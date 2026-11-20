@@ -1,10 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
-import { questRepository } from './services/repository';
-import { DemoRole, LearnerProfile } from './types';
+import { AuthProvider, useAuth } from './contexts/AuthContext';
+import { ProtectedRoute } from './components/auth/ProtectedRoute';
 import { Navbar } from './components/common/Navbar';
 import { FloatingBottomNav } from './components/common/FloatingBottomNav';
 import { ProfileModal } from './components/common/ProfileModal';
+import { ErrorBoundary } from './components/common/ErrorBoundary';
 import { Footer } from './components/landing/Footer';
 import { WelcomeView } from './views/WelcomeView';
 import { DashboardView } from './views/DashboardView';
@@ -15,102 +16,157 @@ import { ProgressView } from './views/ProgressView';
 import { ProfileView } from './views/ProfileView';
 import { ParentDashboardView } from './views/ParentDashboardView';
 import { TeacherDashboardView } from './views/TeacherDashboardView';
-import { DevToolsView } from './views/DevToolsView';
+import { LoginView } from './views/LoginView';
+import { SignupView } from './views/SignupView';
+import { ForgotPasswordView } from './views/ForgotPasswordView';
+import { ResetPasswordView } from './views/ResetPasswordView';
+import { VerifyEmailView } from './views/VerifyEmailView';
+import { AccountSettingsView } from './views/AccountSettingsView';
+import { PrivacyPolicyView } from './views/PrivacyPolicyView';
+import { TermsView } from './views/TermsView';
+import { LearnerProfile } from './types';
 
-export default function App() {
-  const [profile, setProfile] = useState<LearnerProfile | null>(null);
-  const [currentRole, setCurrentRole] = useState<DemoRole>('child');
+function AppShell() {
+  const { activeChild, updateChildProfile, refreshAuth } = useAuth();
   const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
 
-  const refreshProfile = async () => {
-    const current = await questRepository.getLearnerProfile();
-    setProfile(current);
-    const roleState = questRepository.getActiveRole();
-    setCurrentRole(roleState.role);
-  };
-
-  useEffect(() => {
-    refreshProfile();
-  }, []);
-
-  const handleResetLocalState = async () => {
-    await questRepository.resetDemoData();
-    await refreshProfile();
-    window.location.reload();
-  };
-
   const handleSaveProfile = async (updates: Partial<LearnerProfile>) => {
-    const updated = await questRepository.updateLearnerProfile(updates);
-    setProfile(updated);
-  };
-
-  const handleRoleChanged = (newRole: DemoRole) => {
-    setCurrentRole(newRole);
+    if (!activeChild) return;
+    await updateChildProfile(activeChild.id, {
+      displayName: updates.name,
+      avatar: updates.avatar,
+      avatarName: updates.avatarName,
+      readingLevelId: updates.readingLevelId,
+      ageBandOrGrade: updates.gradeLevel,
+    });
   };
 
   return (
-    <BrowserRouter>
-      <div className="min-h-screen readquest-bg flex flex-col text-[#34364B] selection:bg-[#FFAE80]/40 relative">
-        {/* Global Navigation Header */}
-        <Navbar
-          profile={profile}
-          currentRole={currentRole}
-          onRoleChanged={handleRoleChanged}
-          onOpenProfileModal={() => setIsProfileModalOpen(true)}
-          onRefreshProfile={refreshProfile}
-        />
+    <div className="min-h-screen readquest-bg flex flex-col text-[#34364B] selection:bg-[#FFAE80]/40 relative">
+      {/* Global Navigation Header */}
+      <Navbar onOpenProfileModal={() => setIsProfileModalOpen(true)} />
 
-        {/* Main Content Area */}
-        <main className="flex-1">
+      {/* Main Content Area */}
+      <main className="flex-1">
+        <ErrorBoundary>
           <Routes>
-            <Route path="/" element={<WelcomeView profile={profile} />} />
-            <Route path="/welcome" element={<WelcomeView profile={profile} />} />
-            <Route
-              path="/dashboard"
-              element={
+          {/* Public Landing, Curriculum Library & Policy Routes */}
+          <Route path="/" element={<WelcomeView />} />
+          <Route path="/welcome" element={<WelcomeView />} />
+          <Route path="/library" element={<LibraryView />} />
+          <Route path="/privacy" element={<PrivacyPolicyView />} />
+          <Route path="/terms" element={<TermsView />} />
+
+          {/* Public Authentication Routes */}
+          <Route path="/login" element={<LoginView />} />
+          <Route path="/signup" element={<SignupView />} />
+          <Route path="/forgot-password" element={<ForgotPasswordView />} />
+          <Route path="/reset-password" element={<ResetPasswordView />} />
+          <Route path="/verify-email" element={<VerifyEmailView />} />
+
+          {/* Protected Learner & Family Routes */}
+          <Route
+            path="/dashboard"
+            element={
+              <ProtectedRoute>
                 <DashboardView
-                  profile={profile}
-                  onRefreshProfile={refreshProfile}
+                  profile={activeChild}
+                  onRefreshProfile={refreshAuth}
                   onOpenProfileModal={() => setIsProfileModalOpen(true)}
                 />
-              }
-            />
-            <Route path="/library" element={<LibraryView />} />
-            <Route path="/activity/:lessonId" element={<ActivityPlayerView />} />
-            <Route path="/summary/:sessionId" element={<SessionSummaryView />} />
-            <Route path="/progress" element={<ProgressView />} />
-            <Route
-              path="/profile"
-              element={<ProfileView onRefreshGlobalProfile={refreshProfile} />}
-            />
-            <Route path="/parent" element={<ParentDashboardView />} />
-            <Route path="/teacher" element={<TeacherDashboardView />} />
-            <Route
-              path="/dev-tools"
-              element={<DevToolsView onResetState={handleResetLocalState} />}
-            />
-
-            {/* Catch-all redirect to landing page */}
-            <Route path="*" element={<Navigate to="/" replace />} />
-          </Routes>
-        </main>
-
-        {/* Floating Mobile Bottom Navigation Bar */}
-        <FloatingBottomNav profile={profile} />
-
-        {/* ReadQuest Footer */}
-        <Footer />
-
-        {/* Profile Customizer Modal */}
-        {profile && (
-          <ProfileModal
-            isOpen={isProfileModalOpen}
-            onClose={() => setIsProfileModalOpen(false)}
-            profile={profile}
-            onSaveProfile={handleSaveProfile}
+              </ProtectedRoute>
+            }
           />
-        )}
-      </div>
+          <Route
+            path="/activity/:lessonId"
+            element={
+              <ProtectedRoute>
+                <ActivityPlayerView />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/summary/:sessionId"
+            element={
+              <ProtectedRoute>
+                <SessionSummaryView />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/progress"
+            element={
+              <ProtectedRoute>
+                <ProgressView />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/profile"
+            element={
+              <ProtectedRoute>
+                <ProfileView onRefreshGlobalProfile={refreshAuth} />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/account"
+            element={
+              <ProtectedRoute>
+                <AccountSettingsView />
+              </ProtectedRoute>
+            }
+          />
+
+          {/* Role-Protected Adult & Educator Portals */}
+          <Route
+            path="/parent"
+            element={
+              <ProtectedRoute allowedRoles={['parent', 'admin']}>
+                <ParentDashboardView />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/teacher"
+            element={
+              <ProtectedRoute allowedRoles={['teacher', 'admin']}>
+                <TeacherDashboardView />
+              </ProtectedRoute>
+            }
+          />
+
+          {/* Catch-all redirect to landing page */}
+          <Route path="*" element={<Navigate to="/" replace />} />
+          </Routes>
+        </ErrorBoundary>
+      </main>
+
+      {/* Floating Mobile Bottom Navigation Bar */}
+      <FloatingBottomNav />
+
+      {/* ReadQuest Footer */}
+      <Footer />
+
+      {/* Profile Customizer Modal (Authenticated Child Only) */}
+      {activeChild && (
+        <ProfileModal
+          isOpen={isProfileModalOpen}
+          onClose={() => setIsProfileModalOpen(false)}
+          profile={activeChild}
+          onSaveProfile={handleSaveProfile}
+        />
+      )}
+    </div>
+  );
+}
+
+export default function App() {
+  return (
+    <BrowserRouter>
+      <AuthProvider>
+        <AppShell />
+      </AuthProvider>
     </BrowserRouter>
   );
 }

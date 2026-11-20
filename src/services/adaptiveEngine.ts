@@ -68,7 +68,7 @@ export interface RecommendationContext {
 
 /**
  * Deterministic Adaptive Engine
- * Implements COSC 512 mastery scoring, review scheduling, and recommendation policies.
+ * Implements mastery scoring, review scheduling, and recommendation policies.
  */
 export class AdaptiveEngine {
   private config: AdaptiveEngineConfig;

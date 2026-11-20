@@ -294,10 +294,55 @@ export interface Assignment {
 }
 
 /**
- * Demo Role & Multi-User Context
+ * Account Roles & Multi-User Context
  */
-export type DemoRole = 'child' | 'parent' | 'teacher';
+export type UserRole = 'parent' | 'teacher' | 'admin';
 export type DateFilterOption = '7d' | '30d' | 'all';
+
+export type AuthServiceStatus =
+  | 'loading'
+  | 'authenticated'
+  | 'unauthenticated'
+  | 'unavailable';
+
+export interface AuthenticatedUser {
+  id: string;
+  fullName: string;
+  email: string;
+  role: UserRole;
+  emailVerified: boolean;
+  createdAt: string;
+  practiceGoalMinutesPerDay?: number;
+}
+
+export interface ChildProfileInput {
+  displayName: string;
+  avatar: string;
+  avatarName: string;
+  readingLevelId: ReadingLevelId;
+  ageBandOrGrade: string;
+}
+
+export interface AuthSessionResponse {
+  user: AuthenticatedUser;
+  childProfiles?: Learner[];
+  requiresEmailVerification?: boolean;
+  message?: string;
+}
+
+export interface ApiErrorPayload {
+  code: string;
+  message: string;
+  fieldErrors?: Record<string, string>;
+  retryAfterSeconds?: number;
+}
+
+export interface PasswordStrengthResult {
+  score: 0 | 1 | 2 | 3 | 4;
+  label: 'Too weak' | 'Weak' | 'Fair' | 'Strong' | 'Very strong';
+  isValid: boolean;
+  unmetRequirements: string[];
+}
 
 export interface ParentProfile {
   id: string;

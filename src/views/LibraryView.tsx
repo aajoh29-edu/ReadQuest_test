@@ -2,12 +2,14 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Search, SlidersHorizontal, CheckCircle2, Play, ArrowRight, Info, BookOpen } from 'lucide-react';
 import { questRepository } from '../services/repository';
+import { useAuth } from '../contexts/AuthContext';
 import { Lesson, ReadingLevel, ReadingLevelId, SessionRecord, SkillCategoryId } from '../types';
 import { ReadingGroupVignette } from '../components/illustrations/ReadingIllustrations';
 import { Button } from '../components/common/Button';
 
 export const LibraryView: React.FC = () => {
   const navigate = useNavigate();
+  const { status: authStatus, activeChild } = useAuth();
   const [searchParams] = useSearchParams();
   const initialCat = (searchParams.get('category') as 'all' | SkillCategoryId) || 'all';
   const initialLvl = (searchParams.get('level') as 'all' | ReadingLevelId) || 'all';
@@ -19,6 +21,7 @@ export const LibraryView: React.FC = () => {
   const [selectedCategory, setSelectedCategory] = useState<'all' | SkillCategoryId>(initialCat);
   const [selectedLevel, setSelectedLevel] = useState<'all' | ReadingLevelId>(initialLvl);
   const [isLoading, setIsLoading] = useState(true);
+  const [loadError, setLoadError] = useState<string | null>(null);
 
   useEffect(() => {
     const cat = searchParams.get('category') as 'all' | SkillCategoryId | null;
@@ -27,18 +30,53 @@ export const LibraryView: React.FC = () => {
     if (lvl) setSelectedLevel(lvl);
   }, [searchParams]);
 
-  useEffect(() => {
-    Promise.all([
-      questRepository.getAllLessons(),
-      questRepository.getAllSessions(),
-      questRepository.getReadingLevels(),
-    ]).then(([allLessons, allSessions, levels]) => {
+  const loadCatalog = React.useCallback(async () => {
+    setIsLoading(true);
+    setLoadError(null);
+    try {
+      const [allLessons, levels] = await Promise.all([
+        questRepository.getAllLessons(),
+        questRepository.getReadingLevels(),
+      ]);
       setLessons(allLessons);
-      setSessions(allSessions);
       setReadingLevels(levels);
+    } catch (err) {
+      if (import.meta.env.DEV) {
+        console.error('[LibraryView] Failed to load public curriculum:', err);
+      }
+      setLessons([]);
+      setLoadError('Reading adventures are temporarily unavailable. Please try again later.');
+    } finally {
       setIsLoading(false);
-    });
+    }
   }, []);
+
+  useEffect(() => {
+    loadCatalog();
+  }, [loadCatalog]);
+
+  useEffect(() => {
+    if (authStatus !== 'authenticated' || !activeChild) {
+      setSessions([]);
+      return;
+    }
+    questRepository
+      .getLearnerSessions(activeChild.id)
+      .then((allSessions) => setSessions(allSessions))
+      .catch(() => setSessions([]));
+  }, [authStatus, activeChild]);
+
+  const handleOpenQuest = (lessonId: string) => {
+    if (authStatus !== 'authenticated') {
+      navigate(`/login?returnTo=${encodeURIComponent(`/activity/${lessonId}`)}`);
+      return;
+    }
+    if (!activeChild) {
+      navigate('/account');
+      return;
+    }
+    navigate(`/activity/${lessonId}`);
+  };
 
   const getLessonSessionState = (lessonId: string) => {
     const completedSession = sessions.find((s) => s.lessonId === lessonId && s.isCompleted);
@@ -185,6 +223,13 @@ export const LibraryView: React.FC = () => {
         <div className="py-12 flex justify-center">
           <div className="w-10 h-10 border-4 border-[#8274D8] border-t-transparent rounded-full animate-spin" />
         </div>
+      ) : loadError ? (
+        <div className="bg-white border-2 border-[#DED5FF] rounded-3xl p-8 text-center space-y-3">
+          <p className="font-bold text-[#171B37]">{loadError}</p>
+          <Button variant="outline" size="sm" onClick={loadCatalog}>
+            Try Again
+          </Button>
+        </div>
       ) : filteredLessons.length === 0 ? (
         <div className="bg-white border-2 border-[#DED5FF] rounded-3xl p-8 text-center space-y-2">
           <p className="font-bold text-[#171B37]">No reading quests match the selected criteria.</p>
@@ -262,7 +307,7 @@ export const LibraryView: React.FC = () => {
                       <Button
                         variant={status === 'in-progress' ? 'peach' : status === 'completed' ? 'outline' : 'peach'}
                         size="md"
-                        onClick={() => navigate(`/activity/${lesson.id}`)}
+                        onClick={() => handleOpenQuest(lesson.id)}
                         icon={
                           status === 'in-progress' ? (
                             <Play className="w-4 h-4 fill-current" />

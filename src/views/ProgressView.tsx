@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Trophy, Star, Flame, Award, BookOpen, CheckCircle2, ArrowRight, Clock, Sparkles, AlertCircle } from 'lucide-react';
+import { Trophy, Star, Flame, Award, BookOpen, CheckCircle2, ArrowRight, Clock, Sparkles, AlertCircle, UserPlus } from 'lucide-react';
 import { questRepository } from '../services/repository';
+import { useAuth } from '../contexts/AuthContext';
 import { Learner, Mastery, ReadingLevel, ReadingProgressSummary, Reward, SkillCategory } from '../types';
 import { Trophy3DIllustration } from '../components/illustrations/ReadingIllustrations';
 import { Button } from '../components/common/Button';
@@ -9,35 +10,84 @@ import { ProgressBar } from '../components/common/ProgressBar';
 
 export const ProgressView: React.FC = () => {
   const navigate = useNavigate();
+  const { activeChild } = useAuth();
   const [learner, setLearner] = useState<Learner | null>(null);
   const [progress, setProgress] = useState<ReadingProgressSummary | null>(null);
   const [masteryList, setMasteryList] = useState<Mastery[]>([]);
   const [readingLevels, setReadingLevels] = useState<ReadingLevel[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [loadError, setLoadError] = useState<string | null>(null);
 
-  const loadData = () => {
-    Promise.all([
-      questRepository.getLearner(),
-      questRepository.getProgressSummary(),
-      questRepository.getMasterySummary(),
-      questRepository.getReadingLevels(),
-    ]).then(([l, prog, mastery, levels]) => {
+  const loadData = useCallback(async () => {
+    if (!activeChild) {
+      setLearner(null);
+      setProgress(null);
+      setIsLoading(false);
+      return;
+    }
+
+    setIsLoading(true);
+    setLoadError(null);
+    try {
+      const [l, prog, mastery, levels] = await Promise.all([
+        questRepository.getLearner(),
+        questRepository.getProgressSummary(activeChild.id),
+        questRepository.getMasterySummary(activeChild.id),
+        questRepository.getReadingLevels(),
+      ]);
       setLearner(l);
       setProgress(prog);
       setMasteryList(mastery);
       setReadingLevels(levels);
+    } catch (err: any) {
+      setLoadError(err?.message || 'Unable to load explorer progress right now.');
+    } finally {
       setIsLoading(false);
-    });
-  };
+    }
+  }, [activeChild?.id]);
 
   useEffect(() => {
     loadData();
-  }, []);
+  }, [loadData]);
 
-  if (isLoading || !learner || !progress) {
+  if (isLoading) {
     return (
       <div className="min-h-[400px] flex items-center justify-center p-8">
         <div className="w-10 h-10 border-4 border-[#8274D8] border-t-transparent rounded-full animate-spin" />
+      </div>
+    );
+  }
+
+  if (!activeChild) {
+    return (
+      <div className="max-w-lg mx-auto my-12 p-8 bg-white border-2 border-[#DED5FF] rounded-3xl text-center space-y-4">
+        <div className="w-14 h-14 rounded-2xl bg-[#F2EEFF] text-[#8274D8] flex items-center justify-center mx-auto">
+          <UserPlus className="w-7 h-7" />
+        </div>
+        <h2 className="text-2xl font-black text-[#171B37]">No Child Reader Profile Yet</h2>
+        <p className="text-sm font-semibold text-[#6B6E8A]">
+          Create a child reader profile in Account Settings to track skill mastery and reading milestones.
+        </p>
+        <Button variant="peach" size="md" onClick={() => navigate('/account')}>
+          Go to Account Settings
+        </Button>
+      </div>
+    );
+  }
+
+  if (loadError || !learner || !progress) {
+    return (
+      <div className="max-w-lg mx-auto my-12 p-8 bg-white border-2 border-red-200 rounded-3xl text-center space-y-4">
+        <div className="w-12 h-12 rounded-2xl bg-red-100 text-red-600 flex items-center justify-center mx-auto">
+          <AlertCircle className="w-6 h-6" />
+        </div>
+        <h2 className="text-xl font-black text-[#171B37]">Unable to Load Progress</h2>
+        <p className="text-sm font-semibold text-[#6B6E8A]">
+          {loadError || 'Progress data could not be retrieved from the server.'}
+        </p>
+        <Button variant="peach" size="sm" onClick={loadData}>
+          Try Again
+        </Button>
       </div>
     );
   }

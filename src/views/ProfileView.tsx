@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { Star, Flame, Award, Check } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { Star, Flame, Award, Check, AlertCircle, UserPlus } from 'lucide-react';
 import { questRepository } from '../services/repository';
+import { useAuth } from '../contexts/AuthContext';
 import { LearnerProfile } from '../types';
 import { AVAILABLE_AVATARS } from '../services/data/syntheticData';
 import { Button } from '../components/common/Button';
@@ -12,31 +14,54 @@ interface ProfileViewProps {
 export const ProfileView: React.FC<ProfileViewProps> = ({
   onRefreshGlobalProfile,
 }) => {
+  const navigate = useNavigate();
+  const { activeChild } = useAuth();
   const [profile, setProfile] = useState<LearnerProfile | null>(null);
   const [name, setName] = useState('');
   const [selectedAvatar, setSelectedAvatar] = useState('🦊');
   const [selectedAvatarName, setSelectedAvatarName] = useState('Fox Scout');
   const [gradeLevel, setGradeLevel] = useState('1st Grade');
   const [readingLevelId, setReadingLevelId] = useState<'level-1' | 'level-2' | 'level-3'>('level-1');
+  const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
   const [saveSuccess, setSaveSuccess] = useState(false);
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
   useEffect(() => {
-    questRepository.getLearnerProfile().then((p) => {
-      setProfile(p);
-      setName(p.name);
-      setSelectedAvatar(p.avatar);
-      setSelectedAvatarName(p.avatarName);
-      setGradeLevel(p.gradeLevel);
-      if (p.readingLevelId) {
-        setReadingLevelId(p.readingLevelId);
-      }
-    });
-  }, []);
+    if (!activeChild) {
+      setProfile(null);
+      setIsLoading(false);
+      return;
+    }
+
+    setIsLoading(true);
+    setErrorMsg(null);
+    questRepository
+      .getLearnerProfile()
+      .then((p) => {
+        setProfile(p);
+        if (p) {
+          setName(p.name);
+          setSelectedAvatar(p.avatar);
+          setSelectedAvatarName(p.avatarName);
+          setGradeLevel(p.gradeLevel);
+          if (p.readingLevelId) {
+            setReadingLevelId(p.readingLevelId);
+          }
+        }
+      })
+      .catch((err: any) => {
+        setErrorMsg(err?.message || 'Unable to load child profile settings.');
+      })
+      .finally(() => {
+        setIsLoading(false);
+      });
+  }, [activeChild?.id]);
 
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSaving(true);
+    setErrorMsg(null);
     try {
       const updated = await questRepository.updateLearnerProfile({
         name: name.trim() || 'Young Explorer',
@@ -49,15 +74,36 @@ export const ProfileView: React.FC<ProfileViewProps> = ({
       await onRefreshGlobalProfile();
       setSaveSuccess(true);
       setTimeout(() => setSaveSuccess(false), 2500);
+    } catch (err: any) {
+      setErrorMsg(err?.message || 'Could not save profile changes. Please try again.');
     } finally {
       setIsSaving(false);
     }
   };
 
-  if (!profile) {
+  if (isLoading) {
     return (
       <div className="min-h-[400px] flex items-center justify-center p-8">
         <div className="w-10 h-10 border-4 border-[#8274D8] border-t-transparent rounded-full animate-spin" />
+      </div>
+    );
+  }
+
+  if (!activeChild || !profile) {
+    return (
+      <div className="max-w-lg mx-auto my-12 p-8 bg-white border-2 border-[#DED5FF] rounded-3xl text-center space-y-4">
+        <div className="w-14 h-14 rounded-2xl bg-[#F2EEFF] text-[#8274D8] flex items-center justify-center mx-auto">
+          {errorMsg ? <AlertCircle className="w-7 h-7 text-red-600" /> : <UserPlus className="w-7 h-7" />}
+        </div>
+        <h2 className="text-2xl font-black text-[#171B37]">
+          {errorMsg ? 'Profile Unavailable' : 'No Child Reader Profile Selected'}
+        </h2>
+        <p className="text-sm font-semibold text-[#6B6E8A]">
+          {errorMsg || 'Add or select a child profile in Account Settings to customize explorer settings.'}
+        </p>
+        <Button variant="peach" size="md" onClick={() => navigate('/account')}>
+          Manage Child Profiles
+        </Button>
       </div>
     );
   }
@@ -193,6 +239,13 @@ export const ProfileView: React.FC<ProfileViewProps> = ({
               </select>
             </div>
           </div>
+
+          {errorMsg && (
+            <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-2.5 rounded-2xl text-xs font-bold flex items-center gap-2">
+              <AlertCircle className="w-4 h-4 shrink-0" />
+              <span>{errorMsg}</span>
+            </div>
+          )}
 
           <div className="flex items-center justify-between pt-4 border-t border-[#EAF5F7]">
             {saveSuccess ? (

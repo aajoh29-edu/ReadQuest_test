@@ -78,13 +78,23 @@ export const Footer: React.FC = () => {
           </div>
         </div>
 
-        {/* Bottom Copyright & Custom Star Accent */}
+        {/* Bottom Copyright & Legal Links */}
         <div className="pt-6 border-t border-[#EEE9FF] flex flex-col sm:flex-row items-center justify-between gap-3 text-xs font-semibold text-[#5C5E7B]">
           <div className="flex items-center gap-2">
             <RewardStarIcon size={16} className="shrink-0" />
             <span>© {currentYear} ReadQuest · Children’s Adaptive Reading Platform</span>
           </div>
-          <div>Joyful literacy adventures for growing readers</div>
+          <div className="flex flex-wrap items-center gap-4">
+            <Link to="/privacy" className="hover:text-[#7C65E8] transition-colors">
+              Privacy Policy
+            </Link>
+            <Link to="/terms" className="hover:text-[#7C65E8] transition-colors">
+              Terms of Use
+            </Link>
+            <Link to="/login" className="hover:text-[#7C65E8] transition-colors">
+              Parent Sign In
+            </Link>
+          </div>
         </div>
       </div>
     </footer>

@@ -37,7 +37,7 @@ export const ParentDashboardView: React.FC = () => {
   // State
   const [parent, setParent] = useState<ParentProfile | null>(null);
   const [children, setChildren] = useState<Learner[]>([]);
-  const [selectedChildId, setSelectedChildId] = useState<string>('learner-demo-1');
+  const [selectedChildId, setSelectedChildId] = useState<string>('');
   const [activeChild, setActiveChild] = useState<Learner | null>(null);
   const [dateFilter, setDateFilter] = useState<DateFilterOption>('7d');
 
@@ -55,6 +55,7 @@ export const ParentDashboardView: React.FC = () => {
 
   // UI state
   const [isLoading, setIsLoading] = useState(true);
+  const [loadError, setLoadError] = useState<string | null>(null);
   const [isExporting, setIsExporting] = useState(false);
   const [showGoalModal, setShowGoalModal] = useState(false);
   const [practiceGoalMinutes, setPracticeGoalMinutes] = useState(15);
@@ -62,6 +63,7 @@ export const ParentDashboardView: React.FC = () => {
 
   const loadData = async () => {
     setIsLoading(true);
+    setLoadError(null);
     try {
       const [parentProfile, parentLearners, cats] = await Promise.all([
         questRepository.getParentProfile(),
@@ -77,10 +79,17 @@ export const ParentDashboardView: React.FC = () => {
       const targetId =
         parentLearners.find((c) => c.id === selectedChildId)?.id ||
         parentLearners[0]?.id ||
-        'learner-demo-1';
+        '';
       setSelectedChildId(targetId);
 
-      await loadChildData(targetId, dateFilter);
+      if (targetId) {
+        await loadChildData(targetId, dateFilter);
+      } else {
+        setActiveChild(null);
+      }
+    } catch (err) {
+      console.error('Failed to load parent portal:', err);
+      setLoadError('Unable to load family progress insights right now.');
     } finally {
       setIsLoading(false);
     }
@@ -172,11 +181,41 @@ export const ParentDashboardView: React.FC = () => {
       ? masteryList
       : masteryList.filter((m) => m.categoryId === selectedCategoryTab);
 
-  if (isLoading || !activeChild) {
+  if (isLoading) {
     return (
       <div className="max-w-5xl mx-auto px-4 py-12 text-center">
         <div className="w-12 h-12 border-4 border-[#8274D8] border-t-transparent rounded-full animate-spin mx-auto mb-4" />
         <p className="text-base font-bold text-[#171B37]">Loading Parent Portal...</p>
+      </div>
+    );
+  }
+
+  if (loadError) {
+    return (
+      <div className="max-w-lg mx-auto px-4 py-14 text-center space-y-4">
+        <div className="bg-white border-2 border-[#DED5FF] rounded-3xl p-8 shadow-xs space-y-3">
+          <h1 className="text-xl font-black text-[#171B37]">Unable to Load Parent Portal</h1>
+          <p className="text-sm font-semibold text-[#6B6E8A]">{loadError}</p>
+          <Button variant="primary" size="sm" onClick={loadData}>
+            Retry
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
+  if (!activeChild) {
+    return (
+      <div className="max-w-lg mx-auto px-4 py-14 text-center space-y-4">
+        <div className="bg-white border-2 border-[#DED5FF] rounded-3xl p-8 shadow-xs space-y-3">
+          <h1 className="text-2xl font-black text-[#171B37]">No Child Reader Profiles Yet</h1>
+          <p className="text-sm font-semibold text-[#6B6E8A]">
+            Add a child profile in Account Settings to track reading progress, mastery insights, and weekly practice.
+          </p>
+          <Button variant="peach" size="md" onClick={() => navigate('/account')}>
+            Add Child Profile
+          </Button>
+        </div>
       </div>
     );
   }

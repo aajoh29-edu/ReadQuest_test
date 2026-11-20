@@ -1,6 +1,5 @@
 import {
   Activity,
-  Learner,
   Lesson,
   ReadingLevel,
   Reward,
@@ -54,20 +53,6 @@ export const SYNTHETIC_SKILLS: Skill[] = [
   { id: 'skill-comp-inference', categoryId: 'comprehension', name: 'Cause & Inference', code: 'RC.03', description: 'Infer character motivations and main ideas from text evidence', targetReadingLevel: 'level-3' },
 ];
 
-export const INITIAL_LEARNER: Learner = {
-  id: 'learner-demo-1',
-  name: 'Leo Explorer',
-  avatar: '🦊',
-  avatarName: 'Fox Scout',
-  readingLevelId: 'level-1',
-  gradeLevel: '1st Grade',
-  starsEarned: 18,
-  currentStreakDays: 3,
-  badges: ['Early Bird Reader', 'Letter Explorer'],
-  totalActivePracticeSeconds: 340,
-  lastActiveLessonId: 'lesson-letter-sounds-1',
-};
-
 export const AVAILABLE_AVATARS = [
   { id: 'fox', emoji: '🦊', name: 'Fox Scout', desc: 'Curious & clever explorer' },
   { id: 'owl', emoji: '🦉', name: 'Wise Owl', desc: 'Super observant listener' },
@@ -77,7 +62,7 @@ export const AVAILABLE_AVATARS = [
 ];
 
 export const REWARDS_CATALOG: Reward[] = [
-  { id: 'rew-sound-safari', type: 'badge', title: 'Safari Sound Master', description: 'Completed Lesson 1: Initial consonant sound cues', icon: '🦁', isUnlocked: true },
+  { id: 'rew-sound-safari', type: 'badge', title: 'Safari Sound Master', description: 'Completed Lesson 1: Initial consonant sound cues', icon: '🦁', isUnlocked: false },
   { id: 'rew-vowel-valley', type: 'badge', title: 'Vowel Valley Scout', description: 'Mastered Lesson 2: Short vowel sound patterns', icon: '🌈', isUnlocked: false },
   { id: 'rew-sound-teams', type: 'badge', title: 'Digraph Detective', description: 'Mastered Lesson 3: Consonant digraph teams', icon: '🔍', isUnlocked: false },
   { id: 'rew-cvc-builder', type: 'badge', title: 'Master Word Builder', description: 'Completed Lesson 4: CVC short vowel blending', icon: '🧩', isUnlocked: false },

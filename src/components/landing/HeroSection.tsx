@@ -173,8 +173,8 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
               />
             </div>
 
-            {/* Floating Real Data Indicator 1: Active Explorer Stars & Streak (Gentle Bobbing) */}
-            {learner && (
+            {/* Floating Real Data Indicator 1: Active Explorer Stars & Streak OR Starter Callout */}
+            {learner ? (
               <motion.div
                 animate={shouldReduceMotion ? undefined : { y: [0, -5, 0] }}
                 transition={
@@ -194,6 +194,28 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
                   <div className="text-[11px] font-bold text-[#5C5E7B] flex items-center gap-1.5 tabular-nums">
                     <StreakFlameIcon size={14} />
                     <span>{learner.currentStreakDays} day reading streak</span>
+                  </div>
+                </div>
+              </motion.div>
+            ) : (
+              <motion.div
+                animate={shouldReduceMotion ? undefined : { y: [0, -5, 0] }}
+                transition={
+                  shouldReduceMotion
+                    ? undefined
+                    : { duration: 4, repeat: Infinity, ease: 'easeInOut' }
+                }
+                className="hidden sm:flex items-center gap-3 bg-white/95 backdrop-blur-sm border border-[#DED5FF] rounded-2xl px-4 py-2.5 shadow-lg shadow-[#171B3A]/8 absolute -bottom-4 left-4 sm:left-6"
+              >
+                <div className="w-9 h-9 rounded-xl bg-[#FFF6D6] flex items-center justify-center">
+                  <RewardStarIcon size={24} />
+                </div>
+                <div>
+                  <div className="text-xs font-extrabold text-[#171B3A]">
+                    12 Guided Quests · 60 Activities
+                  </div>
+                  <div className="text-[11px] font-bold text-[#5C5E7B]">
+                    Parent-managed accounts for early readers
                   </div>
                 </div>
               </motion.div>
