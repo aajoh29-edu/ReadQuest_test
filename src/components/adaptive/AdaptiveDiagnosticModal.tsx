@@ -178,7 +178,7 @@ export const AdaptiveDiagnosticModal: React.FC<AdaptiveDiagnosticModalProps> = (
               <div className="flex items-center gap-2">
                 <h2 className="text-xl sm:text-2xl font-black tracking-tight">Adaptive Engine Diagnostics</h2>
                 <span className="text-[10px] font-extrabold uppercase px-2 py-0.5 rounded-full bg-[#8274D8]/30 text-[#DED5FF] border border-[#8274D8]/50">
-                  v1.0.0 · COSC 512
+                  Adaptive Engine · v1.0
                 </span>
               </div>
               <p className="text-xs text-[#DED5FF]/80 font-medium">

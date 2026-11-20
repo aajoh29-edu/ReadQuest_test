@@ -11,7 +11,6 @@ import {
   CheckCircle2,
   Play,
   RotateCcw,
-  Cpu,
   Info,
   ChevronDown,
   ChevronUp,
@@ -33,7 +32,6 @@ import {
   ReadingGroupVignette,
 } from '../components/illustrations/ReadingIllustrations';
 import { Button } from '../components/common/Button';
-import { AdaptiveDiagnosticModal } from '../components/adaptive/AdaptiveDiagnosticModal';
 
 interface DashboardViewProps {
   profile: LearnerProfile | null;
@@ -55,7 +53,6 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
   const [allLessons, setAllLessons] = useState<Lesson[]>([]);
   const [pendingAssignments, setPendingAssignments] = useState<Assignment[]>([]);
   const [showAdultExplanation, setShowAdultExplanation] = useState(false);
-  const [showDiagnosticModal, setShowDiagnosticModal] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
   const loadData = async () => {
@@ -148,18 +145,8 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
           </div>
         </div>
 
-        {/* Right: Diagnostics Button + Streak + Notification Bell */}
+        {/* Right: Streak + Notification Bell */}
         <div className="flex items-center gap-2">
-          <button
-            onClick={() => setShowDiagnosticModal(true)}
-            className="flex items-center gap-1.5 bg-[#FAF8FD] hover:bg-[#F2EEFF] border border-[#8274D8]/40 hover:border-[#8274D8] px-3 py-1.5 rounded-full text-xs font-black text-[#8274D8] shadow-xs cursor-pointer transition-all"
-            title="Inspect Adaptive Engine Diagnostics, Formulas, and Tests"
-          >
-            <Cpu className="w-3.5 h-3.5" />
-            <span className="hidden sm:inline">Engine Diagnostics</span>
-            <span className="sm:hidden">Engine</span>
-          </button>
-
           <div className="flex items-center gap-1 bg-white border border-[#DED5FF] px-3 py-1.5 rounded-full text-xs font-extrabold text-[#171B37] shadow-xs">
             <Flame className="w-3.5 h-3.5 fill-orange-400 text-orange-500" />
             <span>{profile.currentStreakDays}d</span>
@@ -468,13 +455,6 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
           })}
         </div>
       </div>
-
-      {/* Adaptive Diagnostics & Verification Modal */}
-      <AdaptiveDiagnosticModal
-        isOpen={showDiagnosticModal}
-        onClose={() => setShowDiagnosticModal(false)}
-        onDataUpdated={loadData}
-      />
     </div>
   );
 };

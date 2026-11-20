@@ -44,7 +44,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
   return (
     <section
       aria-labelledby="hero-heading"
-      className="relative pt-6 pb-10 sm:pt-10 sm:pb-14 lg:pt-14 lg:pb-18"
+      className="relative pt-8 pb-10 sm:pt-12 sm:pb-14 lg:pt-16 lg:pb-18"
     >
       <div className="max-w-[1260px] mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">

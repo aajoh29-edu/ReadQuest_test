@@ -2,11 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { ReadQuestLogoMark, RewardStarIcon } from '../icons/ReadQuestIcons';
 
-interface FooterProps {
-  onResetDemo?: () => Promise<void>;
-}
-
-export const Footer: React.FC<FooterProps> = ({ onResetDemo }) => {
+export const Footer: React.FC = () => {
   const currentYear = new Date().getFullYear();
 
   return (
@@ -71,23 +67,14 @@ export const Footer: React.FC<FooterProps> = ({ onResetDemo }) => {
             </ul>
           </div>
 
-          {/* Demo Data & Privacy Note */}
+          {/* Child-Safe Learning Promise */}
           <div className="md:col-span-3 space-y-3">
             <h3 className="text-xs font-black uppercase tracking-wider text-[#171B3A]">
-              Demo & Data Privacy
+              Child-Safe Learning
             </h3>
             <p className="text-xs font-medium text-[#5C5E7B] leading-relaxed">
-              This interactive prototype saves your reading progress locally in your browser. No personal child data is sent externally.
+              Thoughtfully designed with distraction-free stories, safe progress tracking, and family-friendly reading tools for young explorers.
             </p>
-            {onResetDemo && (
-              <button
-                type="button"
-                onClick={onResetDemo}
-                className="text-xs font-extrabold text-[#5843C4] hover:underline cursor-pointer"
-              >
-                Reset Demo Progress
-              </button>
-            )}
           </div>
         </div>
 
@@ -97,7 +84,7 @@ export const Footer: React.FC<FooterProps> = ({ onResetDemo }) => {
             <RewardStarIcon size={16} className="shrink-0" />
             <span>© {currentYear} ReadQuest · Children’s Adaptive Reading Platform</span>
           </div>
-          <div>COSC 512 Graduate Software Engineering Project</div>
+          <div>Joyful literacy adventures for growing readers</div>
         </div>
       </div>
     </footer>

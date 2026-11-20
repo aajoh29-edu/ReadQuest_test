@@ -1,12 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Trophy, Star, Flame, Award, BookOpen, CheckCircle2, ArrowRight, Clock, Sparkles, Cpu, AlertCircle } from 'lucide-react';
+import { Trophy, Star, Flame, Award, BookOpen, CheckCircle2, ArrowRight, Clock, Sparkles, AlertCircle } from 'lucide-react';
 import { questRepository } from '../services/repository';
 import { Learner, Mastery, ReadingLevel, ReadingProgressSummary, Reward, SkillCategory } from '../types';
 import { Trophy3DIllustration } from '../components/illustrations/ReadingIllustrations';
 import { Button } from '../components/common/Button';
 import { ProgressBar } from '../components/common/ProgressBar';
-import { AdaptiveDiagnosticModal } from '../components/adaptive/AdaptiveDiagnosticModal';
 
 export const ProgressView: React.FC = () => {
   const navigate = useNavigate();
@@ -14,7 +13,6 @@ export const ProgressView: React.FC = () => {
   const [progress, setProgress] = useState<ReadingProgressSummary | null>(null);
   const [masteryList, setMasteryList] = useState<Mastery[]>([]);
   const [readingLevels, setReadingLevels] = useState<ReadingLevel[]>([]);
-  const [showDiagnosticModal, setShowDiagnosticModal] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
   const loadData = () => {
@@ -67,23 +65,14 @@ export const ProgressView: React.FC = () => {
 
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 py-6 sm:py-8 space-y-6 pb-28 md:pb-8">
-      {/* Page Title & Diagnostics Trigger */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-        <div>
-          <h1 className="text-3xl sm:text-4xl font-black text-[#171B37] tracking-tight">
-            Explorer Progress & Mastery
-          </h1>
-          <p className="text-sm font-semibold text-[#6B6E8A]">
-            Track active practice time, 12 reading quests, and adaptive evidence.
-          </p>
-        </div>
-        <button
-          onClick={() => setShowDiagnosticModal(true)}
-          className="flex items-center gap-2 self-start sm:self-auto bg-white hover:bg-[#FAF8FD] border-2 border-[#8274D8] px-4 py-2 rounded-2xl text-xs font-black text-[#8274D8] shadow-xs cursor-pointer transition-all"
-        >
-          <Cpu className="w-4 h-4" />
-          <span>Engine Diagnostics & Live Tests</span>
-        </button>
+      {/* Page Title */}
+      <div>
+        <h1 className="text-3xl sm:text-4xl font-black text-[#171B37] tracking-tight">
+          Explorer Progress & Mastery
+        </h1>
+        <p className="text-sm font-semibold text-[#6B6E8A]">
+          Track active practice time, 12 reading quests, and skill mastery milestones.
+        </p>
       </div>
 
       {/* Purple Level Progress Card */}
@@ -386,13 +375,6 @@ export const ProgressView: React.FC = () => {
           Pick Your Next Reading Quest
         </Button>
       </div>
-
-      {/* Adaptive Engine Diagnostics Modal */}
-      <AdaptiveDiagnosticModal
-        isOpen={showDiagnosticModal}
-        onClose={() => setShowDiagnosticModal(false)}
-        onDataUpdated={loadData}
-      />
     </div>
   );
 };

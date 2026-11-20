@@ -6,7 +6,6 @@ import {
   UserCog,
   Heart,
   GraduationCap,
-  ShieldAlert,
 } from 'lucide-react';
 import { DemoRole, Learner, LearnerProfile } from '../../types';
 import { questRepository } from '../../services/repository';
@@ -118,8 +117,8 @@ export const Navbar: React.FC<NavbarProps> = ({
   };
 
   return (
-    <header className="bg-white/95 backdrop-blur-md border-b border-[#EEE9FF] sticky top-0 z-30">
-      <div className="max-w-[1260px] mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-4 sm:gap-8">
+    <header className="bg-white/95 backdrop-blur-md border-b border-[#EEE9FF] sticky top-0 z-30 shadow-[0_2px_12px_-4px_rgba(23,27,58,0.05)]">
+      <div className="max-w-[1260px] mx-auto px-4 sm:px-6 lg:px-8 h-[68px] sm:h-[72px] flex items-center justify-between gap-4 sm:gap-8">
         {/* Zone 1: Custom ReadQuest Storybook Brand Mark & Wordmark */}
         <Link
           to="/"
@@ -324,12 +323,9 @@ export const Navbar: React.FC<NavbarProps> = ({
                   </button>
                 </div>
 
-                {/* Demo Disclaimer */}
-                <div className="bg-[#FAF9FF] rounded-2xl p-2.5 border border-[#EEE9FF] flex items-start gap-2 text-[10px] text-[#5C5E7B] leading-snug">
-                  <ShieldAlert className="w-3.5 h-3.5 text-[#7C65E8] shrink-0 mt-0.5" />
-                  <span>
-                    Demo persona switcher is not authentication; backend enforces access policies.
-                  </span>
+                {/* Family & Classroom Note */}
+                <div className="bg-[#FAF9FF] rounded-2xl p-2.5 border border-[#EEE9FF] text-[11px] text-[#5C5E7B] leading-snug">
+                  Switch easily between reader profiles, parent insights, and classroom views.
                 </div>
               </div>
             </>

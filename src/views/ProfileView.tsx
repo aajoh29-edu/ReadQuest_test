@@ -1,17 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import { User, Star, Flame, Award, RotateCcw, Check, Sparkles } from 'lucide-react';
+import { Star, Flame, Award, Check } from 'lucide-react';
 import { questRepository } from '../services/repository';
 import { LearnerProfile } from '../types';
 import { AVAILABLE_AVATARS } from '../services/data/syntheticData';
 import { Button } from '../components/common/Button';
 
 interface ProfileViewProps {
-  onResetDemo: () => Promise<void>;
   onRefreshGlobalProfile: () => Promise<void>;
 }
 
 export const ProfileView: React.FC<ProfileViewProps> = ({
-  onResetDemo,
   onRefreshGlobalProfile,
 }) => {
   const [profile, setProfile] = useState<LearnerProfile | null>(null);
@@ -22,7 +20,6 @@ export const ProfileView: React.FC<ProfileViewProps> = ({
   const [readingLevelId, setReadingLevelId] = useState<'level-1' | 'level-2' | 'level-3'>('level-1');
   const [isSaving, setIsSaving] = useState(false);
   const [saveSuccess, setSaveSuccess] = useState(false);
-  const [showResetConfirm, setShowResetConfirm] = useState(false);
 
   useEffect(() => {
     questRepository.getLearnerProfile().then((p) => {
@@ -73,7 +70,7 @@ export const ProfileView: React.FC<ProfileViewProps> = ({
           Explorer Profile
         </h1>
         <p className="text-sm font-semibold text-[#6B6E8A]">
-          Manage your reading character, preferences, and demo settings.
+          Customize your reading character, reading level, and learning preferences.
         </p>
       </div>
 
@@ -220,52 +217,6 @@ export const ProfileView: React.FC<ProfileViewProps> = ({
             </Button>
           </div>
         </form>
-      </div>
-
-      {/* Demo Reset Card */}
-      <div className="bg-[#EAF5F7] border-2 border-[#DED5FF] rounded-3xl p-6 sm:p-7 space-y-3">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2.5 text-[#171B37] font-black text-base">
-            <RotateCcw className="w-5 h-5 text-[#8274D8]" />
-            <span>Reset Demo Data</span>
-          </div>
-        </div>
-
-        <p className="text-xs sm:text-sm font-semibold text-[#6B6E8A]">
-          Clears local storage session answers and restores original starter quest states. Perfect for test grading and re-running demonstrations.
-        </p>
-
-        {showResetConfirm ? (
-          <div className="flex items-center gap-3 pt-2">
-            <Button
-              variant="peach"
-              size="sm"
-              onClick={async () => {
-                await onResetDemo();
-                setShowResetConfirm(false);
-              }}
-              className="bg-red-500 hover:bg-red-600 text-white font-bold"
-            >
-              Confirm Full Reset
-            </Button>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => setShowResetConfirm(false)}
-            >
-              Cancel
-            </Button>
-          </div>
-        ) : (
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => setShowResetConfirm(true)}
-            icon={<RotateCcw className="w-4 h-4" />}
-          >
-            Reset Progress to Default
-          </Button>
-        )}
       </div>
     </div>
   );

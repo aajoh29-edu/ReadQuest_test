@@ -3,7 +3,6 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { questRepository } from './services/repository';
 import { DemoRole, LearnerProfile } from './types';
 import { Navbar } from './components/common/Navbar';
-import { DemoBanner } from './components/common/DemoBanner';
 import { FloatingBottomNav } from './components/common/FloatingBottomNav';
 import { ProfileModal } from './components/common/ProfileModal';
 import { Footer } from './components/landing/Footer';
@@ -16,6 +15,7 @@ import { ProgressView } from './views/ProgressView';
 import { ProfileView } from './views/ProfileView';
 import { ParentDashboardView } from './views/ParentDashboardView';
 import { TeacherDashboardView } from './views/TeacherDashboardView';
+import { DevToolsView } from './views/DevToolsView';
 
 export default function App() {
   const [profile, setProfile] = useState<LearnerProfile | null>(null);
@@ -33,7 +33,7 @@ export default function App() {
     refreshProfile();
   }, []);
 
-  const handleResetDemo = async () => {
+  const handleResetLocalState = async () => {
     await questRepository.resetDemoData();
     await refreshProfile();
     window.location.reload();
@@ -51,9 +51,6 @@ export default function App() {
   return (
     <BrowserRouter>
       <div className="min-h-screen readquest-bg flex flex-col text-[#34364B] selection:bg-[#FFAE80]/40 relative">
-        {/* Top Demo Banner */}
-        <DemoBanner onResetDemo={handleResetDemo} />
-
         {/* Global Navigation Header */}
         <Navbar
           profile={profile}
@@ -84,15 +81,14 @@ export default function App() {
             <Route path="/progress" element={<ProgressView />} />
             <Route
               path="/profile"
-              element={
-                <ProfileView
-                  onResetDemo={handleResetDemo}
-                  onRefreshGlobalProfile={refreshProfile}
-                />
-              }
+              element={<ProfileView onRefreshGlobalProfile={refreshProfile} />}
             />
             <Route path="/parent" element={<ParentDashboardView />} />
             <Route path="/teacher" element={<TeacherDashboardView />} />
+            <Route
+              path="/dev-tools"
+              element={<DevToolsView onResetState={handleResetLocalState} />}
+            />
 
             {/* Catch-all redirect to landing page */}
             <Route path="*" element={<Navigate to="/" replace />} />
@@ -102,8 +98,8 @@ export default function App() {
         {/* Floating Mobile Bottom Navigation Bar */}
         <FloatingBottomNav profile={profile} />
 
-        {/* Redesigned ReadQuest Footer */}
-        <Footer onResetDemo={handleResetDemo} />
+        {/* ReadQuest Footer */}
+        <Footer />
 
         {/* Profile Customizer Modal */}
         {profile && (
