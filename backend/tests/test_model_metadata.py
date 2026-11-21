@@ -22,6 +22,9 @@ EXPECTED_TABLES = {
     "attempts",
     "skill_mastery",
     "recommendations",
+    "learning_plans",
+    "learning_plan_items",
+    "learning_plan_events",
 }
 
 EXPECTED_COLUMNS = {
@@ -87,6 +90,29 @@ EXPECTED_COLUMNS = {
         "status",
         "created_at",
     },
+    "learning_plans": {
+        "id",
+        "child_id",
+        "status",
+        "generated_by",
+        "algorithm_version",
+        "focus_summary",
+        "starts_on",
+        "target_ends_on",
+        "created_at",
+    },
+    "learning_plan_items": {
+        "id",
+        "plan_id",
+        "item_type",
+        "skill_id",
+        "activity_id",
+        "book_id",
+        "sequence",
+        "target_score",
+        "status",
+    },
+    "learning_plan_events": {"id", "plan_id", "event_type", "details", "created_at"},
 }
 
 
@@ -101,7 +127,7 @@ def test_every_table_contains_expected_columns() -> None:
 
 def test_all_relationship_mappers_configure() -> None:
     configure_mappers()
-    assert len(Base.registry.mappers) == 14
+    assert len(Base.registry.mappers) == 17
 
 
 def test_all_foreign_keys_have_explicit_delete_behavior() -> None:

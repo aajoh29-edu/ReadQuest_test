@@ -2,22 +2,29 @@ import secrets
 from datetime import UTC, datetime
 from uuid import UUID
 
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, Header, HTTPException
 from sqlalchemy import delete, select
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, selectinload
 
 from app.api.dependencies import current_user, require_roles, transaction_session
 from app.api.schemas import (
     ActivityInput,
     ActivityView,
+    AdultLearningPlanItemView,
+    AdultLearningPlanView,
     AttemptInput,
     AttemptView,
     ChildInput,
+    ChildLearningPlanItemView,
+    ChildLearningPlanView,
     ChildView,
     ClassInput,
     ClassStatusInput,
     ClassView,
     JoinInput,
+    LearningPlanEventView,
+    LearningPlanFocusView,
+    LearningPlanHistoryView,
     LessonInput,
     LessonView,
     MasteryView,
@@ -28,12 +35,13 @@ from app.api.schemas import (
     UserInput,
     UserView,
 )
+from app.core.config import get_settings
 from app.core.security import hash_password
 from app.models.auth import AuthSession
 from app.models.curriculum import Activity, ActivitySkill, Lesson, Skill
 from app.models.enums import ClassStatus, ContentStatus, EnrollmentStatus, UserRole, UserStatus
 from app.models.identity import ChildProfile, Classroom, Enrollment, GuardianChild, User
-from app.models.learning import Attempt
+from app.models.learning import Attempt, LearningPlan, LearningPlanItem
 from app.repositories.access import AccessRepository
 from app.services.adaptive.workflow import SubmitAttemptCommand, submit_attempt
 from app.services.learning import (
@@ -44,12 +52,19 @@ from app.services.learning import (
     recommend,
     recommendation_view,
 )
+from app.services.learning_plans import (
+    active_plan,
+    complete_item,
+    ensure_current_plan,
+    generate_plan,
+)
 
 router = APIRouter(tags=["production"])
 admin = require_roles(UserRole.ADMIN)
 adult = require_roles(UserRole.PARENT, UserRole.ADMIN)
 teacher = require_roles(UserRole.TEACHER, UserRole.ADMIN)
 child_role = require_roles(UserRole.CHILD)
+plan_adult = require_roles(UserRole.PARENT, UserRole.TEACHER, UserRole.ADMIN)
 
 
 def permitted_child(session, user, child_id):
@@ -69,6 +84,199 @@ def create_account(session: Session, payload: UserInput) -> User:
         session.add(ChildProfile(user_id=row.id, display_name=payload.display_name, grade_level=payload.grade_level))
         session.flush()
     return row
+
+
+def internal_server(
+    token: str | None = Header(default=None, alias="X-ReadQuest-Internal-Token"),
+) -> None:
+    configured = get_settings().internal_api_token
+    if configured is None or token is None or not secrets.compare_digest(token, configured):
+        raise HTTPException(403, "server access required")
+
+
+def child_plan_view(plan: LearningPlan) -> ChildLearningPlanView:
+    return ChildLearningPlanView(
+        id=plan.id,
+        title="My reading adventure",
+        status=plan.status,
+        starts_on=plan.starts_on,
+        target_ends_on=plan.target_ends_on,
+        items=[
+            ChildLearningPlanItemView(
+                id=item.id,
+                sequence=item.sequence,
+                title=item.activity.title if item.activity else "Reading step",
+                status=item.status,
+            )
+            for item in plan.items
+        ],
+    )
+
+
+def _item_skill_and_focus(plan: LearningPlan, item: LearningPlanItem):
+    focus_by_code = {
+        row.get("skill_code"): row for row in plan.focus_summary if row.get("skill_code")
+    }
+    if item.skill is not None:
+        return item.skill, focus_by_code.get(item.skill.code, {})
+    if item.activity is not None:
+        links = sorted(item.activity.skill_links, key=lambda link: link.skill.code)
+        for link in links:
+            if link.skill.code in focus_by_code:
+                return link.skill, focus_by_code[link.skill.code]
+        if links:
+            return links[0].skill, {}
+    raise HTTPException(404, "learning plan skill not available")
+
+
+def adult_plan_view(plan: LearningPlan) -> AdultLearningPlanView:
+    items = []
+    for item in plan.items:
+        skill, focus = _item_skill_and_focus(plan, item)
+        items.append(
+            AdultLearningPlanItemView(
+                id=item.id,
+                sequence=item.sequence,
+                activity_id=item.activity_id or item.skill_id,
+                activity_title=item.activity.title if item.activity else item.skill.name,
+                skill_id=skill.id,
+                skill_code=skill.code,
+                skill_name=skill.name,
+                band=focus.get("band", "review"),
+                target_score=float(item.target_score or 0),
+                status=item.status,
+            )
+        )
+    return AdultLearningPlanView(
+        id=plan.id,
+        title="Learning plan",
+        status=plan.status,
+        generated_by=plan.generated_by,
+        algorithm_version=plan.algorithm_version,
+        starts_on=plan.starts_on,
+        target_ends_on=plan.target_ends_on,
+        created_at=plan.created_at,
+        focus_summary=[
+            LearningPlanFocusView(
+                skill_code=row["skill_code"],
+                band=row["band"],
+                score=float(row["score"]),
+            )
+            for row in plan.focus_summary
+        ],
+        items=items,
+    )
+
+
+@router.get(
+    "/children/{child_id}/learning-plan",
+    response_model=ChildLearningPlanView | AdultLearningPlanView | None,
+)
+def learning_plan(
+    child_id: UUID,
+    user: User = Depends(current_user),
+    session: Session = Depends(transaction_session, scope="function"),
+):
+    child = permitted_child(session, user, child_id)
+    plan = active_plan(session, child.id)
+    if user.role != UserRole.CHILD:
+        plan = ensure_current_plan(
+            session,
+            child,
+            generated_by=f"{user.role.value}:{user.id}",
+        )
+    if plan is None:
+        return None
+    return child_plan_view(plan) if user.role == UserRole.CHILD else adult_plan_view(plan)
+
+
+@router.post(
+    "/children/{child_id}/learning-plan/generate",
+    response_model=AdultLearningPlanView,
+)
+def generate_learning_plan_route(
+    child_id: UUID,
+    user: User = Depends(plan_adult),
+    session: Session = Depends(transaction_session, scope="function"),
+):
+    child = permitted_child(session, user, child_id)
+    try:
+        plan = generate_plan(
+            session,
+            child,
+            generated_by=f"{user.role.value}:{user.id}",
+            reason="refresh_requested",
+            force=True,
+        )
+    except ValueError as error:
+        raise HTTPException(422, str(error)) from error
+    return adult_plan_view(plan)
+
+
+@router.post(
+    "/children/{child_id}/learning-plan/{plan_id}/items/{item_id}/complete",
+    response_model=ChildLearningPlanItemView,
+    dependencies=[Depends(internal_server)],
+)
+def complete_learning_plan_item(
+    child_id: UUID,
+    plan_id: UUID,
+    item_id: UUID,
+    session: Session = Depends(transaction_session, scope="function"),
+):
+    try:
+        row = complete_item(session, child_id, plan_id, item_id)
+    except LookupError as error:
+        raise HTTPException(404, str(error)) from error
+    except ValueError as error:
+        raise HTTPException(409, str(error)) from error
+    return ChildLearningPlanItemView(
+        id=row.id,
+        sequence=row.sequence,
+        title=row.activity.title if row.activity else "Reading step",
+        status=row.status,
+    )
+
+
+@router.get(
+    "/children/{child_id}/learning-plan/history",
+    response_model=list[LearningPlanHistoryView],
+)
+def learning_plan_history(
+    child_id: UUID,
+    user: User = Depends(plan_adult),
+    session: Session = Depends(transaction_session, scope="function"),
+):
+    child = permitted_child(session, user, child_id)
+    ensure_current_plan(
+        session,
+        child,
+        generated_by=f"{user.role.value}:{user.id}",
+    )
+    plans = list(
+        session.scalars(
+            select(LearningPlan)
+            .options(
+                selectinload(LearningPlan.items)
+                .selectinload(LearningPlanItem.activity)
+                .selectinload(Activity.skill_links)
+                .selectinload(ActivitySkill.skill),
+                selectinload(LearningPlan.events),
+            )
+            .where(LearningPlan.child_id == child.id)
+            .order_by(LearningPlan.created_at.desc(), LearningPlan.id.desc())
+        )
+    )
+    return [
+        LearningPlanHistoryView(
+            plan=adult_plan_view(plan),
+            events=[
+                LearningPlanEventView.model_validate(event, from_attributes=True)
+                for event in sorted(plan.events, key=lambda row: row.created_at)
+            ],
+        )
+        for plan in plans
+    ]
 
 
 @router.get("/children", response_model=list[ChildView])

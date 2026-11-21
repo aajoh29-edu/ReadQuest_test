@@ -11,6 +11,7 @@ from app.models.learning import Attempt, Recommendation, SkillMastery
 from app.repositories.adaptive import AdaptiveRepository
 from app.services.adaptive.mastery import calculate_mastery
 from app.services.adaptive.recommendation import rank_activities
+from app.services.learning_plans import complete_targeted_item
 
 
 @dataclass(frozen=True, slots=True)
@@ -79,6 +80,12 @@ def submit_attempt(session: Session, command: SubmitAttemptCommand) -> AdaptiveO
     ranked = rank_activities(candidates, now=now)
     recommendation = (
         repository.save_recommendation(command.child_id, attempt.id, ranked[0]) if ranked else None
+    )
+    complete_targeted_item(
+        session,
+        command.child_id,
+        command.activity_id,
+        tuple(mastery_records),
     )
 
     # The caller owns commit/rollback. FastAPI should use `with session.begin()`

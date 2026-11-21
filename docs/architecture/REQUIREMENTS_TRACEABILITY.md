@@ -16,6 +16,7 @@ This matrix proves that the proposed schema supports the MVP described in the Re
 | Teacher identifies support needs | enrollments, skill_mastery, attempts | class, skill, score, last practice | Members 1 and 2 validate query and UI. |
 | Audit recommendation behavior | recommendations | reason_details, algorithm_version, created_at | Member 3 owns; full team reviews demo evidence. |
 | Reproducible demo data | all reference/learning entities | stable IDs and timestamps | Full team approves scenarios in Process 5. |
+| Child and adult learning plans | learning_plans, learning_plan_items, learning_plan_events, skill_mastery, activities | focus snapshot, ordered target, status, audit event | Phase 1 API, seed, generator, and frontend tests. |
 
 ## Coverage conclusion
 

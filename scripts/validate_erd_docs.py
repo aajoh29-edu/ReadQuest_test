@@ -23,6 +23,9 @@ EXPECTED_ENTITIES = {
     "attempts",
     "skill_mastery",
     "recommendations",
+    "learning_plans",
+    "learning_plan_items",
+    "learning_plan_events",
 }
 
 

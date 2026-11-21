@@ -180,6 +180,23 @@ legend { font-weight: 800; }
 }
 .progress-grid li { background: white; padding: 1rem; border: 1px solid #ded5ff; border-radius: 18px; }
 progress { width: 100%; accent-color: #6f5bd3; }
+.plan-steps, .adult-plan-items { padding: 0; list-style: none; display: grid; gap: .75rem; }
+.plan-steps li, .adult-plan-items li {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: .8rem;
+  padding: 1rem;
+  border: 1px solid #cbc1f6;
+  border-radius: 16px;
+  background: #f8f5ff;
+}
+.plan-steps li.done { background: #eaf8ed; border-color: #b8dfc1; }
+.plan-steps h3, .plan-steps p, .adult-plan-items p { margin: 0; }
+.step-star { color: #d47b27; font-size: 2rem; }
+.focus-summary { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: .5rem; list-style: none; padding: 0; }
+.focus-summary li { margin: 0; border-radius: 12px; background: #f5f1ff; padding: .65rem .8rem; }
+.adult-plan-items li { grid-template-columns: 1fr; }
 code { overflow-wrap: anywhere; }
 summary { cursor: pointer; min-height: 48px; padding: .5rem; font-weight: 800; }
 li { margin: .7rem 0; }
@@ -202,4 +219,6 @@ footer { color: #66568f; text-align: center; }
   .welcome-hero-copy { padding: 1.5rem; }
   .welcome-hero-image { min-height: 230px; max-height: 280px; }
   .reader-grid { grid-template-columns: 1fr; }
+  .plan-steps li { grid-template-columns: auto 1fr; }
+  .plan-steps li button { grid-column: 2; justify-self: start; }
 }

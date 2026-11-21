@@ -54,3 +54,25 @@ class RecommendationStatus(StrEnum):
     ACCEPTED = "accepted"
     DISMISSED = "dismissed"
     EXPIRED = "expired"
+
+
+class LearningPlanStatus(StrEnum):
+    DRAFT = "draft"
+    ACTIVE = "active"
+    PAUSED = "paused"
+    COMPLETED = "completed"
+    ARCHIVED = "archived"
+
+
+class LearningPlanItemType(StrEnum):
+    SKILL = "skill"
+    ACTIVITY = "activity"
+    BOOK = "book"
+    READ_ALOUD = "read_aloud"
+
+
+class LearningPlanItemStatus(StrEnum):
+    PENDING = "pending"
+    IN_PROGRESS = "in_progress"
+    COMPLETED = "completed"
+    SKIPPED = "skipped"

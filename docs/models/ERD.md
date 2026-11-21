@@ -1,6 +1,6 @@
 # Implemented data model
 
-Generated from SQLAlchemy metadata; migrations 0001–0002 are checked against PostgreSQL. Nullable grade/response/evidence timestamps are detailed in the data dictionary. FK deletion rules appear on relationship labels.
+Generated from SQLAlchemy metadata; migrations 0001–0003 are checked against PostgreSQL. Nullable grade/response/evidence timestamps are detailed in the data dictionary. FK deletion rules appear on relationship labels.
 
 ```mermaid
 erDiagram
@@ -16,6 +16,11 @@ erDiagram
     CHILD_PROFILES ||--o{ ENROLLMENTS : "child_id; RESTRICT"
     USERS ||--o{ GUARDIAN_CHILDREN : "guardian_id; RESTRICT"
     CHILD_PROFILES ||--o{ GUARDIAN_CHILDREN : "child_id; RESTRICT"
+    LEARNING_PLANS ||--o{ LEARNING_PLAN_EVENTS : "plan_id; CASCADE"
+    LEARNING_PLANS ||--o{ LEARNING_PLAN_ITEMS : "plan_id; CASCADE"
+    SKILLS ||--o{ LEARNING_PLAN_ITEMS : "skill_id; RESTRICT"
+    ACTIVITIES ||--o{ LEARNING_PLAN_ITEMS : "activity_id; RESTRICT"
+    CHILD_PROFILES ||--o{ LEARNING_PLANS : "child_id; RESTRICT"
     CHILD_PROFILES ||--o{ RECOMMENDATIONS : "child_id; RESTRICT"
     ACTIVITIES ||--o{ RECOMMENDATIONS : "activity_id; RESTRICT"
     ATTEMPTS ||--o{ RECOMMENDATIONS : "triggering_attempt_id; SET NULL"
@@ -78,6 +83,35 @@ erDiagram
         uuid guardian_id PK,FK
         uuid child_id PK,FK
         varchar relationship_label
+        datetime created_at
+    }
+    LEARNING_PLAN_EVENTS {
+        uuid id PK
+        uuid plan_id FK
+        varchar event_type
+        jsonb details
+        datetime created_at
+    }
+    LEARNING_PLAN_ITEMS {
+        uuid id PK
+        uuid plan_id FK
+        learning_plan_item_type item_type
+        uuid skill_id FK
+        uuid activity_id FK
+        uuid book_id
+        integer sequence
+        numeric target_score
+        learning_plan_item_status status
+    }
+    LEARNING_PLANS {
+        uuid id PK
+        uuid child_id FK
+        learning_plan_status status
+        varchar generated_by
+        varchar algorithm_version
+        jsonb focus_summary
+        date starts_on
+        date target_ends_on
         datetime created_at
     }
     LESSONS {

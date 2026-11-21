@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from "react";
-import { request } from "./api.js";
+import { generateLearningPlan, getLearningPlan, request } from "./api.js";
 import WelcomeHero from "./WelcomeHero.jsx";
 import mascotImage from "./assets/images/mascot_quill_buddy_1795046659465.jpg";
 
@@ -16,6 +16,43 @@ export function Progress({ rows }) {
       {row.attempt_count > 0 && <><progress max="1" value={row.score} aria-label={`${row.skill_name} mastery`} /><p>{Math.round(row.score * 100)}% · {row.confidence} confidence · {row.attempt_count} recent answers</p></>}
       <p>{row.last_practiced_at ? `Last practice: ${new Date(row.last_practiced_at).toLocaleDateString()}` : "No practice yet"}</p>
     </li>)}</ul>}
+  </section>;
+}
+
+export function ChildPlan({ plan, activities, onSelect }) {
+  return <section className="card plan" aria-labelledby="child-plan-title">
+    <h2 id="child-plan-title">Your reading steps</h2>
+    {!plan ? <p>Your grown-up is making your next reading adventure.</p> : <>
+      <p>{plan.title}</p>
+      <ol className="plan-steps">
+        {plan.items.map(item => {
+          const done = item.status === "completed" || item.status === "skipped";
+          const activity = activities.find(row => row.title === item.title);
+          return <li className={done ? "done" : ""} key={item.id}>
+            <span className="step-star" aria-hidden="true">{done ? "★" : "☆"}</span>
+            <div><h3>Step {item.sequence}: {item.title}</h3><p>{done ? "Done" : "Your next star"}</p></div>
+            {!done && <button className="secondary" disabled={!activity} onClick={() => onSelect(activity)}>Start step {item.sequence}</button>}
+          </li>;
+        })}
+      </ol>
+    </>}
+  </section>;
+}
+
+export function AdultPlan({ plan, onRefresh, busy }) {
+  return <section className="card adult-plan" aria-labelledby="adult-plan-title">
+    <div className="section-heading"><h2 id="adult-plan-title">Learning plan</h2><button className="secondary" disabled={busy} onClick={onRefresh}>Refresh plan</button></div>
+    {!plan ? <p>No active learning plan yet. Refresh to generate one.</p> : <>
+      <p>{plan.starts_on} to {plan.target_ends_on} · {plan.status}</p>
+      <h3>Focus snapshot</h3>
+      <ul className="focus-summary">{plan.focus_summary.map(row => <li key={row.skill_code}>
+        <strong>{row.skill_code}</strong> · {row.band} · {Math.round(row.score * 100)}%
+      </li>)}</ul>
+      <ol className="adult-plan-items">{plan.items.map(item => <li key={item.id}>
+        <strong>{item.sequence}. {item.skill_name}</strong>
+        <p>{item.activity_title} · {item.band} · Target {Math.round(item.target_score * 100)}% · {item.status}</p>
+      </li>)}</ol>
+    </>}
   </section>;
 }
 
@@ -54,7 +91,7 @@ function PasswordChange({ onChanged }) {
 
 function ChildReader() {
   const [activities, setActivities] = useState([]); const [selected, setSelected] = useState(null);
-  const [children, setChildren] = useState([]); const [progress, setProgress] = useState([]);
+  const [children, setChildren] = useState([]); const [plan, setPlan] = useState(null);
   const [recommendation, setRecommendation] = useState(null); const [result, setResult] = useState(null);
   const [choice, setChoice] = useState(null); const [error, setError] = useState("");
   const [busy, setBusy] = useState(true); const [started, setStarted] = useState(Date.now());
@@ -65,8 +102,11 @@ function ChildReader() {
       const [rows, profiles] = await Promise.all([request("/activities"), request("/children")]);
       setActivities(rows); setChildren(profiles); select(rows[0] || null);
       if (profiles[0]) {
-        const [scores, next] = await Promise.all([request(`/children/${profiles[0].id}/progress`), request(`/children/${profiles[0].id}/recommendations`, { method: "POST" })]);
-        setProgress(scores); setRecommendation(next);
+        const [nextPlan, next] = await Promise.all([
+          getLearningPlan(profiles[0].id),
+          request(`/children/${profiles[0].id}/recommendations`, { method: "POST" }),
+        ]);
+        setPlan(nextPlan); setRecommendation(next);
       }
     } catch (err) { setError(err.message); } finally { setBusy(false); }
   }, [select]);
@@ -76,7 +116,8 @@ function ChildReader() {
     setBusy(true); setError("");
     try {
       const outcome = await request("/attempts", { method: "POST", body: { activity_id: selected.id, selected_index: choice, response_ms: Math.min(3600000, Date.now() - started) } });
-      setResult(outcome); setProgress(outcome.mastery); setRecommendation(outcome.recommendation);
+      setResult(outcome); setRecommendation(outcome.recommendation);
+      if (children[0]) setPlan(await getLearningPlan(children[0].id));
     } catch (err) { setError(err.message); } finally { setBusy(false); }
   }
   return <><div className="section-heading"><h2>Hello{children[0] ? `, ${children[0].display_name}` : " reader"}!</h2><button className="secondary" onClick={load} disabled={busy}>Refresh activities</button></div>
@@ -93,7 +134,7 @@ function ChildReader() {
         {result && <div className="notice" role="status"><h3>{result.is_correct ? "Great reading!" : "Good try. Keep learning!"}</h3><p>Your progress has been saved.</p></div>}
       </> : <h2 id="activity-title">Your adventure will appear here</h2>}
       <section aria-label="Next practice"><h3>What is next?</h3>{recommendation ? <><p>{recommendation.explanation}</p><button disabled={busy} onClick={() => select(recommendation.activity)}>Try {recommendation.activity.title}</button></> : !busy && <p>You have explored today's suggestions. Choose another activity or come back later.</p>}</section>
-    </section></div><Progress rows={progress} />
+    </section></div><ChildPlan plan={plan} activities={activities} onSelect={select} />
   </>;
 }
 
@@ -118,6 +159,7 @@ function Dashboard({ role }) {
   const [children, setChildren] = useState([]); const [selected, setSelected] = useState("");
   const [classes, setClasses] = useState([]); const [classChildren, setClassChildren] = useState({});
   const [scores, setScores] = useState([]); const [next, setNext] = useState(null);
+  const [plan, setPlan] = useState(null);
   const [busy, setBusy] = useState(true); const [error, setError] = useState(""); const [notice, setNotice] = useState("");
   const load = useCallback(async () => {
     setBusy(true); setError("");
@@ -132,11 +174,17 @@ function Dashboard({ role }) {
   }, [role]);
   useEffect(() => { load(); }, [load]);
   useEffect(() => {
-    let active = true; setScores([]); setNext(null);
+    let active = true; setScores([]); setNext(null); setPlan(null);
     if (!selected) return;
     setBusy(true); setError("");
-    Promise.all([request(`/children/${selected}/progress`), request(`/children/${selected}/recommendations`, { method: "POST" })])
-      .then(([rows, recommendation]) => { if (active) { setScores(rows); setNext(recommendation); } })
+    Promise.all([
+      request(`/children/${selected}/progress`),
+      request(`/children/${selected}/recommendations`, { method: "POST" }),
+      getLearningPlan(selected),
+    ])
+      .then(([rows, recommendation, activePlan]) => {
+        if (active) { setScores(rows); setNext(recommendation); setPlan(activePlan); }
+      })
       .catch(err => { if (active) setError(err.message); }).finally(() => { if (active) setBusy(false); });
     return () => { active = false; };
   }, [selected]);
@@ -145,11 +193,18 @@ function Dashboard({ role }) {
     try { await request(path, { method, body }); setNotice(message); await load(); }
     catch (err) { setError(err.message); } finally { setBusy(false); }
   }
+  async function refreshPlan() {
+    setBusy(true); setError(""); setNotice("");
+    try {
+      setPlan(await generateLearningPlan(selected));
+      setNotice("Learning plan refreshed.");
+    } catch (err) { setError(err.message); } finally { setBusy(false); }
+  }
   return <><h2>{role === "parent" ? "Your family" : "Your readers"}</h2><Message error={error} notice={notice} busy={busy} />
     {(role === "parent" || role === "admin") && <ChildForm onCreated={load} />}
     <label>Reader<select aria-label="Reader" value={selected} onChange={event => setSelected(event.target.value)}><option value="">Choose a reader</option>{children.map(c => <option key={c.id} value={c.id}>{c.display_name}</option>)}</select></label>
     {!busy && !children.length && <p>No linked readers yet.</p>}
-    {selected && <><Progress rows={scores} /><section className="card"><h3>Suggested practice</h3><p>{next ? `${next.activity.title}: ${next.explanation}` : "No suggestion available right now."}</p></section></>}
+    {selected && <><AdultPlan plan={plan} onRefresh={refreshPlan} busy={busy} /><Progress rows={scores} /><section className="card"><h3>Suggested practice</h3><p>{next ? `${next.activity.title}: ${next.explanation}` : "No suggestion available right now."}</p></section></>}
     {(role === "parent" || role === "admin") && selected && <form aria-label="Join class" onSubmit={e => { e.preventDefault(); action(`/children/${selected}/enrollments`, "POST", { join_code: new FormData(e.currentTarget).get("join_code") }, "Class joined."); }}>
       <label>Class join code<input name="join_code" required maxLength="20" /></label><button disabled={busy}>Join class</button>
     </form>}

@@ -11,10 +11,17 @@ from app.core.security import hash_password, token_digest
 from app.db.session import SessionFactory, get_db_session
 from app.main import create_app
 from app.models.auth import AuthSession
-from app.models.curriculum import Activity, Skill
-from app.models.enums import ContentStatus
+from app.models.curriculum import Activity, ActivitySkill, Skill
+from app.models.enums import ContentStatus, LearningPlanStatus
 from app.models.identity import User
-from app.models.learning import Attempt, Recommendation, SkillMastery
+from app.models.learning import (
+    Attempt,
+    LearningPlan,
+    LearningPlanEvent,
+    LearningPlanItem,
+    Recommendation,
+    SkillMastery,
+)
 from app.repositories.adaptive import AdaptiveRepository
 from app.seeds.demo import run_seed, uid
 from app.services.adaptive.workflow import SubmitAttemptCommand, submit_attempt
@@ -189,6 +196,104 @@ def test_recommendation_and_progress_contract(api):
         for a in session.scalars(select(Activity)):
             a.status = ContentStatus.ARCHIVED
     assert client.post(f"/children/{uid(10)}/recommendations").json() is None
+
+
+def test_learning_plan_child_contract_and_refresh(api):
+    client = login(api)
+    child_response = client.get(f"/children/{uid(10)}/learning-plan")
+    assert child_response.status_code == 200
+    serialized = child_response.text
+    assert "score" not in serialized
+    assert "target_score" not in serialized
+    assert '"band"' not in serialized
+    plan = child_response.json()
+    assert plan["items"] == sorted(plan["items"], key=lambda item: item["sequence"])
+    assert "Read" in plan["title"] or "reading" in plan["title"].lower()
+    assert plan["items"][0]["title"].startswith("Letter Sounds")
+
+    login(api, "parent")
+    refreshed = client.post(f"/children/{uid(10)}/learning-plan/generate")
+    assert refreshed.status_code == 200, refreshed.text
+    assert refreshed.json()["focus_summary"]
+    assert all(item["target_score"] <= 0.9 for item in refreshed.json()["items"])
+    with SessionFactory() as session:
+        assert session.scalar(
+            select(func.count()).select_from(LearningPlan).where(
+                LearningPlan.child_id == uid(10),
+                LearningPlan.status == LearningPlanStatus.ACTIVE,
+            )
+        ) == 1
+
+
+def test_band_change_regenerates_between_sessions_and_is_audited(api):
+    with SessionFactory() as session:
+        original = session.scalar(
+            select(LearningPlan).where(
+                LearningPlan.child_id == uid(10),
+                LearningPlan.status == LearningPlanStatus.ACTIVE,
+            )
+        )
+        original_id = original.id
+    with SessionFactory.begin() as session:
+        mastery = session.get(SkillMastery, (uid(10), uid(101)))
+        mastery.band = "additional_practice"
+
+    client = login(api, "parent")
+    current = client.get(f"/children/{uid(10)}/learning-plan")
+    assert current.status_code == 200 and current.json()["id"] != str(original_id)
+    with SessionFactory() as session:
+        event = session.scalar(
+            select(LearningPlanEvent).where(
+                LearningPlanEvent.plan_id == original_id,
+                LearningPlanEvent.event_type == "band_changed",
+            )
+        )
+        assert event is not None
+
+
+def test_attempt_completion_updates_plan_in_same_transaction(api):
+    with SessionFactory.begin() as session:
+        attempts = session.scalars(
+            select(Attempt)
+            .join(ActivitySkill, ActivitySkill.activity_id == Attempt.activity_id)
+            .where(
+                Attempt.child_id == uid(10),
+                ActivitySkill.skill_id == uid(101),
+            )
+        )
+        for attempt in attempts:
+            attempt.is_correct = True
+
+    client = login(api)
+    response = client.post(
+        "/attempts",
+        json={"activity_id": str(uid(311)), "selected_index": 0},
+    )
+    assert response.status_code == 201, response.text
+    with SessionFactory() as session:
+        plan = session.scalar(
+            select(LearningPlan).where(
+                LearningPlan.child_id == uid(10),
+                LearningPlan.status == LearningPlanStatus.ACTIVE,
+            )
+        )
+        item = next(row for row in plan.items if row.activity_id == uid(311))
+        assert item.status.value == "completed"
+        assert session.scalar(
+            select(LearningPlanEvent).where(
+                LearningPlanEvent.plan_id == plan.id,
+                LearningPlanEvent.event_type == "item_completed",
+            )
+        ) is not None
+
+
+def test_frontend_cannot_complete_plan_item(api):
+    client = login(api)
+    with SessionFactory() as session:
+        item = session.scalar(select(LearningPlanItem))
+    assert client.post(
+        f"/children/{uid(10)}/learning-plan/{item.plan_id}/items/{item.id}/complete"
+    ).status_code == 403
 
 
 def test_adaptive_rollback_on_recommendation_failure(api, monkeypatch):

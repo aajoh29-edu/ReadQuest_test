@@ -3,9 +3,14 @@ from pathlib import Path
 
 import pytest
 from alembic.config import Config
-from sqlalchemy import create_engine, inspect
+from sqlalchemy import create_engine, inspect, select
+from sqlalchemy.exc import IntegrityError
 
 from alembic import command
+from app.db.session import SessionFactory
+from app.models.enums import LearningPlanItemType, LearningPlanStatus
+from app.models.learning import LearningPlan, LearningPlanItem
+from app.seeds.demo import run_seed, uid
 
 DATABASE_URL = os.getenv("READQUEST_TEST_DATABASE_URL")
 pytestmark = pytest.mark.integration
@@ -49,10 +54,65 @@ def test_upgrade_and_downgrade_complete_schema() -> None:
         "attempts",
         "skill_mastery",
         "recommendations",
+        "learning_plans",
+        "learning_plan_items",
+        "learning_plan_events",
         "alembic_version",
     } <= table_names
+
+    command.downgrade(config, "0002")
+    downgraded = set(inspect(engine).get_table_names())
+    assert not {
+        "learning_plans",
+        "learning_plan_items",
+        "learning_plan_events",
+    } & downgraded
+    command.upgrade(config, "head")
+    assert {
+        "learning_plans",
+        "learning_plan_items",
+        "learning_plan_events",
+    } <= set(inspect(engine).get_table_names())
 
     command.downgrade(config, "base")
     remaining = set(inspect(engine).get_table_names())
     assert remaining <= {"alembic_version"}
     engine.dispose()
+
+
+def test_plan_constraints_enforce_targets_and_single_active_plan() -> None:
+    database_url = require_test_database()
+    alembic_config(database_url)
+    command.upgrade(alembic_config(database_url), "head")
+    run_seed()
+
+    with SessionFactory.begin() as session:
+        existing = session.scalar(select(LearningPlan).where(LearningPlan.status == LearningPlanStatus.ACTIVE))
+        assert existing is not None
+        with pytest.raises(IntegrityError):
+            with session.begin_nested():
+                session.add(
+                    LearningPlanItem(
+                        plan_id=existing.id,
+                        item_type=LearningPlanItemType.ACTIVITY,
+                        skill_id=uid(101),
+                        activity_id=uid(311),
+                        sequence=99,
+                    )
+                )
+                session.flush()
+
+        with pytest.raises(IntegrityError):
+            with session.begin_nested():
+                session.add(
+                    LearningPlan(
+                        child_id=uid(10),
+                        status=LearningPlanStatus.ACTIVE,
+                        generated_by="test",
+                        algorithm_version="test",
+                        focus_summary=[],
+                        starts_on=existing.starts_on,
+                        target_ends_on=existing.target_ends_on,
+                    )
+                )
+                session.flush()

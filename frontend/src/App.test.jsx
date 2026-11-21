@@ -3,17 +3,27 @@ import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { beforeEach, expect, test, vi } from "vitest";
 import App, { Progress } from "./App.jsx";
-import { request } from "./api.js";
+import { generateLearningPlan, getLearningPlan, request } from "./api.js";
 
-vi.mock("./api.js", () => ({ request: vi.fn() }));
+vi.mock("./api.js", () => ({
+  request: vi.fn(),
+  getLearningPlan: vi.fn(),
+  generateLearningPlan: vi.fn(),
+}));
 const reader={id:"reader",display_name:"Sam"};
 const activity={id:"activity",title:"Read a word",difficulty:1,content:{choices:["cat","dog"]},prompt:"Choose cat"};
 const mastery={skill_id:"skill",skill_name:"Phonics",score:.8,band:"normal_review",confidence:"medium",attempt_count:5,last_practiced_at:"2026-09-01T12:00:00Z"};
 const recommendation={activity,explanation:"Let's practice a growing skill."};
+const plan={id:"plan",title:"My reading adventure",status:"active",starts_on:"2026-09-01",target_ends_on:"2026-09-08",items:[{id:"step",sequence:1,title:"Read a word",status:"pending"}]};
 
-beforeEach(() => { request.mockReset(); });
+beforeEach(() => {
+  request.mockReset();
+  getLearningPlan.mockReset();
+  generateLearningPlan.mockReset();
+});
 
 function mockChild() {
+  getLearningPlan.mockResolvedValue(plan);
   request.mockImplementation(async (path, options) => {
     if(path==="/auth/me") return {role:"child"};
     if(path==="/activities") return [activity];
@@ -46,6 +56,7 @@ test("child selects a real answer and submits no correctness or identity", async
   expect(call[1].body).not.toHaveProperty("is_correct");
   expect(call[1].body).not.toHaveProperty("child_id");
   expect(screen.getByRole("button",{name:"Check my answer"})).toBeDisabled();
+  expect(screen.queryByText(/80%/)).not.toBeInTheDocument();
   await user.click(screen.getByRole("button",{name:"Try Read a word"}));
   expect(screen.getByRole("radio",{name:"dog"})).not.toBeChecked();
 });
@@ -57,6 +68,14 @@ test("progress shows server mastery and unassessed wording", () => {
   expect(screen.getByText("No practice yet")).toBeInTheDocument();
 });
 
+test("child plan exposes ordered friendly steps without mastery fields", async () => {
+  mockChild(); render(<App />);
+  expect(await screen.findByRole("heading",{name:"Your reading steps"})).toBeInTheDocument();
+  expect(await screen.findByRole("heading",{name:"Step 1: Read a word"})).toBeInTheDocument();
+  expect(screen.queryByText("normal_review")).not.toBeInTheDocument();
+  expect(screen.queryByText(/%/)).not.toBeInTheDocument();
+});
+
 test("loading, empty and no-candidate states are usable", async () => {
   request.mockImplementation(async path => path==="/auth/me" ? {role:"child"} : []);
   render(<App />);
@@ -66,6 +85,7 @@ test("loading, empty and no-candidate states are usable", async () => {
 });
 
 test("parent role has scoped dashboard and create-child flow", async () => {
+  getLearningPlan.mockResolvedValue(null);
   request.mockImplementation(async path => {
     if(path==="/auth/me") return {role:"parent"};
     if(path==="/children") return [reader];
