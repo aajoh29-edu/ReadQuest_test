@@ -7,6 +7,7 @@
 - Target baseline: `aajoh29-edu/ReadQuest_test` at `d9ceef2`
 - The target remote had `final_configs`, not `final_config`. `final_config` was
   created locally from `origin/final_configs`.
+- Phase 1 plan commit: `51461fd`.
 
 ## Phase 1: Discovery and plan (complete)
 
@@ -63,16 +64,22 @@
 
 - The source defines many `/api/v1` endpoints without a backend implementation.
   Those endpoints cannot be merged blindly or treated as authoritative.
-- `frontend/vite.config.js` sends `/api/...` unchanged, while FastAPI mounts
-  application routes at `/...`; development proxy communication must be fixed
-  during frontend integration.
-- A disposable PostgreSQL runtime is required for migrations and integration
-  tests. Availability will be checked in Phase 2.
+- The Docker daemon and a local PostgreSQL listener are unavailable, so online
+  migration execution and database-backed integration tests remain blocked.
+  Alembic SQL generation succeeds; retry the online checks when PostgreSQL is
+  available.
 
 ### Checkpoint
 
 - **Completed:** Phase 1 discovery and plan.
-- **Next phase:** Phase 2 backend integration.
-- **Exact next command:** `git status --short && git diff --check`
-- **Then inspect:** `backend/app/main.py`, `backend/app/api/schemas.py`, and
-  `backend/tests/integration/test_production_api.py`
+- **Completed:** Phase 2 backend transport integration and startup verification.
+- **Backend files modified:** `backend/app/main.py`,
+  `backend/tests/test_health.py`
+- **Verification passed:** four health/CORS tests, Ruff checks, FastAPI startup,
+  live `GET /health` (HTTP 200), and `alembic upgrade head --sql` through `0002`.
+- **Database verification pending:** no PostgreSQL listener was available for
+  `alembic upgrade head` or the integration test suite.
+- **Next phase:** Phase 3 frontend integration.
+- **Exact next file:** `frontend/src/api.js`
+- **Exact next command:** `npm test -- --runInBand` from `frontend/` after the
+  API client and proxy changes are applied.
