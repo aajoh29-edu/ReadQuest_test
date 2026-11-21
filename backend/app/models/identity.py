@@ -15,7 +15,7 @@ from app.models.mixins import CreatedAtMixin, TimestampMixin
 from app.models.types import database_enum
 
 if TYPE_CHECKING:
-    from app.models.learning import Attempt, Recommendation, SkillMastery
+    from app.models.learning import Attempt, LearningPlan, Recommendation, SkillMastery
 
 
 class User(TimestampMixin, Base):
@@ -63,6 +63,7 @@ class ChildProfile(CreatedAtMixin, Base):
     attempts: Mapped[list[Attempt]] = relationship(back_populates="child")
     mastery_records: Mapped[list[SkillMastery]] = relationship(back_populates="child")
     recommendations: Mapped[list[Recommendation]] = relationship(back_populates="child")
+    learning_plans: Mapped[list[LearningPlan]] = relationship(back_populates="child")
 
 
 class GuardianChild(CreatedAtMixin, Base):

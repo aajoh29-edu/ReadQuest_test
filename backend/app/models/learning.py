@@ -1,17 +1,36 @@
 from __future__ import annotations
 
-from datetime import datetime
+from datetime import date, datetime
 from decimal import Decimal
 from typing import TYPE_CHECKING, Any
 from uuid import UUID, uuid4
 
-from sqlalchemy import CheckConstraint, DateTime, ForeignKey, Index, Integer, Numeric, String, func
+from sqlalchemy import (
+    CheckConstraint,
+    Date,
+    DateTime,
+    ForeignKey,
+    Index,
+    Integer,
+    Numeric,
+    String,
+    UniqueConstraint,
+    func,
+    text,
+)
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.dialects.postgresql import UUID as PGUUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.db.base import Base
-from app.models.enums import MasteryBand, MasteryConfidence, RecommendationStatus
+from app.models.enums import (
+    LearningPlanItemStatus,
+    LearningPlanItemType,
+    LearningPlanStatus,
+    MasteryBand,
+    MasteryConfidence,
+    RecommendationStatus,
+)
 from app.models.mixins import CreatedAtMixin
 from app.models.types import database_enum
 
@@ -129,3 +148,103 @@ class Recommendation(CreatedAtMixin, Base):
     triggering_attempt: Mapped[Attempt | None] = relationship(
         back_populates="triggered_recommendations"
     )
+
+
+class LearningPlan(CreatedAtMixin, Base):
+    __tablename__ = "learning_plans"
+    __table_args__ = (
+        Index("ix_learning_plans_child_status", "child_id", "status"),
+        Index(
+            "uq_learning_plans_active_child",
+            "child_id",
+            unique=True,
+            postgresql_where=text("status = 'active'"),
+        ),
+    )
+
+    id: Mapped[UUID] = mapped_column(PGUUID(as_uuid=True), primary_key=True, default=uuid4)
+    child_id: Mapped[UUID] = mapped_column(
+        PGUUID(as_uuid=True),
+        ForeignKey("child_profiles.id", ondelete="RESTRICT"),
+        nullable=False,
+    )
+    status: Mapped[LearningPlanStatus] = mapped_column(
+        database_enum(LearningPlanStatus, "learning_plan_status"),
+        nullable=False,
+        default=LearningPlanStatus.DRAFT,
+        server_default=LearningPlanStatus.DRAFT.value,
+    )
+    generated_by: Mapped[str] = mapped_column(String(80), nullable=False)
+    algorithm_version: Mapped[str] = mapped_column(String(30), nullable=False)
+    focus_summary: Mapped[list[dict[str, Any]]] = mapped_column(
+        JSONB, nullable=False, default=list
+    )
+    starts_on: Mapped[date] = mapped_column(Date, nullable=False)
+    target_ends_on: Mapped[date] = mapped_column(Date, nullable=False)
+
+    child: Mapped[ChildProfile] = relationship(back_populates="learning_plans")
+    items: Mapped[list[LearningPlanItem]] = relationship(
+        back_populates="plan", cascade="all, delete-orphan"
+    )
+    events: Mapped[list[LearningPlanEvent]] = relationship(
+        back_populates="plan", cascade="all, delete-orphan"
+    )
+
+
+class LearningPlanItem(Base):
+    __tablename__ = "learning_plan_items"
+    __table_args__ = (
+        CheckConstraint(
+            "num_nonnulls(skill_id, activity_id, book_id) = 1",
+            name="learning_plan_items_exactly_one_target",
+        ),
+        CheckConstraint("sequence >= 1", name="learning_plan_items_sequence_positive"),
+        UniqueConstraint("plan_id", "sequence", name="uq_learning_plan_items_plan_sequence"),
+        Index("ix_learning_plan_items_plan_status", "plan_id", "status"),
+        Index("ix_learning_plan_items_activity_id", "activity_id"),
+    )
+
+    id: Mapped[UUID] = mapped_column(PGUUID(as_uuid=True), primary_key=True, default=uuid4)
+    plan_id: Mapped[UUID] = mapped_column(
+        PGUUID(as_uuid=True),
+        ForeignKey("learning_plans.id", ondelete="CASCADE"),
+        nullable=False,
+    )
+    item_type: Mapped[LearningPlanItemType] = mapped_column(
+        database_enum(LearningPlanItemType, "learning_plan_item_type"), nullable=False
+    )
+    skill_id: Mapped[UUID | None] = mapped_column(
+        PGUUID(as_uuid=True), ForeignKey("skills.id", ondelete="RESTRICT")
+    )
+    activity_id: Mapped[UUID | None] = mapped_column(
+        PGUUID(as_uuid=True), ForeignKey("activities.id", ondelete="RESTRICT")
+    )
+    book_id: Mapped[UUID | None] = mapped_column(PGUUID(as_uuid=True))
+    sequence: Mapped[int] = mapped_column(Integer, nullable=False)
+    target_score: Mapped[Decimal | None] = mapped_column(Numeric(5, 4))
+    status: Mapped[LearningPlanItemStatus] = mapped_column(
+        database_enum(LearningPlanItemStatus, "learning_plan_item_status"),
+        nullable=False,
+        default=LearningPlanItemStatus.PENDING,
+        server_default=LearningPlanItemStatus.PENDING.value,
+    )
+
+    plan: Mapped[LearningPlan] = relationship(back_populates="items")
+    skill: Mapped[Skill | None] = relationship()
+    activity: Mapped[Activity | None] = relationship()
+
+
+class LearningPlanEvent(CreatedAtMixin, Base):
+    __tablename__ = "learning_plan_events"
+    __table_args__ = (Index("ix_learning_plan_events_plan_created", "plan_id", "created_at"),)
+
+    id: Mapped[UUID] = mapped_column(PGUUID(as_uuid=True), primary_key=True, default=uuid4)
+    plan_id: Mapped[UUID] = mapped_column(
+        PGUUID(as_uuid=True),
+        ForeignKey("learning_plans.id", ondelete="CASCADE"),
+        nullable=False,
+    )
+    event_type: Mapped[str] = mapped_column(String(50), nullable=False)
+    details: Mapped[dict[str, Any]] = mapped_column(JSONB, nullable=False, default=dict)
+
+    plan: Mapped[LearningPlan] = relationship(back_populates="events")

@@ -1,6 +1,6 @@
 # ReadQuest data dictionary — ERD v1
 
-This dictionary describes migrations 0001–0002 and the implemented ORM. The exact field diagram is in docs/models/ERD.md.
+This dictionary describes migrations 0001–0003 and the implemented ORM. The exact field diagram is in ERD.md.
 
 ## Shared conventions
 
@@ -175,6 +175,49 @@ This dictionary describes migrations 0001–0002 and the implemented ORM. The ex
 | created_at | timestamptz | No | Default current UTC time. |
 
 **Indexes:** `(child_id, created_at)`; `(child_id, status)`; `triggering_attempt_id`.
+
+## learning_plans
+
+| Field | Type | Null? | Rule |
+|---|---|---:|---|
+| id | uuid | No | Primary key. |
+| child_id | uuid | No | FK → child_profiles.id with RESTRICT deletion. |
+| status | learning_plan_status enum | No | `draft`, `active`, `paused`, `completed`, or `archived`. |
+| generated_by | varchar(80) | No | Audit label for the system actor or authenticated adult. |
+| algorithm_version | varchar(30) | No | Version of the pure generation algorithm. |
+| focus_summary | jsonb | No | Generation-time `{skill_code, band, score}` snapshot. |
+| starts_on / target_ends_on | date | No | Inclusive display window for the plan. |
+| created_at | timestamptz | No | Generation time. |
+
+**Constraints/indexes:** `(child_id, status)`; partial unique `child_id` where status is `active`.
+
+## learning_plan_items
+
+| Field | Type | Null? | Rule |
+|---|---|---:|---|
+| id | uuid | No | Primary key. |
+| plan_id | uuid | No | FK → learning_plans.id with CASCADE deletion. |
+| item_type | learning_plan_item_type enum | No | `skill`, `activity`, `book`, or `read_aloud`. |
+| skill_id | uuid | Yes | Optional FK → skills.id. |
+| activity_id | uuid | Yes | Optional FK → activities.id. Phase 1 target. |
+| book_id | uuid | Yes | Reserved for Phase 2. |
+| sequence | integer | No | Positive and unique within the plan. |
+| target_score | numeric(5,4) | Yes | Mastery boundary required for an activity target. |
+| status | learning_plan_item_status enum | No | `pending`, `in_progress`, `completed`, or `skipped`. |
+
+**Constraints/indexes:** exactly one target ID must be non-null; unique `(plan_id, sequence)`; `(plan_id, status)` and `activity_id`.
+
+## learning_plan_events
+
+| Field | Type | Null? | Rule |
+|---|---|---:|---|
+| id | uuid | No | Primary key. |
+| plan_id | uuid | No | FK → learning_plans.id with CASCADE deletion. |
+| event_type | varchar(50) | No | Stable trigger or item lifecycle event. |
+| details | jsonb | No | Machine-readable audit context without live mastery substitution. |
+| created_at | timestamptz | No | Event persistence time. |
+
+**Indexes:** `(plan_id, created_at)` for audit-history reads.
 
 
 ## auth_sessions

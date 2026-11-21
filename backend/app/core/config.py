@@ -27,6 +27,7 @@ class Settings(BaseSettings):
     database_url: str = _INSECURE_DEV_DATABASE_URL
     log_level: str = "INFO"
     session_hours: int = Field(default=8, ge=1, le=24)
+    internal_api_token: str | None = Field(default=None, min_length=16)
     allowed_origins: list[str] = ["http://localhost:8080", "http://127.0.0.1:8080", "http://localhost:5173", "http://127.0.0.1:5173"]
 
     def model_post_init(self, __context: object) -> None:

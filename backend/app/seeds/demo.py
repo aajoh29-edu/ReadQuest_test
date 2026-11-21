@@ -26,6 +26,7 @@ from app.models.identity import ChildProfile, Classroom, Enrollment, GuardianChi
 from app.models.learning import Attempt, Recommendation, SkillMastery  # noqa: F401 -- registers mappers
 from app.repositories.adaptive import AdaptiveRepository
 from app.services.adaptive.mastery import calculate_mastery
+from app.services.learning_plans import active_plan, generate_plan
 
 DEMO_PASSWORD_HASH = "DEMO_AUTH_NOT_CONFIGURED"
 
@@ -190,6 +191,19 @@ def seed_histories(session: Session, child_id) -> None:
         repository.save_mastery(child_id, uid(skill_number), calculate_mastery(evidence))
 
 
+def seed_learning_plan(session: Session, child: ChildProfile) -> None:
+    if active_plan(session, child.id) is not None:
+        return
+    child_session_end = datetime(2026, 9, 23, 12, tzinfo=UTC)
+    generate_plan(
+        session,
+        child,
+        generated_by="demo_seed",
+        reason="initial_seed",
+        now=child_session_end,
+    )
+
+
 def run_seed() -> None:
     if get_settings().environment == "production":
         raise ValueError("demo seeding is prohibited in production")
@@ -207,6 +221,7 @@ def run_seed() -> None:
         if session.get(Enrollment, (classroom.id, child.id)) is None:
             session.add(Enrollment(class_id=classroom.id, child_id=child.id))
         seed_histories(session, child.id)
+        seed_learning_plan(session, child)
     print("ReadQuest demo seed completed successfully.")
 
 

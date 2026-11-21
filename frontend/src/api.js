@@ -75,3 +75,14 @@ export async function request(path, { method = "GET", body, signal } = {}) {
   }
   return payload;
 }
+
+export function getLearningPlan(childId, options = {}) {
+  return request(`/children/${childId}/learning-plan`, options);
+}
+
+export function generateLearningPlan(childId, options = {}) {
+  return request(`/children/${childId}/learning-plan/generate`, {
+    ...options,
+    method: "POST",
+  });
+}

@@ -1,11 +1,19 @@
-from datetime import datetime
+from datetime import date, datetime
 from decimal import Decimal
 from typing import Annotated
 from uuid import UUID
 
 from pydantic import BaseModel, ConfigDict, EmailStr, Field, StringConstraints, model_validator
 
-from app.models.enums import ActivityType, ClassStatus, ContentStatus, UserRole, UserStatus
+from app.models.enums import (
+    ActivityType,
+    ClassStatus,
+    ContentStatus,
+    LearningPlanItemStatus,
+    LearningPlanStatus,
+    UserRole,
+    UserStatus,
+)
 
 Text80 = Annotated[str, StringConstraints(strip_whitespace=True, min_length=1, max_length=80)]
 Text160 = Annotated[str, StringConstraints(strip_whitespace=True, min_length=1, max_length=160)]
@@ -194,3 +202,63 @@ class AttemptView(BaseModel):
     is_correct: bool
     mastery: list[MasteryView]
     recommendation: RecommendationView | None
+
+
+class ChildLearningPlanItemView(BaseModel):
+    id: UUID
+    sequence: int
+    title: str
+    status: LearningPlanItemStatus
+
+
+class ChildLearningPlanView(BaseModel):
+    id: UUID
+    title: str
+    status: LearningPlanStatus
+    starts_on: date
+    target_ends_on: date
+    items: list[ChildLearningPlanItemView]
+
+
+class LearningPlanFocusView(BaseModel):
+    skill_code: str
+    band: str
+    score: float
+
+
+class AdultLearningPlanItemView(BaseModel):
+    id: UUID
+    sequence: int
+    activity_id: UUID
+    activity_title: str
+    skill_id: UUID
+    skill_code: str
+    skill_name: str
+    band: str
+    target_score: float
+    status: LearningPlanItemStatus
+
+
+class AdultLearningPlanView(BaseModel):
+    id: UUID
+    title: str
+    status: LearningPlanStatus
+    generated_by: str
+    algorithm_version: str
+    starts_on: date
+    target_ends_on: date
+    created_at: datetime
+    focus_summary: list[LearningPlanFocusView]
+    items: list[AdultLearningPlanItemView]
+
+
+class LearningPlanEventView(BaseModel):
+    id: UUID
+    event_type: str
+    details: dict
+    created_at: datetime
+
+
+class LearningPlanHistoryView(BaseModel):
+    plan: AdultLearningPlanView
+    events: list[LearningPlanEventView]
