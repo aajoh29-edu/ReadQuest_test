@@ -9,6 +9,7 @@
   created locally from `origin/final_configs`.
 - Phase 1 plan commit: `51461fd`.
 - Phase 2 backend checkpoint: `67bc31a`.
+- Phase 3 frontend checkpoint: `dc62514`.
 
 ## Phase 1: Discovery and plan (complete)
 
@@ -127,3 +128,52 @@
 - **Next phase:** Phase 4 end-to-end communication verification.
 - **Exact next command:** start Docker Desktop or PostgreSQL, then run
   `docker compose up -d db migrate api frontend --build`.
+
+## Phase 4: End-to-end communication (complete)
+
+### Live environment
+
+An isolated PostgreSQL 17 cluster on `127.0.0.1:55432` was used because the
+Docker daemon was unavailable. Its disposable databases were migrated to
+Alembic `0002`, the development database was seeded, and FastAPI plus Vite were
+started using their real application entry points.
+
+### Verified communication
+
+- `GET /api/health` through Vite: HTTP 200.
+- `GET /api/ready` through Vite: HTTP 200 and PostgreSQL connected.
+- Child `POST /api/auth/login`: HTTP 200; HttpOnly session cookie issued.
+- `GET /api/auth/me`, `/api/children`, `/api/activities`, and
+  `/api/children/:id/progress` through the same frontend origin: HTTP 200.
+- Server-scored `POST /api/attempts`: HTTP 201; persisted attempt, mastery, and
+  next recommendation returned with the correct answer key omitted.
+- `POST /api/children/:id/recommendations`: HTTP 200.
+- CORS preflight for the integrated `Accept`, `Content-Type`, and
+  `X-Requested-With` headers: passed.
+- Direct browser workflows: child answer/save, parent progress, teacher class,
+  admin curriculum, guardian create/join, mobile WCAG scan, and admin author/edit
+  all passed.
+
+### Automated verification
+
+- Backend unit tests: 42 passed.
+- Backend PostgreSQL integration tests: 19 passed.
+- Backend Ruff: passed.
+- Frontend Vitest: 11 passed.
+- Frontend production build: passed.
+- Playwright end-to-end: 7 passed.
+
+### Follow-up fix
+
+The existing revocation integration test reused an HTTP client cookie jar after
+switching roles, which left two same-name cookies with different domains and
+could send the newer admin token. The test now clears the jar before restoring
+the revoked child token, so it validates the intended server behavior
+deterministically.
+
+### Final state
+
+- **Completed:** Phases 1–4.
+- **Current blockers:** none.
+- **Next command for a maintainer:** `git status --short` and push
+  `final_config` to the target remote when ready.

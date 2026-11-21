@@ -140,6 +140,7 @@ def test_admin_account_deactivation_revokes_token(api):
     login(api, "admin")
     assert client.patch(f"/admin/users/{uid(3)}", json={"status": "disabled"}).status_code == 200
     assert client.get(f"/classes/{uid(20)}/children").json() == []
+    client.cookies.clear()
     client.cookies.set(COOKIE_NAME, token)
     assert client.get("/auth/me").status_code == 401
     client.cookies.clear()
