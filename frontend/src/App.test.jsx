@@ -71,7 +71,7 @@ test("progress shows server mastery and unassessed wording", () => {
 test("child plan exposes ordered friendly steps without mastery fields", async () => {
   mockChild(); render(<App />);
   expect(await screen.findByRole("heading",{name:"Your reading steps"})).toBeInTheDocument();
-  expect(screen.getByRole("heading",{name:"Step 1: Read a word"})).toBeInTheDocument();
+  expect(await screen.findByRole("heading",{name:"Step 1: Read a word"})).toBeInTheDocument();
   expect(screen.queryByText("normal_review")).not.toBeInTheDocument();
   expect(screen.queryByText(/%/)).not.toBeInTheDocument();
 });

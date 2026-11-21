@@ -11,14 +11,14 @@ async function login(page,role) {
   await page.getByRole("button",{name:"Sign in",exact:true}).click();
   await expect(page.getByRole("button",{name:"Sign out"})).toBeVisible();
 }
-test("child answers, sees mastery and next practice, then signs out",async({page})=>{
+test("child answers, sees reading steps and next practice, then signs out",async({page})=>{
   const errors=[]; page.on("pageerror",e=>errors.push(e.message));
   await login(page,"child");
   await expect(page.getByRole("heading",{name:"Hello, Demo Reader!"})).toBeVisible();
   await page.getByRole("radio").first().check();
   await page.getByRole("button",{name:"Check my answer"}).click();
   await expect(page.getByText("Great reading!")).toBeVisible();
-  await expect(page.getByRole("heading",{name:"Reading progress"})).toBeVisible();
+  await expect(page.getByRole("heading",{name:"Your reading steps"})).toBeVisible();
   await page.getByRole("button",{name:/^Try /}).click();
   await expect(page.getByRole("radio").first()).not.toBeChecked();
   await page.getByRole("button",{name:"Sign out"}).click();

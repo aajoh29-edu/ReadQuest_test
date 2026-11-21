@@ -31,7 +31,7 @@ def main():
                 parent = foreign_key.column.table.name.upper()
                 relationships.append(f'    {parent} ||--o{{ {name.upper()} : "{column.name}; {foreign_key.ondelete}"')
         blocks.append(f"    {name.upper()} {{\n" + "\n".join(fields) + "\n    }")
-    result = "# Implemented data model\n\nGenerated from SQLAlchemy metadata; migrations 0001–0002 are checked against PostgreSQL. Nullable grade/response/evidence timestamps are detailed in the data dictionary. FK deletion rules appear on relationship labels.\n\n```mermaid\nerDiagram\n" + "\n".join(relationships + blocks) + "\n```\n"
+    result = "# Implemented data model\n\nGenerated from SQLAlchemy metadata; migrations 0001–0003 are checked against PostgreSQL. Nullable grade/response/evidence timestamps are detailed in the data dictionary. FK deletion rules appear on relationship labels.\n\n```mermaid\nerDiagram\n" + "\n".join(relationships + blocks) + "\n```\n"
     (ROOT / "docs/models/ERD.md").write_text(result)
     (ROOT / "docs/architecture/ERD.md").write_text(result)
 

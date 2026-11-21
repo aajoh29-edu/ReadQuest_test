@@ -16,12 +16,12 @@ erDiagram
     CHILD_PROFILES ||--o{ ENROLLMENTS : "child_id; RESTRICT"
     USERS ||--o{ GUARDIAN_CHILDREN : "guardian_id; RESTRICT"
     CHILD_PROFILES ||--o{ GUARDIAN_CHILDREN : "child_id; RESTRICT"
-    CHILD_PROFILES ||--o{ RECOMMENDATIONS : "child_id; RESTRICT"
-    CHILD_PROFILES ||--o{ LEARNING_PLANS : "child_id; RESTRICT"
-    LEARNING_PLANS ||--o{ LEARNING_PLAN_ITEMS : "plan_id; CASCADE"
     LEARNING_PLANS ||--o{ LEARNING_PLAN_EVENTS : "plan_id; CASCADE"
+    LEARNING_PLANS ||--o{ LEARNING_PLAN_ITEMS : "plan_id; CASCADE"
     SKILLS ||--o{ LEARNING_PLAN_ITEMS : "skill_id; RESTRICT"
     ACTIVITIES ||--o{ LEARNING_PLAN_ITEMS : "activity_id; RESTRICT"
+    CHILD_PROFILES ||--o{ LEARNING_PLANS : "child_id; RESTRICT"
+    CHILD_PROFILES ||--o{ RECOMMENDATIONS : "child_id; RESTRICT"
     ACTIVITIES ||--o{ RECOMMENDATIONS : "activity_id; RESTRICT"
     ATTEMPTS ||--o{ RECOMMENDATIONS : "triggering_attempt_id; SET NULL"
     CHILD_PROFILES ||--o{ SKILL_MASTERY : "child_id; RESTRICT"
@@ -85,24 +85,11 @@ erDiagram
         varchar relationship_label
         datetime created_at
     }
-    LESSONS {
+    LEARNING_PLAN_EVENTS {
         uuid id PK
-        varchar title
-        text description
-        integer sequence
-        content_status status
-        datetime updated_at
-        datetime created_at
-    }
-    LEARNING_PLANS {
-        uuid id PK
-        uuid child_id FK
-        learning_plan_status status
-        varchar generated_by
-        varchar algorithm_version
-        jsonb focus_summary
-        date starts_on
-        date target_ends_on
+        uuid plan_id FK
+        varchar event_type
+        jsonb details
         datetime created_at
     }
     LEARNING_PLAN_ITEMS {
@@ -116,11 +103,24 @@ erDiagram
         numeric target_score
         learning_plan_item_status status
     }
-    LEARNING_PLAN_EVENTS {
+    LEARNING_PLANS {
         uuid id PK
-        uuid plan_id FK
-        varchar event_type
-        jsonb details
+        uuid child_id FK
+        learning_plan_status status
+        varchar generated_by
+        varchar algorithm_version
+        jsonb focus_summary
+        date starts_on
+        date target_ends_on
+        datetime created_at
+    }
+    LESSONS {
+        uuid id PK
+        varchar title
+        text description
+        integer sequence
+        content_status status
+        datetime updated_at
         datetime created_at
     }
     LOGIN_THROTTLES {

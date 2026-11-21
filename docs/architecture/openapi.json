@@ -115,6 +115,229 @@
         }
       }
     },
+    "/children/{child_id}/learning-plan": {
+      "get": {
+        "tags": [
+          "production"
+        ],
+        "summary": "Learning Plan",
+        "operationId": "learning_plan_children__child_id__learning_plan_get",
+        "parameters": [
+          {
+            "name": "child_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Child Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "anyOf": [
+                    {
+                      "$ref": "#/components/schemas/ChildLearningPlanView"
+                    },
+                    {
+                      "$ref": "#/components/schemas/AdultLearningPlanView"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "title": "Response Learning Plan Children  Child Id  Learning Plan Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/children/{child_id}/learning-plan/generate": {
+      "post": {
+        "tags": [
+          "production"
+        ],
+        "summary": "Generate Learning Plan Route",
+        "operationId": "generate_learning_plan_route_children__child_id__learning_plan_generate_post",
+        "parameters": [
+          {
+            "name": "child_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Child Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdultLearningPlanView"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/children/{child_id}/learning-plan/{plan_id}/items/{item_id}/complete": {
+      "post": {
+        "tags": [
+          "production"
+        ],
+        "summary": "Complete Learning Plan Item",
+        "operationId": "complete_learning_plan_item_children__child_id__learning_plan__plan_id__items__item_id__complete_post",
+        "parameters": [
+          {
+            "name": "child_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Child Id"
+            }
+          },
+          {
+            "name": "plan_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Plan Id"
+            }
+          },
+          {
+            "name": "item_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Item Id"
+            }
+          },
+          {
+            "name": "X-ReadQuest-Internal-Token",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Readquest-Internal-Token"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ChildLearningPlanItemView"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/children/{child_id}/learning-plan/history": {
+      "get": {
+        "tags": [
+          "production"
+        ],
+        "summary": "Learning Plan History",
+        "operationId": "learning_plan_history_children__child_id__learning_plan_history_get",
+        "parameters": [
+          {
+            "name": "child_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Child Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/LearningPlanHistoryView"
+                  },
+                  "title": "Response Learning Plan History Children  Child Id  Learning Plan History Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/children": {
       "get": {
         "tags": [
@@ -1485,6 +1708,133 @@
         ],
         "title": "ActivityView"
       },
+      "AdultLearningPlanItemView": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Id"
+          },
+          "sequence": {
+            "type": "integer",
+            "title": "Sequence"
+          },
+          "activity_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Activity Id"
+          },
+          "activity_title": {
+            "type": "string",
+            "title": "Activity Title"
+          },
+          "skill_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Skill Id"
+          },
+          "skill_code": {
+            "type": "string",
+            "title": "Skill Code"
+          },
+          "skill_name": {
+            "type": "string",
+            "title": "Skill Name"
+          },
+          "band": {
+            "type": "string",
+            "title": "Band"
+          },
+          "target_score": {
+            "type": "number",
+            "title": "Target Score"
+          },
+          "status": {
+            "$ref": "#/components/schemas/LearningPlanItemStatus"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "sequence",
+          "activity_id",
+          "activity_title",
+          "skill_id",
+          "skill_code",
+          "skill_name",
+          "band",
+          "target_score",
+          "status"
+        ],
+        "title": "AdultLearningPlanItemView"
+      },
+      "AdultLearningPlanView": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Id"
+          },
+          "title": {
+            "type": "string",
+            "title": "Title"
+          },
+          "status": {
+            "$ref": "#/components/schemas/LearningPlanStatus"
+          },
+          "generated_by": {
+            "type": "string",
+            "title": "Generated By"
+          },
+          "algorithm_version": {
+            "type": "string",
+            "title": "Algorithm Version"
+          },
+          "starts_on": {
+            "type": "string",
+            "format": "date",
+            "title": "Starts On"
+          },
+          "target_ends_on": {
+            "type": "string",
+            "format": "date",
+            "title": "Target Ends On"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          },
+          "focus_summary": {
+            "items": {
+              "$ref": "#/components/schemas/LearningPlanFocusView"
+            },
+            "type": "array",
+            "title": "Focus Summary"
+          },
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/AdultLearningPlanItemView"
+            },
+            "type": "array",
+            "title": "Items"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "title",
+          "status",
+          "generated_by",
+          "algorithm_version",
+          "starts_on",
+          "target_ends_on",
+          "created_at",
+          "focus_summary",
+          "items"
+        ],
+        "title": "AdultLearningPlanView"
+      },
       "AttemptInput": {
         "properties": {
           "activity_id": {
@@ -1599,6 +1949,77 @@
           "display_name"
         ],
         "title": "ChildInput"
+      },
+      "ChildLearningPlanItemView": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Id"
+          },
+          "sequence": {
+            "type": "integer",
+            "title": "Sequence"
+          },
+          "title": {
+            "type": "string",
+            "title": "Title"
+          },
+          "status": {
+            "$ref": "#/components/schemas/LearningPlanItemStatus"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "sequence",
+          "title",
+          "status"
+        ],
+        "title": "ChildLearningPlanItemView"
+      },
+      "ChildLearningPlanView": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Id"
+          },
+          "title": {
+            "type": "string",
+            "title": "Title"
+          },
+          "status": {
+            "$ref": "#/components/schemas/LearningPlanStatus"
+          },
+          "starts_on": {
+            "type": "string",
+            "format": "date",
+            "title": "Starts On"
+          },
+          "target_ends_on": {
+            "type": "string",
+            "format": "date",
+            "title": "Target Ends On"
+          },
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/ChildLearningPlanItemView"
+            },
+            "type": "array",
+            "title": "Items"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "title",
+          "status",
+          "starts_on",
+          "target_ends_on",
+          "items"
+        ],
+        "title": "ChildLearningPlanView"
       },
       "ChildView": {
         "properties": {
@@ -1796,6 +2217,101 @@
           "join_code"
         ],
         "title": "JoinInput"
+      },
+      "LearningPlanEventView": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Id"
+          },
+          "event_type": {
+            "type": "string",
+            "title": "Event Type"
+          },
+          "details": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Details"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "event_type",
+          "details",
+          "created_at"
+        ],
+        "title": "LearningPlanEventView"
+      },
+      "LearningPlanFocusView": {
+        "properties": {
+          "skill_code": {
+            "type": "string",
+            "title": "Skill Code"
+          },
+          "band": {
+            "type": "string",
+            "title": "Band"
+          },
+          "score": {
+            "type": "number",
+            "title": "Score"
+          }
+        },
+        "type": "object",
+        "required": [
+          "skill_code",
+          "band",
+          "score"
+        ],
+        "title": "LearningPlanFocusView"
+      },
+      "LearningPlanHistoryView": {
+        "properties": {
+          "plan": {
+            "$ref": "#/components/schemas/AdultLearningPlanView"
+          },
+          "events": {
+            "items": {
+              "$ref": "#/components/schemas/LearningPlanEventView"
+            },
+            "type": "array",
+            "title": "Events"
+          }
+        },
+        "type": "object",
+        "required": [
+          "plan",
+          "events"
+        ],
+        "title": "LearningPlanHistoryView"
+      },
+      "LearningPlanItemStatus": {
+        "type": "string",
+        "enum": [
+          "pending",
+          "in_progress",
+          "completed",
+          "skipped"
+        ],
+        "title": "LearningPlanItemStatus"
+      },
+      "LearningPlanStatus": {
+        "type": "string",
+        "enum": [
+          "draft",
+          "active",
+          "paused",
+          "completed",
+          "archived"
+        ],
+        "title": "LearningPlanStatus"
       },
       "LessonInput": {
         "properties": {
