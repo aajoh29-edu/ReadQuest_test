@@ -1,5 +1,7 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { request } from "./api.js";
+import WelcomeHero from "./WelcomeHero.jsx";
+import mascotImage from "./assets/images/mascot_quill_buddy_1795046659465.jpg";
 
 const words = { high_priority: "Let's grow this skill", additional_practice: "Keep practicing", normal_review: "Doing well", mastered: "Strong skill", unassessed: "Ready to try" };
 
@@ -256,8 +258,8 @@ export default function App() {
     try { await request("/auth/logout", { method: "POST" }); setUser(null); setNotice("You are signed out."); }
     catch(err) { setError(err.message); }
   }
-  return <><a className="skip-link" href="#main">Skip to content</a><header><div><p className="eyebrow">A little practice. A new adventure.</p><h1>ReadQuest</h1></div>{user && <div><span>{user.role}</span><button className="secondary" onClick={logout}>Sign out</button></div>}</header>
-    <main id="main"><Message error={error} notice={notice} />{checking ? <p role="status">Opening your reading space…</p> : !user ? <Login onLogin={row => { setUser(row); setError(""); setNotice(""); }} /> : <>
+  return <><a className="skip-link" href="#main">Skip to content</a><header><div className="brand"><img src={mascotImage} alt="" /><div><p className="eyebrow">A little practice. A new adventure.</p><h1>ReadQuest</h1></div></div>{user && <div className="account-actions"><span>{user.role}</span><button className="secondary" onClick={logout}>Sign out</button></div>}</header>
+    <main id="main"><Message error={error} notice={notice} />{checking ? <p role="status">Opening your reading space…</p> : !user ? <div className="welcome-layout"><WelcomeHero /><Login onLogin={row => { setUser(row); setError(""); setNotice(""); }} /></div> : <>
       <PasswordChange onChanged={() => {setUser(null);setNotice("Password changed. Sign in with your new password.");}} />
       {user.role === "child" ? <ChildReader /> : <Dashboard role={user.role} />}
       {user.role === "admin" && <><AccountAdmin /><CurriculumAdmin /></>}

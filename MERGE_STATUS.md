@@ -8,6 +8,7 @@
 - The target remote had `final_configs`, not `final_config`. `final_config` was
   created locally from `origin/final_configs`.
 - Phase 1 plan commit: `51461fd`.
+- Phase 2 backend checkpoint: `67bc31a`.
 
 ## Phase 1: Discovery and plan (complete)
 
@@ -81,5 +82,48 @@
   `alembic upgrade head` or the integration test suite.
 - **Next phase:** Phase 3 frontend integration.
 - **Exact next file:** `frontend/src/api.js`
-- **Exact next command:** `npm test -- --runInBand` from `frontend/` after the
-  API client and proxy changes are applied.
+- **Exact next command:** `npm test` from `frontend/` after the API client and
+  proxy changes are applied.
+
+## Phase 3: Frontend integration (complete)
+
+### Integrated changes
+
+- Added source ReadQuest hero and mascot artwork to the target's existing
+  role-aware application; retained all existing child, guardian, teacher, and
+  admin workflows.
+- Added `WelcomeHero` and source-inspired responsive styling without replacing
+  the authoritative frontend behaviors or test selectors.
+- Merged explicit same-origin API configuration, safe remote HTTPS validation,
+  JSON response checks, network errors, request headers, status mapping, and
+  session-expiry notification behavior into `frontend/src/api.js`.
+- Added `frontend/.env.example` and made Vite strip `/api` before forwarding to
+  root-mounted FastAPI routes, matching the production Nginx proxy.
+- Kept `credentials` as same-origin to match the target's HttpOnly session
+  cookie and reverse-proxy architecture.
+
+### Modified files in this phase
+
+- `frontend/.env.example`
+- `frontend/src/App.jsx`
+- `frontend/src/WelcomeHero.jsx`
+- `frontend/src/api.js`
+- `frontend/src/api.test.js`
+- `frontend/src/styles.css`
+- `frontend/src/assets/images/*`
+- `frontend/vite.config.js`
+
+### Verification
+
+- Vitest: 11 tests passed.
+- Vite production build: passed; production demo HTML removal still runs.
+- Browser smoke: Vite served HTTP 200 and rendered the hero, login form, source
+  artwork, and accessible page landmarks. The only browser errors were expected
+  backend 500 responses while FastAPI/PostgreSQL was intentionally offline.
+
+### Checkpoint
+
+- **Completed:** Phase 3 frontend integration.
+- **Next phase:** Phase 4 end-to-end communication verification.
+- **Exact next command:** start Docker Desktop or PostgreSQL, then run
+  `docker compose up -d db migrate api frontend --build`.
