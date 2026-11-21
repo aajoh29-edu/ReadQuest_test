@@ -1,0 +1,78 @@
+# ReadQuest Integration Status
+
+## Integration branch
+
+- Requested branch: `final_config`
+- Source: `https://github.com/oragz2/ReadQuest.git` at `b04d29b` (`main`)
+- Target baseline: `aajoh29-edu/ReadQuest_test` at `d9ceef2`
+- The target remote had `final_configs`, not `final_config`. `final_config` was
+  created locally from `origin/final_configs`.
+
+## Phase 1: Discovery and plan (complete)
+
+### Audit findings
+
+| Area | Target (`ReadQuest_test`) | Source (`ReadQuest`) | Integration decision |
+| --- | --- | --- | --- |
+| Architecture | FastAPI + SQLAlchemy + Alembic + PostgreSQL; React/Vite frontend in `frontend/` | Frontend-only React/TypeScript/Vite/Tailwind application at repository root | Preserve the target full-stack architecture and import compatible frontend functionality selectively. |
+| Database | COPPA-oriented `User`/`ChildProfile` separation, guardian links, curriculum, attempts, mastery, sessions table | No backend or database implementation; `AUTH_DATABASE_INTEGRATION.md` is only a proposed contract | Keep `backend/app/models` and both Alembic migrations unchanged unless a compatible schema extension is required. |
+| Authentication | Opaque server-side sessions, HttpOnly cookie, Postgres-backed users and role checks | Larger proposed auth API with registration, refresh, email verification, password recovery, and CSRF | Retain target authentication as authoritative; expose source-style UX only for capabilities that the backend already implements. |
+| API prefix | Backend routes are root-mounted; Nginx strips `/api/`; Vite currently does not rewrite `/api/` | Frontend expects `/api/v1` and a much broader route set | Standardize the integrated frontend on same-origin `/api`; fix the Vite proxy rewrite and keep Nginx stripping the external `/api/` prefix. |
+| Curriculum/learning | Published lessons and activities, server grading, attempts, mastery and recommendations | Richer UI/domain types, public synthetic curriculum, proposed session API | Adapt source-inspired UI data to existing backend responses. Do not use synthetic curriculum or client-side answer keys as an integration fallback. |
+| Roles | `parent`, `teacher`, `admin`, `child` | `parent`, `teacher`, `admin` with managed child profiles | Keep the target child login and role behavior. Source visual components must not weaken role or ownership checks. |
+| Dependencies | React 19, Vite 7, Vitest and Playwright | Adds React Router, Lucide, Motion, Tailwind and TypeScript | Add only dependencies used by imported components; preserve the target test/build toolchain. |
+| Environment | `READQUEST_*` backend settings and explicit CORS origins | `VITE_*` frontend API/CSRF settings and `/api/v1` default | Add frontend build-time API configuration compatible with `/api`; retain backend environment names and CORS validation. |
+
+### Merge plan
+
+1. **Backend integration**
+   - Keep `backend/app/models`, `backend/alembic`, `backend/app/db`, migrations,
+     server-side grading, and authorization logic as the source of truth.
+   - Improve CORS/request-header support for the integrated same-origin client.
+   - Add narrowly-scoped API response/schema compatibility only where an
+     imported UI requires it and the target schema can support it without
+     duplicating or bypassing business logic.
+   - Verify unit/integration tests, `alembic upgrade head`, and FastAPI startup.
+
+2. **Frontend integration**
+   - Import the source artwork and visual component patterns that match the
+     target's existing child, guardian, teacher, and admin workflows.
+   - Merge the source API client's explicit error classification, endpoint
+     configuration, `credentials: include`, and safe JSON handling into
+     `frontend/src/api.js`.
+   - Adapt the target React application in place rather than replacing it with
+     source pages whose proposed endpoints have no authoritative backend.
+   - Update Vite, Nginx, CSP, and `.env.example` consistently for same-origin
+     `/api` communication.
+   - Preserve the existing frontend unit and Playwright workflows.
+
+3. **End-to-end verification**
+   - Migrate and seed a disposable PostgreSQL database.
+   - Start FastAPI and Vite/Nginx.
+   - Verify health/readiness, parent and child login/session behavior, child
+     curriculum fetch, answer write/mastery response, guardian-class data, and
+     teacher/admin workflows through the frontend origin.
+   - Verify browser CORS/preflight and confirm there are no unexpected 4xx/5xx
+     responses or client-side runtime errors.
+
+### Modified files in this step
+
+- `MERGE_STATUS.md`
+
+### Current blockers
+
+- The source defines many `/api/v1` endpoints without a backend implementation.
+  Those endpoints cannot be merged blindly or treated as authoritative.
+- `frontend/vite.config.js` sends `/api/...` unchanged, while FastAPI mounts
+  application routes at `/...`; development proxy communication must be fixed
+  during frontend integration.
+- A disposable PostgreSQL runtime is required for migrations and integration
+  tests. Availability will be checked in Phase 2.
+
+### Checkpoint
+
+- **Completed:** Phase 1 discovery and plan.
+- **Next phase:** Phase 2 backend integration.
+- **Exact next command:** `git status --short && git diff --check`
+- **Then inspect:** `backend/app/main.py`, `backend/app/api/schemas.py`, and
+  `backend/tests/integration/test_production_api.py`
