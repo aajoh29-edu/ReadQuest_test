@@ -24,7 +24,8 @@ CMD ["python", "-m", "pytest", "-q"]
 FROM deps AS audit
 
 RUN python -m pip install --no-cache-dir pip-audit==2.10.0 \
-    && python -m pip install --no-cache-dir /wheels/readquest_backend-*.whl
+    && python -m pip install --no-cache-dir /wheels/readquest_backend-*.whl \
+    && python -m pip uninstall -y readquest-backend
 CMD ["pip-audit", "--local"]
 
 FROM python:3.13-slim@sha256:e48f59cdba69a3cbd9ed2cf0f348d90d45a8d350d98134cf1070bc106ee9ed90 AS runtime

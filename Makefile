@@ -41,7 +41,9 @@ clean:
 	docker run --rm -v "$$(pwd):/workspace" -w /workspace $(CLEAN_IMAGE) sh -c 'rm -rf dist server.js'
 
 logs:
-	$(COMPOSE) logs --follow
+	@status=0; \
+	$(COMPOSE) logs --follow || status=$$?; \
+	[ "$$status" -eq 0 ] || [ "$$status" -eq 130 ]
 
 prod:
 	$(COMPOSE) down --remove-orphans
