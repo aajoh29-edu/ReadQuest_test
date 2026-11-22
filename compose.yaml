@@ -1,0 +1,47 @@
+services:
+  db:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_DB: readquest
+      POSTGRES_USER: readquest
+      POSTGRES_PASSWORD: readquest
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U readquest -d readquest"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    volumes:
+      - readquest-postgres:/var/lib/postgresql/data
+
+  backend:
+    build:
+      context: ./backend
+    environment:
+      DATABASE_URL: postgresql+psycopg://readquest:readquest@db:5432/readquest
+      READQUEST_FRONTEND_URL: http://localhost:3000
+    depends_on:
+      db:
+        condition: service_healthy
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "python",
+          "-c",
+          "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/health')",
+        ]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  frontend:
+    build:
+      context: .
+    ports:
+      - "3000:80"
+    depends_on:
+      backend:
+        condition: service_healthy
+
+volumes:
+  readquest-postgres:

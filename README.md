@@ -150,6 +150,20 @@ $env:VITE_DEV_API_TARGET = "http://127.0.0.1:9000"
 npm run dev
 ```
 
+### Docker Compose
+
+Docker Compose builds and starts PostgreSQL, the FastAPI backend, and the Nginx-served
+frontend:
+
+```powershell
+docker compose up --build -d
+Invoke-RestMethod http://localhost:3000/health
+Invoke-WebRequest http://localhost:3000
+```
+
+Stop the stack with `docker compose down`. Add `--volumes` to that command when you
+also want to reset the local PostgreSQL data.
+
 ### Local account behavior
 
 For a usable zero-configuration launch, `READQUEST_AUTO_VERIFY_EMAIL` defaults to `true`, so registration creates an authenticated parent account immediately. For a production-like verification flow, set it to `false` and configure SMTP as described in the [backend README](./backend/README.md). Registration always defaults to `parent`; teacher/admin roles must be assigned through an administrative onboarding process.

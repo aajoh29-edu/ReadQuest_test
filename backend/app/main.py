@@ -18,6 +18,11 @@ app.include_router(production_router, prefix="/api/v1")
 app.include_router(voice_router, prefix="/api/v1")
 
 
+@app.get("/health")
+async def health() -> dict[str, str]:
+    return {"status": "ok"}
+
+
 @app.exception_handler(HTTPException)
 async def http_exception_handler(_request: Request, exc: HTTPException) -> JSONResponse:
     codes = {

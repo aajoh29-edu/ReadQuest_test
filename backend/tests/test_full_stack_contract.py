@@ -53,6 +53,12 @@ def register(client: TestClient) -> None:
     assert client.cookies.get("rq_csrf_token")
 
 
+def test_health() -> None:
+    response = TestClient(app).get("/health")
+    assert response.status_code == 200
+    assert response.json() == {"status": "ok"}
+
+
 def create_learner(client: TestClient) -> dict:
     response = client.post(
         "/api/v1/learners",
