@@ -166,7 +166,7 @@ The backend requires the frontend's double-submit CSRF cookie/header pair on sta
 | `npm run lint` | Run TypeScript type checking (`tsc --noEmit`) |
 | `npx tsx --test src/services/authAndSecurity.test.ts` | Run automated auth validation, security, API transport, and 22 deterministic adaptive engine tests |
 | `npm audit` | Scan dependencies in `package-lock.json` for known vulnerabilities |
-| `npm run clean` | Remove build artifacts on macOS/Linux (`dist` and `server.js`) |
+| `npm run clean` | Remove generated artifacts (`dist/` and legacy `server.js`) on Windows, macOS, or Linux |
 | `cd backend; python -m pytest -q` | Run the complete backend authentication, curriculum, learning, books, voice, and portal test suite |
 
 ---

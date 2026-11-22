@@ -8,7 +8,7 @@
     "build": "vite build",
     "preview": "vite preview",
     "optimize:images": "node scripts/optimize-images.mjs",
-    "clean": "rm -rf dist server.js",
+    "clean": "node -e \"for (const p of ['dist','server.js']) require('fs').rmSync(p,{recursive:true,force:true})\"",
     "lint": "tsc --noEmit"
   },
   "dependencies": {
