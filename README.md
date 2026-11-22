@@ -93,7 +93,9 @@ On macOS/Linux, copy the file with `cp .env.example .env`.
 
 ### 3. Prepare and seed the backend
 
-Use a separate virtual environment for backend dependencies.
+Use a separate virtual environment for backend dependencies. The editable install
+includes the `dev` test dependencies and supports the workspace's Python 3.15
+interpreter.
 
 **Windows PowerShell:**
 
@@ -102,7 +104,7 @@ Set-Location backend
 py -m venv .venv
 .\.venv\Scripts\Activate.ps1
 python -m pip install --upgrade pip
-python -m pip install --only-binary=:all: -r requirements.txt
+python -m pip install --only-binary=:all: -e ".[dev]"
 python -m app.seeds.demo
 ```
 
@@ -113,7 +115,7 @@ cd backend
 python3 -m venv .venv
 source .venv/bin/activate
 python -m pip install --upgrade pip
-python -m pip install -r requirements.txt
+python -m pip install -e ".[dev]"
 python -m app.seeds.demo
 ```
 

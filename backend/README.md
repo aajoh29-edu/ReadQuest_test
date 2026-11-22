@@ -14,7 +14,7 @@ Use Python 3.11 or newer. Run these commands from this `backend` directory.
 py -m venv .venv
 .\.venv\Scripts\Activate.ps1
 python -m pip install --upgrade pip
-python -m pip install --only-binary=:all: -r requirements.txt
+python -m pip install --only-binary=:all: -e ".[dev]"
 python -m app.seeds.demo
 python -m app
 ```
@@ -28,7 +28,7 @@ On Python 3.15, `--only-binary=:all:` avoids attempting a local
 python3 -m venv .venv
 source .venv/bin/activate
 python -m pip install --upgrade pip
-python -m pip install -r requirements.txt
+python -m pip install -e ".[dev]"
 python -m app.seeds.demo
 python -m app
 ```
@@ -83,6 +83,12 @@ Set `READQUEST_COOKIE_SECURE=true` behind HTTPS. Registration always creates a
 database onboarding process rather than accepting roles from client requests.
 
 ## Tests
+
+```powershell
+python -m pytest -q
+```
+
+The suite can also be run from the repository root:
 
 ```powershell
 python -m pytest -q

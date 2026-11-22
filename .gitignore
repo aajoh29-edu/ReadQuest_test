@@ -6,6 +6,7 @@ coverage/
 .DS_Store
 *.log
 __pycache__/
+*.egg-info/
 *.py[cod]
 .pytest_cache/
 backend/*.db
