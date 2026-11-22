@@ -4,67 +4,32 @@ This FastAPI service implements authentication, learner profiles, curriculum,
 server-side lesson grading, sessions, mastery analytics, books, read-aloud
 assessment, parent/teacher portals, and assignments.
 
-## Local setup
+## Docker setup
 
-Use Python 3.11 or newer. Run these commands from this `backend` directory.
-
-### Windows PowerShell
-
-```powershell
-py -m venv .venv
-.\.venv\Scripts\Activate.ps1
-python -m pip install --upgrade pip
-python -m pip install --only-binary=:all: -e ".[dev]"
-python -m app.seeds.demo
-python -m app
-```
-
-On Python 3.15, `--only-binary=:all:` avoids attempting a local
-`pydantic-core` build, which Windows Application Control may block.
-
-### macOS/Linux
+Run the Docker workflow from the repository root; host Python is not required:
 
 ```bash
-python3 -m venv .venv
-source .venv/bin/activate
-python -m pip install --upgrade pip
-python -m pip install -e ".[dev]"
-python -m app.seeds.demo
-python -m app
+cp .env.example .env
+make up
+make seed
 ```
 
 The API listens on `http://127.0.0.1:8000`. Check
-`http://127.0.0.1:8000/docs` for the OpenAPI UI or
-`http://127.0.0.1:8000/api/v1/books` for seeded data.
+`http://127.0.0.1:8000/health`, `http://127.0.0.1:8000/docs`, or
+`http://127.0.0.1:8000/api/v1/books`.
 
 ## Database
 
-The default database is `sqlite:///./readquest.db`, relative to the directory
-where the backend command is launched. `python -m app.seeds.demo` creates the
-tables and imports the checked-in JSON fixtures. It is safe to run repeatedly.
-
-The local seed imports 12 lessons, 60 frontend activities, 16 books, and the
-read-aloud fixtures.
-
-For PostgreSQL, set `DATABASE_URL` before running the migration and seed:
-
-```powershell
-$env:DATABASE_URL = "postgresql+psycopg://user:password@localhost/readquest"
-alembic upgrade head
-python -m app.seeds.demo
-```
-
-Do not run the migrations against the default SQLite database; the migrations
-use PostgreSQL enum and JSONB features.
+PostgreSQL is the supported Docker database. Compose runs Alembic migrations in
+the separate `migrate` service before FastAPI starts. Seed data is loaded only
+when `make seed` runs; it imports 12 lessons, 60 frontend activities, 16 books,
+and all read-aloud fixtures. The seed is idempotent.
 
 ## Authentication and email configuration
 
 Local development defaults to automatically verifying new accounts so the UI is
-immediately usable:
-
-```powershell
-$env:READQUEST_AUTO_VERIFY_EMAIL = "true"
-```
+immediately usable. Set backend configuration in the root `.env`, not in a host
+shell.
 
 For production-like email verification and password reset, set
 `READQUEST_AUTO_VERIFY_EMAIL=false` and configure:
@@ -84,14 +49,8 @@ database onboarding process rather than accepting roles from client requests.
 
 ## Tests
 
-```powershell
-python -m pytest -q
-```
-
-The suite can also be run from the repository root:
-
-```powershell
-python -m pytest -q
+```bash
+make test
 ```
 
 For the complete frontend and backend launch sequence, see the main
