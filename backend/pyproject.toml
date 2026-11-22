@@ -1,0 +1,31 @@
+[build-system]
+requires = ["setuptools>=77"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "readquest-backend"
+version = "0.0.0"
+description = "ReadQuest FastAPI backend"
+requires-python = ">=3.11"
+dependencies = [
+  "alembic>=1.17,<2",
+  "argon2-cffi>=25,<26",
+  "fastapi>=0.121,<1",
+  "httpx>=0.28,<1",
+  "pydantic>=2.12,<3",
+  "psycopg[binary]>=3.3.6,<4",
+  "SQLAlchemy>=2.0,<3",
+  "uvicorn>=0.38,<1",
+]
+
+[project.optional-dependencies]
+dev = [
+  "pytest>=8.4,<9",
+]
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["app*"]
+
+[tool.setuptools.package-data]
+app = ["seeds/data/*.json"]

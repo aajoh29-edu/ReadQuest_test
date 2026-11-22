@@ -1,0 +1,43 @@
+name: readquest-test
+
+services:
+  test-db:
+    image: postgres:17-alpine@sha256:f9cf3e1f0066f0eb0c48707d864f0ac5941e9ff454a072077d97a4d278d07d73
+    environment:
+      POSTGRES_DB: readquest_test
+      POSTGRES_USER: readquest_test
+      POSTGRES_PASSWORD: readquest_test_only
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
+      interval: 2s
+      timeout: 5s
+      retries: 10
+    tmpfs:
+      - /var/lib/postgresql/data
+
+  backend-test:
+    build:
+      context: ./backend
+      target: test
+    environment:
+      DATABASE_URL: postgresql+psycopg://readquest_test:readquest_test_only@test-db:5432/readquest_test
+    command: ["sh", "-c", "alembic upgrade head && python -m pytest -q"]
+    depends_on:
+      test-db:
+        condition: service_healthy
+
+  frontend-test:
+    build:
+      context: .
+      target: check
+
+  backend-audit:
+    build:
+      context: ./backend
+      target: audit
+
+  frontend-audit:
+    build:
+      context: .
+      target: deps
+    command: ["npm", "audit", "--audit-level=high"]

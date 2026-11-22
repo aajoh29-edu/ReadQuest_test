@@ -1,0 +1,102 @@
+name: ${COMPOSE_PROJECT_NAME:-readquest-dev}
+
+services:
+  db:
+    image: postgres:17-alpine@sha256:f9cf3e1f0066f0eb0c48707d864f0ac5941e9ff454a072077d97a4d278d07d73
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-readquest}
+      POSTGRES_USER: ${POSTGRES_USER:-readquest}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-replace-with-local-password}
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    volumes:
+      - readquest-postgres:/var/lib/postgresql/data
+
+  migrate:
+    build:
+      context: ./backend
+      target: dev
+    environment: &backend-environment
+      DATABASE_URL: postgresql+psycopg://${POSTGRES_USER:-readquest}:${POSTGRES_PASSWORD:-replace-with-local-password}@db:5432/${POSTGRES_DB:-readquest}
+      READQUEST_FRONTEND_URL: ${READQUEST_FRONTEND_URL:-http://localhost:8080}
+      READQUEST_AUTO_VERIFY_EMAIL: ${READQUEST_AUTO_VERIFY_EMAIL:-true}
+      READQUEST_COOKIE_SECURE: ${READQUEST_COOKIE_SECURE:-false}
+      READQUEST_CSRF_COOKIE: ${READQUEST_CSRF_COOKIE:-rq_csrf_token}
+      SMTP_HOST: ${SMTP_HOST:-}
+      SMTP_PORT: ${SMTP_PORT:-587}
+      SMTP_FROM: ${SMTP_FROM:-no-reply@readquest.local}
+      SMTP_USERNAME: ${SMTP_USERNAME:-}
+      SMTP_PASSWORD: ${SMTP_PASSWORD:-}
+    command: ["alembic", "upgrade", "head"]
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: "no"
+
+  backend:
+    build:
+      context: ./backend
+      target: dev
+    environment: *backend-environment
+    command: ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000", "--reload"]
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "python",
+          "-c",
+          "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/health', timeout=3)",
+        ]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    ports:
+      - "${DEV_BACKEND_PORT:-8000}:8000"
+    volumes:
+      - ./backend:/app
+      - backend-venv:/app/.venv
+
+  frontend:
+    build:
+      context: .
+      target: dev
+    environment:
+      VITE_API_BASE_URL: ${VITE_API_BASE_URL:-/api/v1}
+      VITE_APP_NAME: ${VITE_APP_NAME:-ReadQuest}
+      VITE_ENABLE_CSRF_HEADER: ${VITE_ENABLE_CSRF_HEADER:-true}
+      VITE_CSRF_COOKIE_NAME: ${VITE_CSRF_COOKIE_NAME:-rq_csrf_token}
+      VITE_DEV_API_TARGET: ${VITE_DEV_API_TARGET:-http://backend:8000}
+      CHOKIDAR_USEPOLLING: ${CHOKIDAR_USEPOLLING:-true}
+    depends_on:
+      backend:
+        condition: service_healthy
+    ports:
+      - "${DEV_FRONTEND_PORT:-8080}:3000"
+    volumes:
+      - .:/app
+      - frontend-node-modules:/app/node_modules
+
+  seed:
+    profiles: ["seed"]
+    build:
+      context: ./backend
+      target: dev
+    environment: *backend-environment
+    command: ["python", "-m", "app.seeds.demo"]
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+    volumes:
+      - ./backend:/app
+      - backend-venv:/app/.venv
+
+volumes:
+  readquest-postgres:
+  backend-venv:
+  frontend-node-modules:

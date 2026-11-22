@@ -79,21 +79,28 @@ If hosting the backend on a separate subdomain (`https://api.readquest.org`), up
 
 ## 4. Build & Deployment Steps
 
-1. Install dependencies using the lockfile:
+1. Copy `.env.example` to `.env` and provide deployment-only values through
+   CI/CD secrets; never commit `.env`.
+2. Run the same container checks used by CI:
    ```bash
-   bun install --frozen-lockfile
+   make build
+   make test
+   make audit
    ```
-2. Run verification checks before building:
+3. Build and run the production Compose stack:
    ```bash
-   npm run lint
-   npx tsx --test src/services/authAndSecurity.test.ts
-   bun audit
+   export PROD_POSTGRES_PASSWORD="..."
+   make prod
    ```
-3. Set production environment variables (e.g., `VITE_API_BASE_URL="/api/v1"`) and build:
+4. Verify the Nginx frontend and reverse proxy:
    ```bash
-   npm run build
+   curl -I http://localhost:8081/
+   curl http://localhost:8081/api/v1/curriculum/levels
    ```
-4. Deploy `dist/` to your static host/CDN or Nginx origin, and verify `/api/v1/*` proxy connectivity to the backend team's API server.
+
+`compose.production.yaml` uses non-root FastAPI and Nginx runtime stages, has
+no bind mounts or development dependencies, and runs Alembic through a separate
+`migrate` service.
 
 ---
 

@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
 import { BookOpen } from 'lucide-react';
 
-import heroArtwork from '../../assets/images/hero_reading_adventure_1795046657309.jpg';
-import phonicsForestArtwork from '../../assets/images/quest_phonics_forest_1795046657223.jpg';
-import blendingBeachArtwork from '../../assets/images/quest_blending_beach_1795046658152.jpg';
-import sightWordGalaxyArtwork from '../../assets/images/quest_sight_word_galaxy_1795046658135.jpg';
-import storybookKingdomArtwork from '../../assets/images/quest_storybook_kingdom_1795046659843.jpg';
-import quillMascotArtwork from '../../assets/images/mascot_quill_buddy_1795046659465.jpg';
+import heroArtwork from '../../assets/images/hero_reading_adventure_1795046657309.webp';
+import phonicsForestArtwork from '../../assets/images/quest_phonics_forest_1795046657223.webp';
+import blendingBeachArtwork from '../../assets/images/quest_blending_beach_1795046658152.webp';
+import sightWordGalaxyArtwork from '../../assets/images/quest_sight_word_galaxy_1795046658135.webp';
+import storybookKingdomArtwork from '../../assets/images/quest_storybook_kingdom_1795046659843.webp';
+import quillMascotArtwork from '../../assets/images/mascot_quill_buddy_1795046659465.webp';
 
 export const LANDING_ARTWORK = {
   hero: heroArtwork,

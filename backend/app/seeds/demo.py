@@ -76,6 +76,7 @@ def seed_demo(session: Session) -> dict[str, int]:
             Skill,
             {"id": item["id"], "code": item["code"], "name": item["name"]},
         )
+    session.flush()
 
     frontend_activities = 0
     for lesson in frontend_lessons:
@@ -94,6 +95,7 @@ def seed_demo(session: Session) -> dict[str, int]:
                     "content": activity,
                 },
             )
+    session.flush()
 
     for row in books:
         _upsert(
@@ -105,6 +107,7 @@ def seed_demo(session: Session) -> dict[str, int]:
                 "source": BookSource(row["source"]),
             },
         )
+    session.flush()
 
     book_rows = list(session.scalars(select(Book).where(Book.id.in_([b["id"] for b in books]))))
     skill_ids = [item["id"] for item in skills]
@@ -123,6 +126,9 @@ def seed_demo(session: Session) -> dict[str, int]:
             "content": row.get("content", {"show_word_bank": True}),
         }
         _upsert(session, Activity, activity_values)
+    session.flush()
+
+    for row in reading_texts:
         reading_text = session.get(ReadingText, row["id"])
         if reading_text is None:
             reading_text = ReadingText(id=row["id"])

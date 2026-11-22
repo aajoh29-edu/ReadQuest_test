@@ -58,120 +58,119 @@
 
 ## Getting Started
 
+New to the project? Follow the
+[Junior Developer Setup Guide](./docs/JUNIOR_DEVELOPER_SETUP.md) for a complete
+Windows/WSL walkthrough.
+
 ### Prerequisites
-- [Bun](https://bun.sh/) or Node.js `20.19+` (or `22.12+`)
-- Python `3.11+`
+- Docker Engine in Ubuntu, **or** Docker Desktop with WSL integration enabled for
+  the Ubuntu distribution.
+- Docker Compose v2 (`docker compose`, not `docker-compose`).
+- GNU Make. On Ubuntu: `sudo apt-get update && sudo apt-get install -y make`.
+- Node.js, npm, Bun, Python, and PostgreSQL do **not** need to be installed on the
+  host.
 
-Run all commands below from the `ReadQuest` project directory unless a step says otherwise.
+Run commands from an Ubuntu terminal in the repository root. A native Linux
+checkout (for example, `~/projects/ReadQuest`) gives the fastest bind mounts and
+file watching. `/mnt/c` and `/mnt/d` checkouts are supported, including the
+polling configuration used by Vite and Uvicorn.
 
-### 1. Install frontend dependencies
-
-The repository includes a Bun lockfile. Choose one package manager:
-
-```powershell
-bun install --frozen-lockfile
-# or
-npm install
-```
-
-### 2. Configure the frontend
-
-Copy the environment template. The default `/api/v1` value is correct for local development because Vite proxies `/api` to the backend on port `8000`.
-
-```powershell
-Copy-Item .env.example .env
-```
-
-```env
-VITE_API_BASE_URL="/api/v1"
-VITE_APP_NAME="ReadQuest"
-VITE_ENABLE_CSRF_HEADER="true"
-VITE_CSRF_COOKIE_NAME="rq_csrf_token"
-```
-
-> **Security Note:** Never place database URLs, JWT secrets, or private API keys in `VITE_*` variables—they are bundled into client-side JavaScript.
-
-On macOS/Linux, copy the file with `cp .env.example .env`.
-
-### 3. Prepare and seed the backend
-
-Use a separate virtual environment for backend dependencies.
-
-**Windows PowerShell:**
-
-```powershell
-Set-Location backend
-py -m venv .venv
-.\.venv\Scripts\Activate.ps1
-python -m pip install --upgrade pip
-python -m pip install --only-binary=:all: -r requirements.txt
-python -m app.seeds.demo
-```
-
-**macOS/Linux:**
+### First-time setup
 
 ```bash
-cd backend
-python3 -m venv .venv
-source .venv/bin/activate
-python -m pip install --upgrade pip
-python -m pip install -r requirements.txt
-python -m app.seeds.demo
+cp .env.example .env
+make build
+make up
+make seed
 ```
 
-`app.seeds.demo` creates the local `backend\readquest.db` SQLite database, creates its tables, and inserts the complete 12-quest/60-activity curriculum plus the checked-in books and read-aloud texts. The seed is safe to run again.
+Edit `.env` before starting a shared or production-like environment. Keep all
+`VITE_*` values public; never put database passwords, SMTP credentials, or tokens
+in a `VITE_*` variable because Vite embeds those values in browser JavaScript.
 
-SQLite is the supported zero-configuration local database. The Alembic migrations use PostgreSQL-specific types; do not run `alembic upgrade head` for the local SQLite workflow.
+Development URLs:
 
-### 4. Launch both services
+- Frontend: `http://localhost:8080`
+- Backend health: `http://localhost:8000/health`
+- Backend OpenAPI: `http://localhost:8000/docs`
+- Demo activity feed: `http://localhost:8000/demo/activities`
+- Same-origin API from the frontend: `http://localhost:8080/api/v1/*` through the
+  development proxy configuration
 
-Keep the virtual environment active and start FastAPI from `backend`:
+The migration service runs `alembic upgrade head` before FastAPI starts. `seed`
+is an explicit profile so normal startup never reloads fixture data implicitly.
+The demo seed is idempotent.
 
-```powershell
-python -m app
+### Daily workflow
+
+| Command | Action |
+| --- | --- |
+| `make up` | Build and start PostgreSQL, migrations, FastAPI, and Vite with hot reload |
+| `make down` | Stop development containers without deleting database data |
+| `make logs` | Follow development service logs |
+| `make seed` | Load or refresh the idempotent demo data |
+| `make test` | Run backend pytest plus frontend type, security, build, and audit checks in isolated containers |
+| `make audit` | Run `npm audit --audit-level=high` and `pip-audit` in containers |
+| `make build` | Build development, test, audit, and production image targets |
+| `make clean` | Remove project containers/volumes and delete generated `dist/` and `server.js` in a container |
+| `make prod` | Stop development and run the non-root Nginx/FastAPI production stack |
+
+### Production-like local run
+
+Set a production database password through the environment or `.env`, then run:
+
+```bash
+export PROD_POSTGRES_PASSWORD="$(openssl rand -hex 24)"
+make prod
+curl http://localhost:8081/
+curl http://localhost:8081/api/v1/curriculum/levels
 ```
 
-Leave that terminal running. In a second terminal, return to the `ReadQuest` directory and start Vite:
+The production frontend is on `http://localhost:8081`, and the production
+backend health endpoint is on `http://localhost:8001/health`. Production images
+contain no bind mounts or development dependencies.
 
-```powershell
-npm run dev
-# or
-bun run dev
+### Resetting the database
+
+`make clean` is the complete reset: it removes the development, test, and
+production Compose volumes. To recreate development data afterward:
+
+```bash
+make up
+make seed
 ```
 
-Open:
+For a development-only reset that preserves production data:
 
-- Application: `http://localhost:3000`
-- Backend API documentation: `http://localhost:8000/docs`
-- Seeded books endpoint: `http://localhost:8000/api/v1/books`
-
-Vite proxies `http://localhost:3000/api/*` to `http://127.0.0.1:8000/api/*`, so the frontend and API behave as one same-origin application during development. If the API runs elsewhere, set `VITE_DEV_API_TARGET` before starting Vite; for example, in PowerShell:
-
-```powershell
-$env:VITE_DEV_API_TARGET = "http://127.0.0.1:9000"
-npm run dev
+```bash
+docker compose down --volumes
+make up
+make seed
 ```
+
+### Troubleshooting
+
+- **Port conflict:** Change `DEV_FRONTEND_PORT`, `DEV_BACKEND_PORT`,
+  `PROD_FRONTEND_PORT`, or `PROD_BACKEND_PORT` in `.env`.
+- **Slow or missed reloads under `/mnt/c` or `/mnt/d`:** Keep
+  `CHOKIDAR_USEPOLLING=true`. For best performance, clone into
+  `~/projects/ReadQuest`.
+- **Shell script line endings:** `.gitattributes` enforces LF for Dockerfiles,
+  shell/Python/TypeScript files, YAML, and `Makefile`. If a script still has
+  CRLF, run `git add --renormalize .` and recommit the normalized files.
+- **Docker unavailable in WSL:** Enable Docker Desktop's WSL integration for the
+  active Ubuntu distribution, or install Docker Engine directly in Ubuntu.
+  Re-run `docker version` and `docker compose version` before `make up`.
+- **Production refuses to start:** `PROD_POSTGRES_PASSWORD` is required by
+  `compose.production.yaml`; supply it through the shell or an untracked `.env`.
+- **Database is still starting:** Wait for the PostgreSQL and backend health
+  checks, then inspect `make logs`.
 
 ### Local account behavior
 
 For a usable zero-configuration launch, `READQUEST_AUTO_VERIFY_EMAIL` defaults to `true`, so registration creates an authenticated parent account immediately. For a production-like verification flow, set it to `false` and configure SMTP as described in the [backend README](./backend/README.md). Registration always defaults to `parent`; teacher/admin roles must be assigned through an administrative onboarding process.
 
 The backend requires the frontend's double-submit CSRF cookie/header pair on state-changing authenticated requests. Public catalog reads do not require authentication, while learner, session, progress, parent, teacher, assignment, book-progress, and voice-attempt access is ownership checked.
-
----
-
-## Scripts & Verification
-
-| Command | Description |
-| --- | --- |
-| `npm run dev` | Start Vite development server on port `3000` |
-| `npm run build` | Build production bundle into `dist/` |
-| `npm run preview` | Preview the production build locally |
-| `npm run lint` | Run TypeScript type checking (`tsc --noEmit`) |
-| `npx tsx --test src/services/authAndSecurity.test.ts` | Run automated auth validation, security, API transport, and 22 deterministic adaptive engine tests |
-| `bun audit` | Scan dependencies in `bun.lock` for known vulnerabilities |
-| `npm run clean` | Remove build artifacts on macOS/Linux (`dist` and `server.js`) |
-| `cd backend; python -m pytest -q` | Run the complete backend authentication, curriculum, learning, books, voice, and portal test suite |
 
 ---
 
@@ -209,16 +208,20 @@ The backend requires the frontend's double-submit CSRF cookie/header pair on sta
 ```text
 ├── .env.example                     # Frontend environment template
 ├── index.html                       # Entry HTML with metadata and strict referrer policy
-├── backend/                         # FastAPI books/read-aloud service and local SQLite seed
+├── backend/                         # FastAPI books/read-aloud service and PostgreSQL seed
 │   ├── app/                         # API routes, models, services, and seed fixtures
 │   ├── alembic/                     # PostgreSQL migration chain
 │   ├── tests/                       # Backend pytest suite
-│   └── requirements.txt             # Python dependencies
+│   └── pyproject.toml               # Python runtime and test dependencies
 ├── public/                          # Static assets (favicon.svg)
 ├── docs/
 │   └── ADAPTIVE_ENGINE_SPEC.md      # Adaptive mastery formula & rules specification
 ├── AUTH_DATABASE_INTEGRATION.md     # Backend API & database schema contract
 ├── SECURITY_AUDIT.md                # Frontend security audit & verification results
+├── compose.yaml                     # Hot-reload development stack
+├── compose.test.yaml                # Isolated PostgreSQL test/audit jobs
+├── compose.production.yaml          # Non-root production runtime stack
+├── Makefile                         # Docker-only build/test/run entry points
 ├── DEPLOYMENT.md                    # Production build, Nginx proxy & CSP/HSTS guide
 ├── PRODUCTION_READINESS.md          # Current readiness & backend launch checklist
 └── src/
