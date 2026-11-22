@@ -6,14 +6,18 @@ from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
 from app.database import get_db
+from app.api.dependencies import require_current_user
+from app.models.account import AuthSession, User
 from app.models.curriculum import Book, ChildBook, Learner
 from app.models.enums import ChildBookStatus, ContentStatus
 from app.schemas.books import (
+    BookListItem,
     BookDetail,
     BookPageResponse,
     BookProgressResponse,
     BookProgressUpdate,
 )
+from app.services.learning import require_learner_access
 
 router = APIRouter(tags=["books"])
 
@@ -42,7 +46,14 @@ def list_books(
     query = select(Book).where(*filters).order_by(Book.level, Book.title)
     total = db.scalar(select(func.count()).select_from(Book).where(*filters)) or 0
     books = db.scalars(query.offset(offset).limit(limit)).all()
-    return BookPageResponse(items=books, total=total, limit=limit, offset=offset)
+    return BookPageResponse(
+        items=[
+            BookListItem.model_validate(item, from_attributes=True) for item in books
+        ],
+        total=total,
+        limit=limit,
+        offset=offset,
+    )
 
 
 @router.get("/books/{book_id}", response_model=BookDetail)
@@ -65,8 +76,11 @@ def update_book_progress(
     child_id: str,
     book_id: str,
     update: BookProgressUpdate,
+    session_data: tuple[User, AuthSession] = Depends(require_current_user),
     db: Session = Depends(get_db),
 ) -> BookProgressResponse:
+    user, _ = session_data
+    require_learner_access(db, user, child_id)
     book = db.scalar(
         select(Book).where(
             and_(Book.id == book_id, Book.content_status == ContentStatus.PUBLISHED)

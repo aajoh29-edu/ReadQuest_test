@@ -1,16 +1,16 @@
 # ReadQuest — Production Readiness Assessment
 
-**Assessment Date:** 2026-11-19  
-**Frontend Readiness:** **COMPLETE & VERIFIED (Build + Type Check + Unit/Security Tests Passing)**  
-**Full-Stack Live Production Readiness:** **NOT READY FOR LIVE PRODUCTION** *(Pending Backend API & Database Implementation by Teammate)*
+**Assessment Date:** 2026-11-22  
+**Full-Stack Implementation:** **COMPLETE & TESTED LOCALLY** *(FastAPI, SQLite seed, authentication, curriculum, sessions, mastery, books, voice, portals, and assignments)*  
+**Live Production Readiness:** **CONFIGURATION REQUIRED** *(PostgreSQL, HTTPS, SMTP, secrets, rate-limit distribution, backups, and operational monitoring)*
 
 ---
 
 ## 1. Honest Readiness Summary
 
-ReadQuest's **frontend application** has completed all authentication UI, route protection, API client integration, data sanitization, and static security hardening tasks within our assigned scope.
+ReadQuest includes a working frontend and backend. The local launch path creates and seeds SQLite, authenticates parent accounts, protects mutations with session cookies and CSRF, strips client answer keys, grades attempts on the server, and persists learning progress.
 
-However, **ReadQuest as a live end-to-end product is NOT ready for public launch yet** because a separate team member owns the backend API server, authentication persistence, email delivery, and relational database. By design, the frontend fails closed (`status = 'unavailable'` or `'unauthenticated'`) whenever `/api/v1/auth/me` is not backed by a live JSON API, ensuring no fake logins or placeholder user accounts are ever presented as real authenticated sessions.
+Production still requires operator-owned infrastructure and policy decisions. Local development intentionally auto-verifies newly registered accounts unless `READQUEST_AUTO_VERIFY_EMAIL=false`; production should enable verification and provide SMTP configuration. The frontend continues to fail closed if the API is unavailable.
 
 ---
 
@@ -34,14 +34,17 @@ However, **ReadQuest as a live end-to-end product is NOT ready for public launch
 - `npm run lint` (`tsc --noEmit`) -> **Exited 0 (no TypeScript errors)**.
 - `npm run build` (`vite build`) -> **Exited 0 (production bundle built cleanly)**.
 - `bun audit` -> **0 vulnerabilities found across 262 packages**.
+- `python -m pytest -q` (2026-11-22, from `backend/`) -> **11 passed**, covering authentication/cookies/CSRF, learner CRUD, sanitized curriculum, authoritative grading/idempotency, sessions/mastery, books, voice, educator RBAC, and assignments.
 
 ---
 
-## 4. Blocking Gate Before Public Launch (Team Dependencies)
+## 4. Blocking Gate Before Public Launch (Deployment Configuration)
 
 Before ReadQuest can serve real families and classrooms in production, the backend/database team and deployment operator must complete:
 
-1. **Database & Schema Implementation:** Provision and migrate the relational tables described in `AUTH_DATABASE_INTEGRATION.md` (`users`, `auth_sessions`, `auth_tokens`, `child_profiles`, `classrooms`, `learning_sessions`, `attempts`, `skill_mastery`, `assignments`).
-2. **Auth & Session Backend Endpoints:** Implement `/api/v1/auth/*` with Argon2id/bcrypt hashing, `HttpOnly` + `Secure` + `SameSite=Lax` cookies, CSRF header verification, email verification/reset mail delivery, and login/reset rate limiting.
-3. **Server-Side Grading & RBAC:** Implement `/api/v1/curriculum/*` (omitting `isCorrect`), `/api/v1/sessions/:id/attempts` (authoritative grading + idempotency), and strict parent/teacher ownership authorization on all child/class routes.
-4. **End-to-End Integration & Security Testing:** Run integration tests against the live API + database (auth flow, IDOR tests, CSRF rejection, rate limiting, session invalidation on password reset, and HTTPS security header checks per `DEPLOYMENT.md`).
+1. **PostgreSQL:** Provision PostgreSQL, set `DATABASE_URL`, run `alembic upgrade head`, and apply a tested backup/restore policy.
+2. **HTTPS & Cookies:** Deploy behind TLS, set `READQUEST_COOKIE_SECURE=true`, and verify the Nginx/security-header configuration in `DEPLOYMENT.md`.
+3. **Email:** Set SMTP variables, `READQUEST_FRONTEND_URL`, and `READQUEST_AUTO_VERIFY_EMAIL=false`; verify verification and reset delivery.
+4. **Operational Controls:** Replace the in-process login limiter with a shared store for multi-instance deployments, configure log/metric retention, alerts, database monitoring, and dependency updates.
+5. **Access Onboarding:** Create/promote teacher and admin accounts through a controlled administrative process; registration intentionally creates parent accounts only.
+6. **End-to-End Production Test:** Exercise registration, email verification, login/logout, password reset, CSRF rejection, role ownership/IDOR rejection, server grading, and PostgreSQL restore against the deployed environment.

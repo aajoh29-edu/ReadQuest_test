@@ -59,6 +59,9 @@ def _upsert(session: Session, model: type, values: dict, primary_key: str = "id"
 
 
 def seed_demo(session: Session) -> dict[str, int]:
+    curriculum = _load_fixture("curriculum_seed.json")
+    frontend_skills = curriculum["skills"]
+    frontend_lessons = curriculum["lessons"]
     books = _load_fixture("books_seed.json")["books"]
     reading_texts = _load_fixture("reading_texts_seed.json")["reading_texts"]
     skills = _load_fixture("reading_texts_seed.json")["skills"]
@@ -67,6 +70,30 @@ def seed_demo(session: Session) -> dict[str, int]:
 
     for item in skills:
         _upsert(session, Skill, item)
+    for item in frontend_skills:
+        _upsert(
+            session,
+            Skill,
+            {"id": item["id"], "code": item["code"], "name": item["name"]},
+        )
+
+    frontend_activities = 0
+    for lesson in frontend_lessons:
+        for activity in lesson["activities"]:
+            frontend_activities += 1
+            _upsert(
+                session,
+                Activity,
+                {
+                    "id": activity["id"],
+                    "primary_skill_id": activity["primarySkillId"],
+                    "type": ActivityType(activity["type"].replace("-", "_")),
+                    "difficulty": {"beginner": 1, "intermediate": 2, "advanced": 3}[
+                        activity["difficulty"]
+                    ],
+                    "content": activity,
+                },
+            )
 
     for row in books:
         _upsert(
@@ -117,8 +144,8 @@ def seed_demo(session: Session) -> dict[str, int]:
     session.commit()
     return {
         "books": len(books),
-        "skills": len(skills),
-        "activities": len(reading_texts),
+        "skills": len(skills) + len(frontend_skills),
+        "activities": len(reading_texts) + frontend_activities,
         "reading_texts": len(reading_texts),
     }
 

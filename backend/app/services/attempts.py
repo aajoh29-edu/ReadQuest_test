@@ -1,5 +1,6 @@
 from datetime import UTC, datetime
 from itertools import pairwise
+from collections.abc import Sequence
 
 from sqlalchemy import desc, select
 from sqlalchemy.orm import Session
@@ -8,7 +9,7 @@ from app.models.curriculum import Activity
 from app.models.progress import Attempt, SkillMastery
 
 
-def mastery_score(attempts: list[Attempt], now: datetime | None = None) -> tuple[float, float]:
+def mastery_score(attempts: Sequence[Attempt], now: datetime | None = None) -> tuple[float, float]:
     if not attempts:
         return 0.0, 0.0
     chronological = list(reversed(attempts))
@@ -57,7 +58,7 @@ def submit_attempt(
     db.add(attempt)
     db.flush()
 
-    recent = db.scalars(
+    recent = list(db.scalars(
         select(Attempt)
         .where(
             Attempt.child_id == child_id,
@@ -65,7 +66,7 @@ def submit_attempt(
         )
         .order_by(desc(Attempt.attempted_at))
         .limit(10)
-    ).all()
+    ).all())
     score, accuracy = mastery_score(recent)
     mastery = db.get(SkillMastery, (child_id, activity.primary_skill_id))
     if mastery is None:

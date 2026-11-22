@@ -1,4 +1,5 @@
 alembic>=1.17,<2
+argon2-cffi>=25,<26
 fastapi>=0.121,<1
 httpx>=0.28,<1
 pydantic>=2.12,<3

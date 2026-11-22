@@ -1,5 +1,6 @@
 from datetime import UTC, datetime
 from decimal import Decimal
+from uuid import uuid4
 
 from sqlalchemy import (
     JSON,
@@ -36,8 +37,37 @@ JsonType = JSONB().with_variant(JSON(), "sqlite")
 class Learner(Base):
     __tablename__ = "child_profiles"
 
-    id: Mapped[str] = mapped_column(String(64), primary_key=True)
+    id: Mapped[str] = mapped_column(
+        String(64), primary_key=True, default=lambda: uuid4().hex
+    )
+    parent_user_id: Mapped[str | None] = mapped_column(
+        ForeignKey("users.id", ondelete="CASCADE"), index=True
+    )
+    display_name: Mapped[str] = mapped_column(String(120), default="Reader", nullable=False)
+    avatar: Mapped[str] = mapped_column(String(80), default="fox", nullable=False)
+    avatar_name: Mapped[str] = mapped_column(
+        String(120), default="Fox Scout", nullable=False
+    )
+    reading_level_id: Mapped[str] = mapped_column(
+        String(32), default="level-1", nullable=False
+    )
+    grade_level: Mapped[str] = mapped_column(String(80), default="", nullable=False)
     stars_earned: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
+    current_streak_days: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
+    badges: Mapped[list[str]] = mapped_column(JsonType, default=list, nullable=False)
+    total_active_practice_seconds: Mapped[float] = mapped_column(
+        default=0.0, nullable=False
+    )
+    last_active_lesson_id: Mapped[str | None] = mapped_column(String(64))
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), default=lambda: datetime.now(UTC), nullable=False
+    )
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True),
+        default=lambda: datetime.now(UTC),
+        onupdate=lambda: datetime.now(UTC),
+        nullable=False,
+    )
 
 
 class Skill(Base):

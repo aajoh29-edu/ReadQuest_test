@@ -1,8 +1,8 @@
 # ReadQuest — Authentication & Database Integration Contract
 
-**Document Purpose:** Technical handoff specification for the backend and database team members integrating persistent storage and server-side authentication with the ReadQuest React frontend.
+**Document Purpose:** Implemented API contract shared by the ReadQuest React frontend and FastAPI backend, plus the production deployment requirements that must be configured outside the application.
 
-**Scope Boundary:** The frontend repository provides zero database drivers, zero ORM models, and zero simulated persistence. All authentication, session state, child profile ownership, answer validation, mastery calculation, parent/teacher analytics, and assignment mutations are delegated to the backend REST API defined in `src/services/apiConfig.ts`, `src/services/authService.ts`, and `src/services/repository.ts`.
+**Implementation Status:** The backend now provides the authentication, learner ownership, curriculum, grading, persistence, mastery, portal, and assignment behavior specified below. PostgreSQL migration `0006` creates the full-stack tables; the zero-configuration SQLite setup creates them through SQLAlchemy metadata and the demo seed.
 
 ---
 

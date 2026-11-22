@@ -5,7 +5,9 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy import delete, desc, select
 from sqlalchemy.orm import Session
 
+from app.api.dependencies import require_current_user, require_session
 from app.database import get_db
+from app.models.account import AuthSession, User
 from app.models.curriculum import Activity, Learner, ReadingText
 from app.models.enums import (
     ActivityType,
@@ -28,6 +30,7 @@ from app.schemas.voice import (
 )
 from app.services.attempts import mastery_score, submit_attempt
 from app.services.voice import align_words, score_alignment
+from app.services.learning import require_learner_access
 
 router = APIRouter(tags=["voice"])
 
@@ -91,7 +94,7 @@ def _load_voice_attempt(
             ReadingText.id == attempt.reading_text_id
         )
     )
-    attempt.__dict__["_text_type"] = text_type.value if text_type else "passage"
+    setattr(attempt, "_text_type", text_type.value if text_type else "passage")
     return attempt
 
 
@@ -101,8 +104,11 @@ def _load_voice_attempt(
 def set_voice_consent(
     child_id: str,
     update: VoiceConsentUpdate,
+    session_data: tuple[User, AuthSession] = Depends(require_current_user),
     db: Session = Depends(get_db),
 ) -> VoiceConsentResponse:
+    user, _ = session_data
+    require_learner_access(db, user, child_id)
     child = db.get(Learner, child_id)
     if child is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Child not found.")
@@ -163,8 +169,11 @@ def get_read_aloud_activity(
 def submit_read_aloud(
     child_id: str,
     submission: ReadAloudSubmission,
+    session_data: tuple[User, AuthSession] = Depends(require_current_user),
     db: Session = Depends(get_db),
 ) -> VoiceAttemptResponse:
+    user, _ = session_data
+    require_learner_access(db, user, child_id)
     provider = VoiceProvider(submission.provider)
     scope = VoiceScope.READ_ALOUD_ASSESSMENT
     consent = _active_consent(db, child_id, provider, scope)
@@ -254,7 +263,7 @@ def submit_read_aloud(
     attempt.mastery_attempt_id = mastery_attempt.id
     db.commit()
     db.refresh(attempt)
-    attempt.__dict__["_text_type"] = reading_text.text_type.value
+    setattr(attempt, "_text_type", reading_text.text_type.value)
     return _voice_response(attempt)
 
 
@@ -265,8 +274,11 @@ def submit_read_aloud(
 def get_voice_attempt(
     child_id: str,
     voice_attempt_id: str,
+    session_data: tuple[User, AuthSession] = Depends(require_session),
     db: Session = Depends(get_db),
 ) -> VoiceAttemptResponse:
+    user, _ = session_data
+    require_learner_access(db, user, child_id)
     return _voice_response(_load_voice_attempt(db, child_id, voice_attempt_id))
 
 
@@ -274,8 +286,12 @@ def get_voice_attempt(
     "/children/{child_id}/voice-progress", response_model=VoiceProgressResponse
 )
 def get_voice_progress(
-    child_id: str, db: Session = Depends(get_db)
+    child_id: str,
+    session_data: tuple[User, AuthSession] = Depends(require_session),
+    db: Session = Depends(get_db),
 ) -> VoiceProgressResponse:
+    user, _ = session_data
+    require_learner_access(db, user, child_id)
     attempts = db.scalars(
         select(VoiceAttempt)
         .where(VoiceAttempt.child_id == child_id)
@@ -307,8 +323,11 @@ def get_voice_progress(
 def delete_voice_attempt(
     child_id: str,
     voice_attempt_id: str,
+    session_data: tuple[User, AuthSession] = Depends(require_current_user),
     db: Session = Depends(get_db),
 ) -> None:
+    user, _ = session_data
+    require_learner_access(db, user, child_id)
     attempt = _load_voice_attempt(db, child_id, voice_attempt_id)
     mastery_attempt_id = attempt.mastery_attempt_id
     mastery_skill_id = db.scalar(
@@ -342,8 +361,12 @@ def delete_voice_attempt(
     response_model=ReadAloudRecommendation,
 )
 def get_read_aloud_recommendation(
-    child_id: str, db: Session = Depends(get_db)
+    child_id: str,
+    session_data: tuple[User, AuthSession] = Depends(require_session),
+    db: Session = Depends(get_db),
 ) -> ReadAloudRecommendation:
+    user, _ = session_data
+    require_learner_access(db, user, child_id)
     weakest = db.scalar(
         select(SkillMastery.skill_id)
         .where(SkillMastery.child_id == child_id)
@@ -368,9 +391,21 @@ def get_read_aloud_recommendation(
         if matching:
             activity, reading_text = matching
         else:
-            activity, reading_text = db.execute(query).first()
+            row = db.execute(query).first()
+            if row is None:
+                raise HTTPException(
+                    status_code=status.HTTP_404_NOT_FOUND,
+                    detail="No read-aloud activities are available.",
+                )
+            activity, reading_text = row
     else:
-        activity, reading_text = db.execute(query).first()
+        row = db.execute(query).first()
+        if row is None:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="No read-aloud activities are available.",
+            )
+        activity, reading_text = row
     return ReadAloudRecommendation(
         activity_id=activity.id,
         skill_id=activity.primary_skill_id,

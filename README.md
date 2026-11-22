@@ -2,7 +2,7 @@
 
 **ReadQuest** is an adaptive children's literacy web application built with React, TypeScript, Vite, and Tailwind CSS. It combines structured phonics, word blending, sight word fluency, and reading comprehension adventures for young readers with parent-managed child profiles, deterministic skill mastery tracking, and educator classroom insights.
 
-> **Architecture Status:** This repository contains the production-hardened **frontend application**. Persistent authentication, relational database storage, email delivery, and authoritative server-side activity grading are integrated through the `/api/v1/*` REST contract documented in [`AUTH_DATABASE_INTEGRATION.md`](./AUTH_DATABASE_INTEGRATION.md).
+> **Architecture Status:** The repository includes a complete local full-stack application: React/Vite plus a FastAPI/SQLAlchemy backend. The backend implements cookie-based authentication, learner profiles, the 12-quest curriculum, server-side grading, sessions, mastery, books, read-aloud assessment, parent/teacher portals, and assignments. Production email delivery and HTTPS/session secrets remain deployment configuration rather than hard-coded development defaults.
 
 ---
 
@@ -48,6 +48,8 @@
 
 - **Framework:** React 19 + TypeScript
 - **Build Tool:** Vite 8
+- **Backend:** FastAPI + SQLAlchemy + Argon2id password hashing
+- **Local Database:** SQLite (PostgreSQL migrations are provided for deployment)
 - **Styling:** Tailwind CSS 4 (`@tailwindcss/vite`)
 - **Routing:** React Router 7 (`react-router-dom`)
 - **Animations & Icons:** Motion (`motion`) + Lucide (`lucide-react`) + custom ReadQuest SVG illustrations & badges
@@ -57,47 +59,104 @@
 ## Getting Started
 
 ### Prerequisites
-- [Bun](https://bun.sh/) (lockfile uses `bun.lock`) or Node.js `>= 20`
+- [Bun](https://bun.sh/) or Node.js `20.19+` (or `22.12+`)
+- Python `3.11+`
 
-### Installation
+Run all commands below from the `ReadQuest` project directory unless a step says otherwise.
 
-```bash
+### 1. Install frontend dependencies
+
+The repository includes a Bun lockfile. Choose one package manager:
+
+```powershell
 bun install --frozen-lockfile
+# or
+npm install
 ```
 
-*(Or `npm install` if using npm.)*
+### 2. Configure the frontend
 
-### Environment Configuration
+Copy the environment template. The default `/api/v1` value is correct for local development because Vite proxies `/api` to the backend on port `8000`.
 
-Copy `.env.example` to `.env` and configure for your environment:
-
-```bash
-cp .env.example .env
+```powershell
+Copy-Item .env.example .env
 ```
 
 ```env
-# Same-origin reverse proxy default (recommended for production)
 VITE_API_BASE_URL="/api/v1"
-
-# Public display name
 VITE_APP_NAME="ReadQuest"
-
-# Double-submit CSRF header settings
 VITE_ENABLE_CSRF_HEADER="true"
 VITE_CSRF_COOKIE_NAME="rq_csrf_token"
 ```
 
 > **Security Note:** Never place database URLs, JWT secrets, or private API keys in `VITE_*` variables—they are bundled into client-side JavaScript.
 
-### Running Locally
+On macOS/Linux, copy the file with `cp .env.example .env`.
 
-Start the development server on port `3000`:
+### 3. Prepare and seed the backend
+
+Use a separate virtual environment for backend dependencies.
+
+**Windows PowerShell:**
+
+```powershell
+Set-Location backend
+py -m venv .venv
+.\.venv\Scripts\Activate.ps1
+python -m pip install --upgrade pip
+python -m pip install --only-binary=:all: -r requirements.txt
+python -m app.seeds.demo
+```
+
+**macOS/Linux:**
 
 ```bash
+cd backend
+python3 -m venv .venv
+source .venv/bin/activate
+python -m pip install --upgrade pip
+python -m pip install -r requirements.txt
+python -m app.seeds.demo
+```
+
+`app.seeds.demo` creates the local `backend\readquest.db` SQLite database, creates its tables, and inserts the complete 12-quest/60-activity curriculum plus the checked-in books and read-aloud texts. The seed is safe to run again.
+
+SQLite is the supported zero-configuration local database. The Alembic migrations use PostgreSQL-specific types; do not run `alembic upgrade head` for the local SQLite workflow.
+
+### 4. Launch both services
+
+Keep the virtual environment active and start FastAPI from `backend`:
+
+```powershell
+python -m app
+```
+
+Leave that terminal running. In a second terminal, return to the `ReadQuest` directory and start Vite:
+
+```powershell
+npm run dev
+# or
+bun run dev
+```
+
+Open:
+
+- Application: `http://localhost:3000`
+- Backend API documentation: `http://localhost:8000/docs`
+- Seeded books endpoint: `http://localhost:8000/api/v1/books`
+
+Vite proxies `http://localhost:3000/api/*` to `http://127.0.0.1:8000/api/*`, so the frontend and API behave as one same-origin application during development. If the API runs elsewhere, set `VITE_DEV_API_TARGET` before starting Vite; for example, in PowerShell:
+
+```powershell
+$env:VITE_DEV_API_TARGET = "http://127.0.0.1:9000"
 npm run dev
 ```
 
-Visit `http://localhost:3000`. When no backend server is mounted at `/api/v1`, public landing and curriculum previews load safely while authentication and protected dashboards fail closed with an offline service notice.
+### Local account behavior
+
+For a usable zero-configuration launch, `READQUEST_AUTO_VERIFY_EMAIL` defaults to `true`, so registration creates an authenticated parent account immediately. For a production-like verification flow, set it to `false` and configure SMTP as described in the [backend README](./backend/README.md). Registration always defaults to `parent`; teacher/admin roles must be assigned through an administrative onboarding process.
+
+The backend requires the frontend's double-submit CSRF cookie/header pair on state-changing authenticated requests. Public catalog reads do not require authentication, while learner, session, progress, parent, teacher, assignment, book-progress, and voice-attempt access is ownership checked.
 
 ---
 
@@ -111,7 +170,8 @@ Visit `http://localhost:3000`. When no backend server is mounted at `/api/v1`, p
 | `npm run lint` | Run TypeScript type checking (`tsc --noEmit`) |
 | `npx tsx --test src/services/authAndSecurity.test.ts` | Run automated auth validation, security, API transport, and 22 deterministic adaptive engine tests |
 | `bun audit` | Scan dependencies in `bun.lock` for known vulnerabilities |
-| `npm run clean` | Remove build artifacts (`dist`) |
+| `npm run clean` | Remove build artifacts on macOS/Linux (`dist` and `server.js`) |
+| `cd backend; python -m pytest -q` | Run the complete backend authentication, curriculum, learning, books, voice, and portal test suite |
 
 ---
 
@@ -149,6 +209,11 @@ Visit `http://localhost:3000`. When no backend server is mounted at `/api/v1`, p
 ```text
 ├── .env.example                     # Frontend environment template
 ├── index.html                       # Entry HTML with metadata and strict referrer policy
+├── backend/                         # FastAPI books/read-aloud service and local SQLite seed
+│   ├── app/                         # API routes, models, services, and seed fixtures
+│   ├── alembic/                     # PostgreSQL migration chain
+│   ├── tests/                       # Backend pytest suite
+│   └── requirements.txt             # Python dependencies
 ├── public/                          # Static assets (favicon.svg)
 ├── docs/
 │   └── ADAPTIVE_ENGINE_SPEC.md      # Adaptive mastery formula & rules specification
@@ -190,4 +255,4 @@ Visit `http://localhost:3000`. When no backend server is mounted at `/api/v1`, p
 - [`AUTH_DATABASE_INTEGRATION.md`](./AUTH_DATABASE_INTEGRATION.md) — Complete REST endpoint, cookie/CSRF, RBAC, and conceptual relational database schema guide for backend integration.
 - [`SECURITY_AUDIT.md`](./SECURITY_AUDIT.md) — Frontend security controls, static/dependency scan outputs, and remaining backend security requirements.
 - [`DEPLOYMENT.md`](./DEPLOYMENT.md) — Production build steps, Nginx reverse proxy example, and recommended HTTP security headers (`CSP`, `HSTS`, `X-Frame-Options`, `Referrer-Policy`).
-- [`PRODUCTION_READINESS.md`](./PRODUCTION_READINESS.md) — Current launch readiness assessment and pre-release checklist.
+- [`PRODUCTION_READINESS.md`](./PRODUCTION_READINESS.md) — Production configuration and pre-release checklist.

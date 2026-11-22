@@ -10,12 +10,14 @@ from sqlalchemy.pool import StaticPool
 from app.database import get_db
 from app.main import app
 from app.models import Base
+from app.models.account import User
 from app.models.curriculum import Learner
 from app.models.enums import WordResultType
 from app.models.progress import Attempt, SkillMastery
 from app.models.voice import VoiceAttempt, WordResult
 from app.seeds.demo import seed_demo
 from app.services.voice import align_words
+from app.services.security import create_session, hash_password
 
 
 def database() -> tuple[sessionmaker[Session], TestClient]:
@@ -35,18 +37,33 @@ def database() -> tuple[sessionmaker[Session], TestClient]:
     return factory, TestClient(app)
 
 
-def setup_seed() -> tuple[sessionmaker[Session], TestClient, str]:
+def setup_seed() -> tuple[sessionmaker[Session], TestClient, str, str]:
     factory, client = database()
     with factory() as session:
         seed_demo(session)
-        session.add(Learner(id="child-voice", stars_earned=0))
+        user = User(
+            email="voice@example.org",
+            full_name="Voice Parent",
+            password_hash=hash_password("StrongPassword!1"),
+            role="parent",
+            email_verified=True,
+        )
+        session.add(user)
+        session.flush()
+        session.add(
+            Learner(id="child-voice", parent_user_id=user.id, stars_earned=0)
+        )
         session.commit()
-    return factory, client, "act-letter_sounds-sentence-01"
+        raw_session, csrf, _ = create_session(session, user)
+    client.cookies.set("rq_session", raw_session)
+    client.cookies.set("rq_csrf_token", csrf)
+    return factory, client, "act-letter_sounds-sentence-01", csrf
 
 
-def grant(client: TestClient) -> None:
+def grant(client: TestClient, csrf: str) -> None:
     response = client.post(
         "/api/v1/children/child-voice/voice-consent",
+        headers={"X-CSRF-Token": csrf},
         json={
             "provider": "web_speech",
             "scope": "read_aloud_assessment",
@@ -76,9 +93,10 @@ def test_alignment_covers_correct_substitution_omission_and_insertion() -> None:
 
 
 def test_no_consent_forbids_without_voice_attempt() -> None:
-    factory, client, activity_id = setup_seed()
+    factory, client, activity_id, csrf = setup_seed()
     response = client.post(
         "/api/v1/children/child-voice/read-aloud",
+        headers={"X-CSRF-Token": csrf},
         json={
             "activity_id": activity_id,
             "transcript": "I can map by the sun.",
@@ -94,10 +112,11 @@ def test_no_consent_forbids_without_voice_attempt() -> None:
 
 
 def test_known_transcript_scores_and_updates_mastery_without_audio() -> None:
-    factory, client, activity_id = setup_seed()
-    grant(client)
+    factory, client, activity_id, csrf = setup_seed()
+    grant(client, csrf)
     response = client.post(
         "/api/v1/children/child-voice/read-aloud",
+        headers={"X-CSRF-Token": csrf},
         json={
             "activity_id": activity_id,
             "transcript": "I can map by sun.",
@@ -139,10 +158,11 @@ def test_known_transcript_scores_and_updates_mastery_without_audio() -> None:
 
 
 def test_audio_limit_and_recommendation_and_guardian_delete() -> None:
-    factory, client, activity_id = setup_seed()
-    grant(client)
+    factory, client, activity_id, csrf = setup_seed()
+    grant(client, csrf)
     rejected = client.post(
         "/api/v1/children/child-voice/read-aloud",
+        headers={"X-CSRF-Token": csrf},
         json={
             "activity_id": activity_id,
             "transcript": "I can map by the sun.",
@@ -155,6 +175,7 @@ def test_audio_limit_and_recommendation_and_guardian_delete() -> None:
 
     created = client.post(
         "/api/v1/children/child-voice/read-aloud",
+        headers={"X-CSRF-Token": csrf},
         json={
             "activity_id": activity_id,
             "transcript": "I can map by the sun.",
@@ -176,7 +197,8 @@ def test_audio_limit_and_recommendation_and_guardian_delete() -> None:
     assert recommendation.json()["activity_id"].startswith("act-")
 
     deleted = client.delete(
-        f"/api/v1/children/child-voice/read-aloud/{attempt_id}"
+        f"/api/v1/children/child-voice/read-aloud/{attempt_id}",
+        headers={"X-CSRF-Token": csrf},
     )
     assert deleted.status_code == 204
     with factory() as session:
