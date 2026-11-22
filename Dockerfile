@@ -12,16 +12,21 @@ CMD ["npm", "run", "dev"]
 
 FROM deps AS build
 
+ARG VITE_API_BASE_URL=/api/v1
+ARG VITE_APP_NAME=ReadQuest
+ARG VITE_ENABLE_CSRF_HEADER=true
+ARG VITE_CSRF_COOKIE_NAME=rq_csrf_token
+ENV VITE_API_BASE_URL=$VITE_API_BASE_URL \
+    VITE_APP_NAME=$VITE_APP_NAME \
+    VITE_ENABLE_CSRF_HEADER=$VITE_ENABLE_CSRF_HEADER \
+    VITE_CSRF_COOKIE_NAME=$VITE_CSRF_COOKIE_NAME
 COPY . .
 RUN npm run build
 
 FROM deps AS check
 
 COPY . .
-RUN npm run lint \
-    && npx tsx --test src/services/authAndSecurity.test.ts \
-    && npm run build \
-    && npm audit --audit-level=high
+CMD ["sh", "-c", "npm run lint && npx tsx --test src/services/authAndSecurity.test.ts && npm run build && npm audit --audit-level=high"]
 
 FROM nginx:1.29-alpine@sha256:5616878291a2eed594aee8db4dade5878cf7edcb475e59193904b198d9b830de AS runtime
 
