@@ -34,6 +34,7 @@ audit:
 	$(TEST_COMPOSE) run --build --rm backend-audit
 
 clean:
+	docker compose -p readquest down --remove-orphans --volumes
 	$(COMPOSE) down --remove-orphans --volumes
 	$(TEST_COMPOSE) down --remove-orphans --volumes
 	PROD_POSTGRES_PASSWORD=$${PROD_POSTGRES_PASSWORD:-clean-placeholder} $(PRODUCTION_COMPOSE) down --remove-orphans --volumes
