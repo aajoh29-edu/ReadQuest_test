@@ -7,6 +7,9 @@ backend/.ruff_cache
 backend/.venv
 backend/*.db
 backend/*.egg-info
+backend/
+.github/
+docs/
 dist
 node_modules
 **/__pycache__
