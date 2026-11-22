@@ -1,11 +1,10 @@
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from decimal import Decimal
 
 from sqlalchemy import (
     JSON,
     CheckConstraint,
     DateTime,
-    Enum as SqlEnum,
     ForeignKey,
     Integer,
     Numeric,
@@ -15,9 +14,11 @@ from sqlalchemy import (
     event,
     select,
 )
+from sqlalchemy import (
+    Enum as SqlEnum,
+)
 from sqlalchemy.dialects.postgresql import JSONB
-from sqlalchemy.orm import Mapped, mapped_column, relationship
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Mapped, Session, mapped_column, relationship
 
 from app.models.base import Base
 from app.models.enums import (
@@ -28,7 +29,6 @@ from app.models.enums import (
     ReadingTextType,
 )
 from app.utils.tokenizer import tokenize_text
-
 
 JsonType = JSONB().with_variant(JSON(), "sqlite")
 
@@ -138,7 +138,7 @@ class ChildBook(Base):
     last_page: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
     minutes_read: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
     started_at: Mapped[datetime] = mapped_column(
-        DateTime(timezone=True), default=lambda: datetime.now(timezone.utc), nullable=False
+        DateTime(timezone=True), default=lambda: datetime.now(UTC), nullable=False
     )
     finished_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     book: Mapped[Book] = relationship(back_populates="progress")
@@ -233,7 +233,7 @@ def validate_curriculum_links(session: Session, _flush_context, _instances) -> N
             for link in pending_links
             if link.book_id == book_id and link not in weights
         ]
-        if sum((Decimal(link.weight) for link in [*weights, *pending]), Decimal("0")) != Decimal(
-            "1"
+        if sum((Decimal(link.weight) for link in [*weights, *pending]), Decimal(0)) != Decimal(
+            1
         ):
             raise ValueError(f"Book skill weights must sum to 1 for {book_id}")

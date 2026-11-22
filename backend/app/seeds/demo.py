@@ -85,7 +85,7 @@ def seed_demo(session: Session) -> dict[str, int]:
         skill_id = skill_ids[index % len(skill_ids)]
         existing = session.get(BookSkill, (book_row.id, skill_id))
         if existing is None:
-            session.add(BookSkill(book_id=book_row.id, skill_id=skill_id, weight=Decimal("1")))
+            session.add(BookSkill(book_id=book_row.id, skill_id=skill_id, weight=Decimal(1)))
 
     for row in reading_texts:
         activity_values = {
@@ -111,7 +111,7 @@ def seed_demo(session: Session) -> dict[str, int]:
     totals: dict[str, Decimal] = defaultdict(Decimal)
     for link in session.scalars(select(BookSkill).where(BookSkill.book_id.in_([b["id"] for b in books]))):
         totals[link.book_id] += Decimal(link.weight)
-    invalid = [book_id for book_id, total in totals.items() if total != Decimal("1")]
+    invalid = [book_id for book_id, total in totals.items() if total != Decimal(1)]
     if invalid:
         raise ValueError(f"Book skill weights must sum to 1: {invalid}")
     session.commit()

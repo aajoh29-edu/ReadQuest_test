@@ -161,6 +161,18 @@ export const API_ENDPOINTS = {
   BOOK_BY_ID: (id: string) => `/books/${encodeURIComponent(id)}`,
   BOOK_PROGRESS: (childId: string, bookId: string) =>
     `/children/${encodeURIComponent(childId)}/books/${encodeURIComponent(bookId)}/progress`,
+  VOICE_CONSENT: (childId: string) =>
+    `/children/${encodeURIComponent(childId)}/voice-consent`,
+  READ_ALOUD_ACTIVITY: (activityId: string) =>
+    `/read-aloud-activities/${encodeURIComponent(activityId)}`,
+  READ_ALOUD: (childId: string) =>
+    `/children/${encodeURIComponent(childId)}/read-aloud`,
+  READ_ALOUD_ATTEMPT: (childId: string, attemptId: string) =>
+    `/children/${encodeURIComponent(childId)}/read-aloud/${encodeURIComponent(attemptId)}`,
+  VOICE_PROGRESS: (childId: string) =>
+    `/children/${encodeURIComponent(childId)}/voice-progress`,
+  READ_ALOUD_RECOMMENDATION: (childId: string) =>
+    `/children/${encodeURIComponent(childId)}/read-aloud-recommendation`,
 } as const;
 
 export type FetchLike = typeof fetch;

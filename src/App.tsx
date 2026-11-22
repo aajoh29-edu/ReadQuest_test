@@ -12,6 +12,7 @@ import { DashboardView } from './views/DashboardView';
 import { LibraryView } from './views/LibraryView';
 import { BookLibraryView } from './views/BookLibraryView';
 import { BookReaderView } from './views/BookReaderView';
+import { ReadAloudView } from './views/ReadAloudView';
 import { ActivityPlayerView } from './views/ActivityPlayerView';
 import { SessionSummaryView } from './views/SessionSummaryView';
 import { ProgressView } from './views/ProgressView';
@@ -86,6 +87,14 @@ function AppShell() {
             element={
               <ProtectedRoute>
                 <ActivityPlayerView />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/read-aloud/:activityId"
+            element={
+              <ProtectedRoute>
+                <ReadAloudView />
               </ProtectedRoute>
             }
           />

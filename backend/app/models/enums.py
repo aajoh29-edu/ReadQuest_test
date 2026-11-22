@@ -33,3 +33,24 @@ class ChildBookStatus(StrEnum):
     STARTED = "started"
     FINISHED = "finished"
     FAVORITE = "favorite"
+
+
+class VoiceProvider(StrEnum):
+    WEB_SPEECH = "web_speech"
+
+
+class VoiceScope(StrEnum):
+    READ_ALOUD_ASSESSMENT = "read_aloud_assessment"
+
+
+class VoiceAttemptStatus(StrEnum):
+    COMPLETED = "completed"
+    REJECTED = "rejected"
+
+
+class WordResultType(StrEnum):
+    CORRECT = "correct"
+    SUBSTITUTION = "substitution"
+    OMISSION = "omission"
+    INSERTION = "insertion"
+    SELF_CORRECTION = "self_correction"

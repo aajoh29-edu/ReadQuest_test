@@ -1,9 +1,10 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { BookOpen, ChevronLeft, ChevronRight, Search } from 'lucide-react';
+import { BookOpen, ChevronLeft, ChevronRight, Mic, Search } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '../components/common/Button';
+import { useAuth } from '../contexts/AuthContext';
 import { questRepository } from '../services/repository';
-import { BookSummary } from '../types';
+import { BookSummary, ReadAloudRecommendation } from '../types';
 
 const PAGE_SIZE = 12;
 
@@ -12,7 +13,10 @@ const sourceLabel = (source: BookSummary['source']) =>
 
 export const BookLibraryView: React.FC = () => {
   const navigate = useNavigate();
+  const { status: authStatus, activeChild } = useAuth();
   const [books, setBooks] = useState<BookSummary[]>([]);
+  const [voiceRecommendation, setVoiceRecommendation] =
+    useState<ReadAloudRecommendation | null>(null);
   const [total, setTotal] = useState(0);
   const [level, setLevel] = useState('');
   const [category, setCategory] = useState('');
@@ -48,6 +52,17 @@ export const BookLibraryView: React.FC = () => {
     void loadBooks();
   }, [loadBooks]);
 
+  useEffect(() => {
+    if (authStatus !== 'authenticated' || !activeChild) {
+      setVoiceRecommendation(null);
+      return;
+    }
+    questRepository
+      .getReadAloudRecommendation()
+      .then(setVoiceRecommendation)
+      .catch(() => setVoiceRecommendation(null));
+  }, [activeChild, authStatus]);
+
   const categories = useMemo(
     () => Array.from(new Set(books.map((book) => book.category))).sort(),
     [books]
@@ -75,6 +90,25 @@ export const BookLibraryView: React.FC = () => {
           Read at your own pace. Every published book is ready to read aloud—no quiz required.
         </p>
       </header>
+
+      {voiceRecommendation && (
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 rounded-3xl border-2 border-[#FFC38E] bg-[#FFF5EA] p-5">
+          <div className="flex items-center gap-3">
+            <Mic className="h-7 w-7 text-[#D86D35] shrink-0" />
+            <div>
+              <p className="text-xs font-black uppercase tracking-wider text-[#D86D35]">Read-aloud practice</p>
+              <p className="font-bold text-[#171B37]">{voiceRecommendation.title}</p>
+            </div>
+          </div>
+          <Button
+            size="sm"
+            variant="peach"
+            onClick={() => navigate(`/read-aloud/${encodeURIComponent(voiceRecommendation.activity_id)}`)}
+          >
+            Start with my voice
+          </Button>
+        </div>
+      )}
 
       <div className="grid sm:grid-cols-[1fr_auto_auto] gap-3 rounded-3xl bg-white border-2 border-[#DED5FF] p-4">
         <label className="flex items-center gap-3 min-h-11 rounded-2xl bg-[#FAF8FD] px-4">

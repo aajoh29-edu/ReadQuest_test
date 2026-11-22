@@ -5,6 +5,10 @@ import {
   BookDetail,
   BookListResponse,
   BookProgress,
+  ReadAloudActivity,
+  ReadAloudRecommendation,
+  VoiceAttemptResult,
+  VoiceProgress,
   Classroom,
   DateFilterOption,
   GradedAnswer,
@@ -78,6 +82,16 @@ export interface IReadingQuestRepository {
       minutes_read: number;
     }
   ): Promise<BookProgress>;
+  setVoiceConsent(granted: boolean): Promise<void>;
+  getReadAloudActivity(activityId: string): Promise<ReadAloudActivity>;
+  submitReadAloud(
+    activityId: string,
+    transcript: string,
+    wordConfidences: number[],
+    durationSeconds: number
+  ): Promise<VoiceAttemptResult>;
+  getVoiceProgress(): Promise<VoiceProgress>;
+  getReadAloudRecommendation(): Promise<ReadAloudRecommendation>;
 
   // Session & activity methods (authenticated only)
   getActiveSession(lessonId?: string): Promise<SessionRecord | null>;
@@ -286,6 +300,56 @@ export class ApiReadingQuestRepository implements IReadingQuestRepository {
       method: 'POST',
       body: JSON.stringify(update),
     });
+  }
+
+  public async setVoiceConsent(granted: boolean): Promise<void> {
+    const childId = this.requireChildId();
+    await apiFetch(API_ENDPOINTS.VOICE_CONSENT(childId), {
+      method: 'POST',
+      body: JSON.stringify({
+        provider: 'web_speech',
+        scope: 'read_aloud_assessment',
+        granted,
+      }),
+    });
+  }
+
+  public async getReadAloudActivity(activityId: string): Promise<ReadAloudActivity> {
+    return apiFetch<ReadAloudActivity>(API_ENDPOINTS.READ_ALOUD_ACTIVITY(activityId), {
+      method: 'GET',
+    });
+  }
+
+  public async submitReadAloud(
+    activityId: string,
+    transcript: string,
+    wordConfidences: number[],
+    durationSeconds: number
+  ): Promise<VoiceAttemptResult> {
+    const childId = this.requireChildId();
+    return apiFetch<VoiceAttemptResult>(API_ENDPOINTS.READ_ALOUD(childId), {
+      method: 'POST',
+      body: JSON.stringify({
+        activity_id: activityId,
+        transcript,
+        word_confidences: wordConfidences,
+        duration_seconds: durationSeconds,
+        provider: 'web_speech',
+      }),
+    });
+  }
+
+  public async getVoiceProgress(): Promise<VoiceProgress> {
+    const childId = this.requireChildId();
+    return apiFetch<VoiceProgress>(API_ENDPOINTS.VOICE_PROGRESS(childId), { method: 'GET' });
+  }
+
+  public async getReadAloudRecommendation(): Promise<ReadAloudRecommendation> {
+    const childId = this.requireChildId();
+    return apiFetch<ReadAloudRecommendation>(
+      API_ENDPOINTS.READ_ALOUD_RECOMMENDATION(childId),
+      { method: 'GET' }
+    );
   }
 
   public async getReadingLevels(): Promise<ReadingLevel[]> {

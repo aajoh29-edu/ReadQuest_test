@@ -4,7 +4,7 @@ Revision ID: 0003
 Revises: 0002
 """
 
-from typing import Sequence
+from collections.abc import Sequence
 
 from alembic import op
 

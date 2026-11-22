@@ -1,4 +1,4 @@
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 
 from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy import and_, func, select
@@ -93,7 +93,7 @@ def update_book_progress(
     progress.last_page = update.last_page
     progress.minutes_read = update.minutes_read
     progress.finished_at = (
-        datetime.now(timezone.utc)
+        datetime.now(UTC)
         if progress.status == ChildBookStatus.FINISHED
         else None
     )

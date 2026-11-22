@@ -1,6 +1,5 @@
 import re
-from typing import Iterable
-
+from collections.abc import Iterable
 
 WORD_PATTERN = re.compile(r"[a-z0-9]+(?:'[a-z0-9]+)?", re.IGNORECASE)
 

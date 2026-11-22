@@ -55,6 +55,61 @@ export interface BookProgress {
   stars_awarded: number;
 }
 
+export interface ReadAloudActivity {
+  activity_id: string;
+  title: string;
+  text_type: 'word' | 'sentence' | 'passage';
+  text: string;
+  word_count: number;
+  difficulty: number;
+}
+
+export interface VoiceWordResult {
+  result_index: number;
+  expected_index: number | null;
+  expected_word: string | null;
+  actual_word: string | null;
+  result_type: 'correct' | 'substitution' | 'omission' | 'insertion' | 'self_correction';
+  confidence: number | null;
+}
+
+export interface VoiceAttemptResult {
+  id: string;
+  child_id: string;
+  activity_id: string;
+  transcript: string;
+  accuracy: number;
+  wcpm: number;
+  duration_seconds: number;
+  provider: 'web_speech';
+  status: 'completed' | 'rejected';
+  audio_retention: 'none';
+  created_at: string;
+  word_results: VoiceWordResult[];
+  retry_words: string[];
+  is_correct: boolean;
+}
+
+export interface VoiceProgress {
+  items: Array<{
+    voice_attempt_id: string;
+    created_at: string;
+    activity_id: string;
+    accuracy: number;
+    wcpm: number;
+  }>;
+  attempt_count: number;
+  average_accuracy: number;
+  average_wcpm: number;
+}
+
+export interface ReadAloudRecommendation {
+  activity_id: string;
+  skill_id: string;
+  title: string;
+  text_type: 'word' | 'sentence' | 'passage';
+}
+
 export interface ReadingLevel {
   id: ReadingLevelId;
   name: string;
