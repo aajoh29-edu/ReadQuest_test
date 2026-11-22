@@ -58,6 +58,10 @@
 
 ## Getting Started
 
+New to the project? Follow the
+[Junior Developer Setup Guide](./docs/JUNIOR_DEVELOPER_SETUP.md) for a complete
+Windows/WSL walkthrough.
+
 ### Prerequisites
 - Docker Engine in Ubuntu, **or** Docker Desktop with WSL integration enabled for
   the Ubuntu distribution.
