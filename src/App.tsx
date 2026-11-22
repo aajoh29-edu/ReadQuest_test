@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { lazy, Suspense, useState } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import { ProtectedRoute } from './components/auth/ProtectedRoute';
@@ -7,27 +7,44 @@ import { FloatingBottomNav } from './components/common/FloatingBottomNav';
 import { ProfileModal } from './components/common/ProfileModal';
 import { ErrorBoundary } from './components/common/ErrorBoundary';
 import { Footer } from './components/landing/Footer';
-import { WelcomeView } from './views/WelcomeView';
-import { DashboardView } from './views/DashboardView';
-import { LibraryView } from './views/LibraryView';
-import { BookLibraryView } from './views/BookLibraryView';
-import { BookReaderView } from './views/BookReaderView';
-import { ReadAloudView } from './views/ReadAloudView';
-import { ActivityPlayerView } from './views/ActivityPlayerView';
-import { SessionSummaryView } from './views/SessionSummaryView';
-import { ProgressView } from './views/ProgressView';
-import { ProfileView } from './views/ProfileView';
-import { ParentDashboardView } from './views/ParentDashboardView';
-import { TeacherDashboardView } from './views/TeacherDashboardView';
-import { LoginView } from './views/LoginView';
-import { SignupView } from './views/SignupView';
-import { ForgotPasswordView } from './views/ForgotPasswordView';
-import { ResetPasswordView } from './views/ResetPasswordView';
-import { VerifyEmailView } from './views/VerifyEmailView';
-import { AccountSettingsView } from './views/AccountSettingsView';
-import { PrivacyPolicyView } from './views/PrivacyPolicyView';
-import { TermsView } from './views/TermsView';
 import { LearnerProfile } from './types';
+
+const WelcomeView = lazy(() => import('./views/WelcomeView').then(({ WelcomeView }) => ({ default: WelcomeView })));
+const DashboardView = lazy(() => import('./views/DashboardView').then(({ DashboardView }) => ({ default: DashboardView })));
+const LibraryView = lazy(() => import('./views/LibraryView').then(({ LibraryView }) => ({ default: LibraryView })));
+const BookLibraryView = lazy(() => import('./views/BookLibraryView').then(({ BookLibraryView }) => ({ default: BookLibraryView })));
+const BookReaderView = lazy(() => import('./views/BookReaderView').then(({ BookReaderView }) => ({ default: BookReaderView })));
+const ReadAloudView = lazy(() => import('./views/ReadAloudView').then(({ ReadAloudView }) => ({ default: ReadAloudView })));
+const ActivityPlayerView = lazy(() => import('./views/ActivityPlayerView').then(({ ActivityPlayerView }) => ({ default: ActivityPlayerView })));
+const SessionSummaryView = lazy(() => import('./views/SessionSummaryView').then(({ SessionSummaryView }) => ({ default: SessionSummaryView })));
+const ProgressView = lazy(() => import('./views/ProgressView').then(({ ProgressView }) => ({ default: ProgressView })));
+const ProfileView = lazy(() => import('./views/ProfileView').then(({ ProfileView }) => ({ default: ProfileView })));
+const ParentDashboardView = lazy(() => import('./views/ParentDashboardView').then(({ ParentDashboardView }) => ({ default: ParentDashboardView })));
+const TeacherDashboardView = lazy(() => import('./views/TeacherDashboardView').then(({ TeacherDashboardView }) => ({ default: TeacherDashboardView })));
+const LoginView = lazy(() => import('./views/LoginView').then(({ LoginView }) => ({ default: LoginView })));
+const SignupView = lazy(() => import('./views/SignupView').then(({ SignupView }) => ({ default: SignupView })));
+const ForgotPasswordView = lazy(() => import('./views/ForgotPasswordView').then(({ ForgotPasswordView }) => ({ default: ForgotPasswordView })));
+const ResetPasswordView = lazy(() => import('./views/ResetPasswordView').then(({ ResetPasswordView }) => ({ default: ResetPasswordView })));
+const VerifyEmailView = lazy(() => import('./views/VerifyEmailView').then(({ VerifyEmailView }) => ({ default: VerifyEmailView })));
+const AccountSettingsView = lazy(() => import('./views/AccountSettingsView').then(({ AccountSettingsView }) => ({ default: AccountSettingsView })));
+const PrivacyPolicyView = lazy(() => import('./views/PrivacyPolicyView').then(({ PrivacyPolicyView }) => ({ default: PrivacyPolicyView })));
+const TermsView = lazy(() => import('./views/TermsView').then(({ TermsView }) => ({ default: TermsView })));
+
+function RouteLoadingState() {
+  return (
+    <div
+      className="min-h-[50vh] flex flex-col items-center justify-center gap-4 px-6 text-center"
+      role="status"
+      aria-live="polite"
+    >
+      <div
+        className="h-12 w-12 rounded-full border-4 border-[#DED5FF] border-t-[#7C65E8] motion-safe:animate-spin"
+        aria-hidden="true"
+      />
+      <p className="font-extrabold text-[#5843C4]">Opening your next reading adventure...</p>
+    </div>
+  );
+}
 
 function AppShell() {
   const { activeChild, updateChildProfile, refreshAuth } = useAuth();
@@ -52,6 +69,7 @@ function AppShell() {
       {/* Main Content Area */}
       <main className="flex-1">
         <ErrorBoundary>
+          <Suspense fallback={<RouteLoadingState />}>
           <Routes>
           {/* Public Landing, Curriculum Library & Policy Routes */}
           <Route path="/" element={<WelcomeView />} />
@@ -152,6 +170,7 @@ function AppShell() {
           {/* Catch-all redirect to landing page */}
           <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
+          </Suspense>
         </ErrorBoundary>
       </main>
 

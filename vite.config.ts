@@ -21,5 +21,31 @@ export default defineConfig(() => {
         },
       },
     },
+    build: {
+      rolldownOptions: {
+        output: {
+          codeSplitting: {
+            groups: [
+              {
+                name: 'react-vendor',
+                test: /node_modules[\\/](react|react-dom|scheduler)[\\/]/,
+                priority: 30,
+              },
+              {
+                name: 'router-vendor',
+                test: /node_modules[\\/](react-router|react-router-dom)[\\/]/,
+                priority: 20,
+              },
+              {
+                name: 'ui-vendor',
+                test: /node_modules[\\/](motion|lucide-react)[\\/]/,
+                priority: 10,
+                maxSize: 400 * 1024,
+              },
+            ],
+          },
+        },
+      },
+    },
   };
 });
