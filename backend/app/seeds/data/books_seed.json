@@ -1,0 +1,1729 @@
+{
+  "books": [
+    {
+      "id": "original-mia-red-hat",
+      "title": "Mia and the Red Hat",
+      "author": "ReadQuest Curriculum Team",
+      "level": 1,
+      "category": "friendship",
+      "word_count": 32,
+      "content": {
+        "pages": [
+          {
+            "page_number": 1,
+            "sentences": [
+              "Mia has a red hat.",
+              "She wears it to the park."
+            ]
+          },
+          {
+            "page_number": 2,
+            "sentences": [
+              "A little bird lands by her.",
+              "Mia shares a crumb."
+            ]
+          },
+          {
+            "page_number": 3,
+            "sentences": [
+              "The bird chirps and hops.",
+              "Mia smiles at her new friend."
+            ]
+          }
+        ]
+      },
+      "cover_url": null,
+      "content_status": "published",
+      "source": "original",
+      "attribution": {
+        "source_title": "Mia and the Red Hat",
+        "creator_credits": [
+          "ReadQuest Curriculum Team"
+        ],
+        "copyright_notice": "Original content created for the ReadQuest course demo.",
+        "edition_url": null,
+        "license_url": null,
+        "reformatting_note": "Formatted as ordered text-only pages for the ReadQuest reader.",
+        "sourcing_notes": []
+      }
+    },
+    {
+      "id": "original-ben-bus",
+      "title": "Ben Takes the Bus",
+      "author": "ReadQuest Curriculum Team",
+      "level": 1,
+      "category": "community",
+      "word_count": 36,
+      "content": {
+        "pages": [
+          {
+            "page_number": 1,
+            "sentences": [
+              "Ben waits by the blue sign.",
+              "The bus comes down the road."
+            ]
+          },
+          {
+            "page_number": 2,
+            "sentences": [
+              "He taps his card and finds a seat.",
+              "A kind man moves his bag."
+            ]
+          },
+          {
+            "page_number": 3,
+            "sentences": [
+              "Ben waves at the stop.",
+              "He is ready for school."
+            ]
+          }
+        ]
+      },
+      "cover_url": null,
+      "content_status": "published",
+      "source": "original",
+      "attribution": {
+        "source_title": "Ben Takes the Bus",
+        "creator_credits": [
+          "ReadQuest Curriculum Team"
+        ],
+        "copyright_notice": "Original content created for the ReadQuest course demo.",
+        "edition_url": null,
+        "license_url": null,
+        "reformatting_note": "Formatted as ordered text-only pages for the ReadQuest reader.",
+        "sourcing_notes": []
+      }
+    },
+    {
+      "id": "original-seeds-sun",
+      "title": "Seeds in the Sun",
+      "author": "ReadQuest Curriculum Team",
+      "level": 2,
+      "category": "nature",
+      "word_count": 34,
+      "content": {
+        "pages": [
+          {
+            "page_number": 1,
+            "sentences": [
+              "Nora plants three small seeds.",
+              "She gives each seed a drink."
+            ]
+          },
+          {
+            "page_number": 2,
+            "sentences": [
+              "Sun shines on the soft soil.",
+              "Nora checks the pots each day."
+            ]
+          },
+          {
+            "page_number": 3,
+            "sentences": [
+              "Green leaves pop through the dirt.",
+              "Nora cheers for every sprout."
+            ]
+          }
+        ]
+      },
+      "cover_url": null,
+      "content_status": "published",
+      "source": "original",
+      "attribution": {
+        "source_title": "Seeds in the Sun",
+        "creator_credits": [
+          "ReadQuest Curriculum Team"
+        ],
+        "copyright_notice": "Original content created for the ReadQuest course demo.",
+        "edition_url": null,
+        "license_url": null,
+        "reformatting_note": "Formatted as ordered text-only pages for the ReadQuest reader.",
+        "sourcing_notes": []
+      }
+    },
+    {
+      "id": "original-fox-lost-bell",
+      "title": "The Fox and the Lost Bell",
+      "author": "ReadQuest Curriculum Team",
+      "level": 2,
+      "category": "animals",
+      "word_count": 43,
+      "content": {
+        "pages": [
+          {
+            "page_number": 1,
+            "sentences": [
+              "Finn the fox hears a bell by the brook.",
+              "He finds it caught beside a stone."
+            ]
+          },
+          {
+            "page_number": 2,
+            "sentences": [
+              "The bell belongs to a little goat.",
+              "Finn carries it across the hill."
+            ]
+          },
+          {
+            "page_number": 3,
+            "sentences": [
+              "The goat rings it with a bright clang.",
+              "Finn races home, proud and happy."
+            ]
+          }
+        ]
+      },
+      "cover_url": null,
+      "content_status": "published",
+      "source": "original",
+      "attribution": {
+        "source_title": "The Fox and the Lost Bell",
+        "creator_credits": [
+          "ReadQuest Curriculum Team"
+        ],
+        "copyright_notice": "Original content created for the ReadQuest course demo.",
+        "edition_url": null,
+        "license_url": null,
+        "reformatting_note": "Formatted as ordered text-only pages for the ReadQuest reader.",
+        "sourcing_notes": []
+      }
+    },
+    {
+      "id": "original-night-sky-map",
+      "title": "A Map of the Night Sky",
+      "author": "ReadQuest Curriculum Team",
+      "level": 3,
+      "category": "science",
+      "word_count": 45,
+      "content": {
+        "pages": [
+          {
+            "page_number": 1,
+            "sentences": [
+              "Jules draws the moon in a blue notebook.",
+              "She marks three bright stars beside it."
+            ]
+          },
+          {
+            "page_number": 2,
+            "sentences": [
+              "A cloud hides the stars for a moment.",
+              "Jules waits instead of closing her book."
+            ]
+          },
+          {
+            "page_number": 3,
+            "sentences": [
+              "The stars return in the same places.",
+              "Her sky map helps her spot them again."
+            ]
+          }
+        ]
+      },
+      "cover_url": null,
+      "content_status": "published",
+      "source": "original",
+      "attribution": {
+        "source_title": "A Map of the Night Sky",
+        "creator_credits": [
+          "ReadQuest Curriculum Team"
+        ],
+        "copyright_notice": "Original content created for the ReadQuest course demo.",
+        "edition_url": null,
+        "license_url": null,
+        "reformatting_note": "Formatted as ordered text-only pages for the ReadQuest reader.",
+        "sourcing_notes": []
+      }
+    },
+    {
+      "id": "original-market-day",
+      "title": "Market Day Mystery",
+      "author": "ReadQuest Curriculum Team",
+      "level": 3,
+      "category": "community",
+      "word_count": 44,
+      "content": {
+        "pages": [
+          {
+            "page_number": 1,
+            "sentences": [
+              "Tari notices that one basket is empty.",
+              "Red peppers were there in the morning."
+            ]
+          },
+          {
+            "page_number": 2,
+            "sentences": [
+              "She follows small red scraps to a cart.",
+              "The cart belongs to a busy cook."
+            ]
+          },
+          {
+            "page_number": 3,
+            "sentences": [
+              "The cook explains that he bought the peppers.",
+              "Tari returns to fill the basket again."
+            ]
+          }
+        ]
+      },
+      "cover_url": null,
+      "content_status": "published",
+      "source": "original",
+      "attribution": {
+        "source_title": "Market Day Mystery",
+        "creator_credits": [
+          "ReadQuest Curriculum Team"
+        ],
+        "copyright_notice": "Original content created for the ReadQuest course demo.",
+        "edition_url": null,
+        "license_url": null,
+        "reformatting_note": "Formatted as ordered text-only pages for the ReadQuest reader.",
+        "sourcing_notes": []
+      }
+    },
+    {
+      "id": "original-river-rescue",
+      "title": "River Rescue Club",
+      "author": "ReadQuest Curriculum Team",
+      "level": 4,
+      "category": "adventure",
+      "word_count": 47,
+      "content": {
+        "pages": [
+          {
+            "page_number": 1,
+            "sentences": [
+              "After a storm, Asha and Leo find litter along the riverbank.",
+              "They call friends and bring safe gloves."
+            ]
+          },
+          {
+            "page_number": 2,
+            "sentences": [
+              "The group separates glass, paper, and plastic.",
+              "A park ranger collects the sorted bags."
+            ]
+          },
+          {
+            "page_number": 3,
+            "sentences": [
+              "The clear bank welcomes ducks and turtles again.",
+              "The club plans another cleanup for Saturday."
+            ]
+          }
+        ]
+      },
+      "cover_url": null,
+      "content_status": "published",
+      "source": "original",
+      "attribution": {
+        "source_title": "River Rescue Club",
+        "creator_credits": [
+          "ReadQuest Curriculum Team"
+        ],
+        "copyright_notice": "Original content created for the ReadQuest course demo.",
+        "edition_url": null,
+        "license_url": null,
+        "reformatting_note": "Formatted as ordered text-only pages for the ReadQuest reader.",
+        "sourcing_notes": []
+      }
+    },
+    {
+      "id": "original-library-lantern",
+      "title": "The Library Lantern",
+      "author": "ReadQuest Curriculum Team",
+      "level": 4,
+      "category": "mystery",
+      "word_count": 53,
+      "content": {
+        "pages": [
+          {
+            "page_number": 1,
+            "sentences": [
+              "When the storm cuts the power, the library grows quiet.",
+              "Omar and Priya search for a lantern."
+            ]
+          },
+          {
+            "page_number": 2,
+            "sentences": [
+              "They follow a trail of brass hooks beneath the front desk.",
+              "An old map points to a supply shelf."
+            ]
+          },
+          {
+            "page_number": 3,
+            "sentences": [
+              "The lantern glows as readers gather in a circle.",
+              "Omar reads the final chapter by warm light."
+            ]
+          }
+        ]
+      },
+      "cover_url": null,
+      "content_status": "published",
+      "source": "original",
+      "attribution": {
+        "source_title": "The Library Lantern",
+        "creator_credits": [
+          "ReadQuest Curriculum Team"
+        ],
+        "copyright_notice": "Original content created for the ReadQuest course demo.",
+        "edition_url": null,
+        "license_url": null,
+        "reformatting_note": "Formatted as ordered text-only pages for the ReadQuest reader.",
+        "sourcing_notes": []
+      }
+    },
+    {
+      "id": "original-rooftop-garden",
+      "title": "The Rooftop Garden Plan",
+      "author": "ReadQuest Curriculum Team",
+      "level": 5,
+      "category": "science",
+      "word_count": 56,
+      "content": {
+        "pages": [
+          {
+            "page_number": 1,
+            "sentences": [
+              "The class wants a garden, but the schoolyard is already full.",
+              "Mina proposes a careful rooftop plan."
+            ]
+          },
+          {
+            "page_number": 2,
+            "sentences": [
+              "They measure sunlight, test soil weight, and ask the building engineer.",
+              "Their design uses light tubs and a drip-water system."
+            ]
+          },
+          {
+            "page_number": 3,
+            "sentences": [
+              "The council approves a smaller pilot garden.",
+              "After one season, the students share both vegetables and measured results."
+            ]
+          }
+        ]
+      },
+      "cover_url": null,
+      "content_status": "published",
+      "source": "original",
+      "attribution": {
+        "source_title": "The Rooftop Garden Plan",
+        "creator_credits": [
+          "ReadQuest Curriculum Team"
+        ],
+        "copyright_notice": "Original content created for the ReadQuest course demo.",
+        "edition_url": null,
+        "license_url": null,
+        "reformatting_note": "Formatted as ordered text-only pages for the ReadQuest reader.",
+        "sourcing_notes": []
+      }
+    },
+    {
+      "id": "original-kite-code",
+      "title": "The Kite Code",
+      "author": "ReadQuest Curriculum Team",
+      "level": 5,
+      "category": "adventure",
+      "word_count": 59,
+      "content": {
+        "pages": [
+          {
+            "page_number": 1,
+            "sentences": [
+              "Amir builds a kite from cloth, string, and narrow bamboo strips.",
+              "His cousin Inez suggests a better brace for strong wind."
+            ]
+          },
+          {
+            "page_number": 2,
+            "sentences": [
+              "Their first test bends at the center, so they record the failure.",
+              "They change one variable and try again."
+            ]
+          },
+          {
+            "page_number": 3,
+            "sentences": [
+              "The repaired kite rises above the field.",
+              "Amir writes the revised plan so other builders can repeat their success."
+            ]
+          }
+        ]
+      },
+      "cover_url": null,
+      "content_status": "published",
+      "source": "original",
+      "attribution": {
+        "source_title": "The Kite Code",
+        "creator_credits": [
+          "ReadQuest Curriculum Team"
+        ],
+        "copyright_notice": "Original content created for the ReadQuest course demo.",
+        "edition_url": null,
+        "license_url": null,
+        "reformatting_note": "Formatted as ordered text-only pages for the ReadQuest reader.",
+        "sourcing_notes": []
+      }
+    },
+    {
+      "id": "licensed-too-big-too-small",
+      "title": "Too Big! Too Small!",
+      "author": "Lavanya Karthik",
+      "level": 1,
+      "category": "family",
+      "word_count": 199,
+      "content": {
+        "pages": [
+          {
+            "page_number": 2,
+            "sentences": [
+              "“I can’t lift you up, Shanu!” says Ammi.",
+              "“You are too big!”"
+            ]
+          },
+          {
+            "page_number": 3,
+            "sentences": [
+              "“You can’t walk to school alone, Shanu!” says Abbu.",
+              "“You are too small!”"
+            ]
+          },
+          {
+            "page_number": 4,
+            "sentences": [
+              "“You can’t sleep in the baby’s cot, Shanu!” says Dadu.",
+              "“You are too big!”"
+            ]
+          },
+          {
+            "page_number": 5,
+            "sentences": [
+              "“You can’t carry the baby to the park, Shanu!” says Dadi.",
+              "“You are too small!”"
+            ]
+          },
+          {
+            "page_number": 6,
+            "sentences": [
+              "Shanu is puzzled.",
+              "Too big!",
+              "Too small!",
+              "How can she be too big and too small all at once?"
+            ]
+          },
+          {
+            "page_number": 7,
+            "sentences": [
+              "Too big to wear her old pink frock.",
+              "Too small to make dosas at the stove."
+            ]
+          },
+          {
+            "page_number": 8,
+            "sentences": [
+              "Too big to climb up on Dadu’s back?",
+              "Too small to carry the baby on hers?"
+            ]
+          },
+          {
+            "page_number": 9,
+            "sentences": [
+              "“What am I the right size for?” Shanu wonders."
+            ]
+          },
+          {
+            "page_number": 10,
+            "sentences": [
+              "Ammi smiles and says, “Why, you are just big enough to go to big school.”"
+            ]
+          },
+          {
+            "page_number": 11,
+            "sentences": [
+              "“And you are just small enough for me to carry you on my shoulders,” says Abbu."
+            ]
+          },
+          {
+            "page_number": 12,
+            "sentences": [
+              "“You are just big enough to take me for my morning walks,” says Dadu."
+            ]
+          },
+          {
+            "page_number": 13,
+            "sentences": [
+              "“And you are just small enough for me to tell stories to,” says Dadi."
+            ]
+          },
+          {
+            "page_number": 14,
+            "sentences": [
+              "“And you will always, always be the perfect size... for this!",
+              "\" all say, and give her a warm, wonderful hug."
+            ]
+          }
+        ]
+      },
+      "cover_url": null,
+      "content_status": "published",
+      "source": "licensed_edition",
+      "attribution": {
+        "source_title": "Too Big! Too Small!",
+        "creator_credits": [
+          "Written and illustrated by Lavanya Karthik",
+          "Published by Pratham Books; StoryWeaver edition 16411",
+          "Development supported by Parag, an initiative of Tata Trusts"
+        ],
+        "copyright_notice": "© Pratham Books, 2017. Some rights reserved.",
+        "edition_url": "https://storyweaver.org.in/en/stories/16411-too-big-too-small",
+        "license_url": "https://creativecommons.org/licenses/by/4.0/",
+        "reformatting_note": "Text-only reformat: illustrations removed; story wording and page order preserved and each page split into sentences.",
+        "sourcing_notes": [
+          "StoryWeaver read-along/video editions are excluded; those noncommercial/no-derivatives exports remain pending permission."
+        ]
+      }
+    },
+    {
+      "id": "licensed-sam-big-fish",
+      "title": "Sam and the Big Fish",
+      "author": "Nan Hkawn Nding",
+      "level": 2,
+      "category": "phonics",
+      "word_count": 101,
+      "content": {
+        "pages": [
+          {
+            "page_number": 1,
+            "sentences": [
+              "Sam went to the pond.",
+              "He went with six kids."
+            ]
+          },
+          {
+            "page_number": 2,
+            "sentences": [
+              "Sam got a big fish.",
+              "The kids got fish too."
+            ]
+          },
+          {
+            "page_number": 3,
+            "sentences": [
+              "Sam gave his fish.",
+              "He gave it to the kids."
+            ]
+          },
+          {
+            "page_number": 4,
+            "sentences": [
+              "A kid said, \" your mom is ugly.",
+              "She has a big neck.",
+              "\""
+            ]
+          },
+          {
+            "page_number": 5,
+            "sentences": [
+              "Sam did not talk.",
+              "He sat on a rock."
+            ]
+          },
+          {
+            "page_number": 6,
+            "sentences": [
+              "It was time to eat.",
+              "The kids had fish and rice."
+            ]
+          },
+          {
+            "page_number": 7,
+            "sentences": [
+              "Sam had no food.",
+              "No kid gave him rice."
+            ]
+          },
+          {
+            "page_number": 8,
+            "sentences": [
+              "Mom came with a bag.",
+              "She had rice and fish."
+            ]
+          },
+          {
+            "page_number": 9,
+            "sentences": [
+              "Sam said, \" Thanks, Mom.",
+              "\" He gave mom a big hug."
+            ]
+          },
+          {
+            "page_number": 10,
+            "sentences": [
+              "The kid saw Sam's mom.",
+              "They said, \" She is kind.",
+              "\""
+            ]
+          }
+        ]
+      },
+      "cover_url": null,
+      "content_status": "published",
+      "source": "licensed_edition",
+      "attribution": {
+        "source_title": "Sam and the Big Fish The consonants: s, m, b, f, k, p, d, g",
+        "creator_credits": [
+          "Story and edition credited to Nan Hkawn Nding on the Bloom title page",
+          "Published by Bloom"
+        ],
+        "copyright_notice": "Copyright © 2025, Bloom.",
+        "edition_url": "https://bloomlibrary.org/book/eX40kysRK8",
+        "license_url": "https://creativecommons.org/licenses/by/4.0/",
+        "reformatting_note": "Text-only reformat of the English download; title/subtitle separated, illustrations/audio removed, wording and 10 story pages preserved.",
+        "sourcing_notes": []
+      }
+    },
+    {
+      "id": "licensed-cloud-trash",
+      "title": "A Cloud of Trash",
+      "author": "Karanjeet Kaur",
+      "level": 2,
+      "category": "environment",
+      "word_count": 728,
+      "content": {
+        "pages": [
+          {
+            "page_number": 2,
+            "sentences": [
+              "Cheekoo was the unhappiest girl among her friends.",
+              "She was certainly the unhappiest girl in her entire class.",
+              "She was perhaps the unhappiest girl in the world."
+            ]
+          },
+          {
+            "page_number": 3,
+            "sentences": [
+              "Friends?",
+              "Cheekoo had no friends anymore.",
+              "No one wanted to play with Cheekoo.",
+              "Because she had a cloud hanging over her head.",
+              "A cloud of TRASH."
+            ]
+          },
+          {
+            "page_number": 4,
+            "sentences": [
+              "Orange peels and biscuit packets, Broken toys and pencil shavings, Twisted plastic bottles and colourful plastic bags, All surrounded by a swarm of buzzing flies."
+            ]
+          },
+          {
+            "page_number": 5,
+            "sentences": [
+              "No one wanted to play with a girl who had a cloud of trash hanging over her.",
+              "What if a rotten banana peel fell on your head?",
+              "YUCK!",
+              "Cheekoo couldn’t even play hide- and-seek anymore.",
+              "The cloud would always give her away."
+            ]
+          },
+          {
+            "page_number": 6,
+            "sentences": [
+              "\"Let’s walk to school together, \" she said to Sona.",
+              "Sona ran off in the opposite direction.",
+              "\"May I borrow your pencil sharpener?",
+              "\" she asked Sweety.",
+              "Sweety made a face and changed her seat to go sit with Asha.",
+              "Cheekoo even had to eat her lunch alone.",
+              "Cheekoo knew that she should have listened to her Amma.",
+              "Amma always told her not to litter."
+            ]
+          },
+          {
+            "page_number": 7,
+            "sentences": [
+              "\"Don’t throw the banana peel on the road!",
+              "\" \"Throw the empty biscuit packet in the dustbin.",
+              "\" But Cheekoo never listened.",
+              "She only laughed and kept littering."
+            ]
+          },
+          {
+            "page_number": 8,
+            "sentences": [
+              "Then one day, Amma became very angry.",
+              "\"Soon, all this trash will start following you!",
+              "\" she said.",
+              "Cheekoo just laughed.",
+              "The next morning, Cheekoo woke up to a foul smell and the sound of buzzing flies.",
+              "The cloud of trash was hanging over her head.",
+              "Amma’s words had come true!",
+              "And then, Cheekoo was unable to laugh."
+            ]
+          },
+          {
+            "page_number": 10,
+            "sentences": [
+              "Cheekoo tried to run away.",
+              "But the trash cloud followed her everywhere.",
+              "Cheekoo took a broom to sweep the cloud down.",
+              "But the trash could not be swept away."
+            ]
+          },
+          {
+            "page_number": 11,
+            "sentences": [
+              "Cheekoo tried EVERYTHING.",
+              "She screamed and asked the cloud to leave her alone.",
+              "She even tried throwing the cloud into the dustbin.",
+              "But the cloud of trash just wouldn’t go.",
+              "So Cheekoo became very unhappy."
+            ]
+          },
+          {
+            "page_number": 12,
+            "sentences": [
+              "Then something happened!",
+              "Cheekoo saw Bala throwing a banana peel on the road.",
+              "Cheekoo was annoyed.",
+              "Could he not see the cloud over her head?",
+              "\"Oye silly boy!",
+              "\" she yelled.",
+              "\"Don’t throw the peel on the road.",
+              "Someone will slip!",
+              "\" Bala, scared of the trash cloud, threw the peel in the dustbin."
+            ]
+          },
+          {
+            "page_number": 13,
+            "sentences": [
+              "The next day, the trash cloud had become smaller!",
+              "\"How did that happen?",
+              "\" Cheekoo wondered.",
+              "Then, Cheekoo saw Reema Aunty throwing away plastic bags.",
+              "\"Aunty!",
+              "\" Cheekoo said.",
+              "\"Please pick up these bags and reuse them.",
+              "\" Reema Aunty picked up the bags and left.",
+              "The next day when Cheekoo woke up, the cloud was much smaller.",
+              "Cheekoo smiled.",
+              "She knew what she had to do."
+            ]
+          },
+          {
+            "page_number": 14,
+            "sentences": [
+              "When someone threw away a biscuit packet or pencil shavings, Cheekoo stopped them.",
+              "She picked up every twisted plastic bottle and put it in the dustbin.",
+              "The village became cleaner and cleaner.",
+              "And Cheekoo’s cloud became smaller and smaller.",
+              "Until one day, it was gone.",
+              "COMPLETELY gone.",
+              "Cheekoo was now perhaps the happiest girl in the world."
+            ]
+          },
+          {
+            "page_number": 15,
+            "sentences": [
+              "Cheekoo never littered again.",
+              "Secretly, she liked living in a clean village.",
+              "But she was also scared that the trash cloud would come back, some day.",
+              "Who knew!"
+            ]
+          },
+          {
+            "page_number": 17,
+            "sentences": [
+              "Let’s Talk About Trash Ever wondered what happens to trash once you throw it away?",
+              "No, it doesn’t become a cloud on your head.",
+              "The trash ends up in a big garbage bin near your home.",
+              "When you litter, the trash collects by the side of the road.",
+              "Some of it goes into the drains that carry waste water from your house.",
+              "This clogs the drains and attracts flies which spread nasty diseases!",
+              "UGH!",
+              "Nobody likes living in a dirty environment.",
+              "Ask Cheekoo."
+            ]
+          },
+          {
+            "page_number": 18,
+            "sentences": [
+              "Here’s how NOT to make a cloud of trash - We can start by not littering our surroundings. - Always, always throw waste into a dustbin – look around for the nearest one."
+            ]
+          },
+          {
+            "page_number": 19,
+            "sentences": [
+              "- After you eat a banana, don’t throw it on the road.",
+              "Put the peel in a small bag until you find a dustbin. - There are many things that you may think are useless, like the paper bag into which you put the peel.",
+              "But not everything is waste.",
+              "So don’t throw the bag with the peel!",
+              "Take it home and reuse it. - Cover dustbins so that flies can’t get inside."
+            ]
+          }
+        ]
+      },
+      "cover_url": null,
+      "content_status": "published",
+      "source": "licensed_edition",
+      "attribution": {
+        "source_title": "A Cloud of Trash",
+        "creator_credits": [
+          "Written by Karanjeet Kaur",
+          "Illustrated by Bhavana Vyas Vipparthi",
+          "Published by Pratham Books; StoryWeaver edition 11166",
+          "Development supported by Oracle; guest editor Bijal Vaccharajani; art director Vinayak Varma"
+        ],
+        "copyright_notice": "© Pratham Books, 2017. Some rights reserved.",
+        "edition_url": "https://storyweaver.org.in/en/stories/11166",
+        "license_url": "https://creativecommons.org/licenses/by/4.0/",
+        "reformatting_note": "Text-only reformat: illustrations removed, story and educational pages retained in edition order, page text split into sentences.",
+        "sourcing_notes": [
+          "StoryWeaver read-along/video editions are excluded; those noncommercial/no-derivatives exports remain pending permission."
+        ]
+      }
+    },
+    {
+      "id": "licensed-joseph-dreamer",
+      "title": "Joseph the Dreamer",
+      "author": "SIL Global",
+      "level": 3,
+      "category": "classic",
+      "word_count": 751,
+      "content": {
+        "pages": [
+          {
+            "page_number": 1,
+            "sentences": [
+              "Jacob had four wives, twelve sons, and a daughter.",
+              "Joseph was Jacob's favorite son because Joseph was born when Jacob was old.",
+              "Also, Joseph's mother was Rachel, the wife Jacob loved most."
+            ]
+          },
+          {
+            "page_number": 2,
+            "sentences": [
+              "Because Jacob loved Joseph more than all his other children, he gave Joseph a beautiful, many-colored coat."
+            ]
+          },
+          {
+            "page_number": 3,
+            "sentences": [
+              "When Joseph's brothers saw that their father loved Joseph more than them, they hated Joseph.",
+              "They always spoke to Joseph with angry words."
+            ]
+          },
+          {
+            "page_number": 4,
+            "sentences": [
+              "Joseph often helped his brothers care for their father’s sheep and goats."
+            ]
+          },
+          {
+            "page_number": 5,
+            "sentences": [
+              "One day, when Joseph was seventeen years old, he returned home and told his father about the wrong things his brothers did.",
+              "This caused his brothers to hate Joseph even more."
+            ]
+          },
+          {
+            "page_number": 6,
+            "sentences": [
+              "One day, Joseph said to his brothers, “I dreamed we all were in the field, tying grain-stalks into bundles.",
+              "Suddenly, my bundle stood up by itself.",
+              "Then, all your bundles stood around my bundle and bowed down to honor my bundle.”"
+            ]
+          },
+          {
+            "page_number": 7,
+            "sentences": [
+              "This dream made his brothers very angry and they hated Joseph even more.",
+              "They said to him, “Do you think you will become a king, and we will bow down to honor you?!”"
+            ]
+          },
+          {
+            "page_number": 8,
+            "sentences": [
+              "Some time later, Joseph had another dream.",
+              "He told his father and brothers, “This time, in my dream, I saw the sun, the moon, and eleven stars bow down to me.”"
+            ]
+          },
+          {
+            "page_number": 9,
+            "sentences": [
+              "Then his father Jacob scolded Joseph, “Your dream is nonsense!",
+              "You must not think that your mother and I, and your brothers will bow down to honor you!”"
+            ]
+          },
+          {
+            "page_number": 10,
+            "sentences": [
+              "But Jacob thought about the meaning of Joseph’s dreams.",
+              "He wondered whether Joseph would one day become an important man."
+            ]
+          },
+          {
+            "page_number": 11,
+            "sentences": [
+              "Soon after this, Joseph’s brothers were herding their father’s sheep and goats far to the north near the town called Shechem."
+            ]
+          },
+          {
+            "page_number": 12,
+            "sentences": [
+              "After many days, Jacob was worried about his sons and the flocks.",
+              "So he told Joseph to go to Shechem and then return home with a report."
+            ]
+          },
+          {
+            "page_number": 13,
+            "sentences": [
+              "So Joseph obeyed and traveled north to Shechem where he knew his brothers often camped.",
+              "His brothers were not there, so Joseph traveled to Dothan to find them."
+            ]
+          },
+          {
+            "page_number": 14,
+            "sentences": [
+              "Near Dothan, Joseph saw their herds and their camp."
+            ]
+          },
+          {
+            "page_number": 15,
+            "sentences": [
+              "His brothers saw him in the distance.",
+              "They recognized him by his colorful coat.",
+              "They were still angry and they decided to kill him."
+            ]
+          },
+          {
+            "page_number": 16,
+            "sentences": [
+              "One of them said, “Look there!",
+              "Here comes that dreamer!",
+              "Let’s kill him!",
+              "No one will know!”"
+            ]
+          },
+          {
+            "page_number": 17,
+            "sentences": [
+              "But their oldest brother, Reuben, did not want to kill Joseph.",
+              "So he said, “Do not kill him.",
+              "We do not need to become guilty of murder.",
+              "We can throw him into that deep, dry cistern [a hole for collecting rainwater].",
+              "No one will find him there.”"
+            ]
+          },
+          {
+            "page_number": 18,
+            "sentences": [
+              "The other brothers agreed to Reuben’s plan.",
+              "But Reuben did not tell them about his secret plan to rescue Joseph and take him back to their father."
+            ]
+          },
+          {
+            "page_number": 19,
+            "sentences": [
+              "When Joseph arrived in the camp, his brothers grabbed him.",
+              "They ripped off his colorful coat.",
+              "Then they threw him down into the empty cistern."
+            ]
+          },
+          {
+            "page_number": 20,
+            "sentences": [
+              "Joseph begged them not to kill him!",
+              "Later, Joseph’s brothers sat down to eat.",
+              "But, Reuben was not with them."
+            ]
+          },
+          {
+            "page_number": 21,
+            "sentences": [
+              "As they ate, they saw a caravan of traders traveling to Egypt.",
+              "One brother named Judah said, “Look there!",
+              "Let us sell that dreamer as a slave to those traders!",
+              "Then we will not kill him ourselves.” And the other brothers agreed."
+            ]
+          },
+          {
+            "page_number": 22,
+            "sentences": [
+              "So they lifted Joseph from the cistern and sold him to the traders.",
+              "And the traders took Joseph away!"
+            ]
+          },
+          {
+            "page_number": 23,
+            "sentences": [
+              "When Reuben returned, he saw that the cistern was empty.",
+              "He was so grieved that he tore his clothes.",
+              "He said to his brothers, “Joseph is gone!",
+              "What will I do now?",
+              "What will I say to my father?”"
+            ]
+          },
+          {
+            "page_number": 24,
+            "sentences": [
+              "The brothers decided to deceive their father.",
+              "They tore Joseph’s coat, killed a goat, and put the goat’s blood on the coat.",
+              "It looked like Joseph’s blood."
+            ]
+          },
+          {
+            "page_number": 25,
+            "sentences": [
+              "They returned home to their father Jacob and gave him the coat.",
+              "They said, “We found this coat.",
+              "Is it Joseph’s?” Jacob recognized the coat and cried, “Yes, it is Joseph’s coat.",
+              "A wild animal has killed him!”"
+            ]
+          },
+          {
+            "page_number": 26,
+            "sentences": [
+              "Jacob was so grieved that he tore his clothes and cried, “I will mourn my son until the day I die!” All his children tried to comfort him, but Jacob kept mourning."
+            ]
+          },
+          {
+            "page_number": 27,
+            "sentences": [
+              "Meanwhile, the traders who bought Joseph, took him far away to Egypt.",
+              "In that far country, they sold him as a slave to an important, rich man."
+            ]
+          }
+        ]
+      },
+      "cover_url": null,
+      "content_status": "published",
+      "source": "licensed_edition",
+      "attribution": {
+        "source_title": "111 Joseph the Dreamer",
+        "creator_credits": [
+          "Story and music © 2026 SIL Global",
+          "Original images by Jim Padgett, © 1984 Sweet Publishing, CC BY-SA 3.0",
+          "Images adapted by SIL Global; some adapted with Gemini AI"
+        ],
+        "copyright_notice": "Copyright © 2026, SIL Global. Story text is CC BY-SA 4.0.",
+        "edition_url": "https://bloomlibrary.org/book/630t0CnECh",
+        "license_url": "https://creativecommons.org/licenses/by-sa/4.0/",
+        "reformatting_note": "Text-only reformat of the English download; 27 story pages preserved in order and split into sentences. Scripture references, illustrations, audio, and front/back matter omitted. This adaptation is distributed under CC BY-SA 4.0.",
+        "sourcing_notes": [
+          "The adapted story text remains ShareAlike; redistribute adaptations under CC BY-SA 4.0 or a compatible license."
+        ]
+      }
+    },
+    {
+      "id": "licensed-story-ruth",
+      "title": "The Story of Ruth",
+      "author": "Wycliffe Bible Translators, Inc.",
+      "level": 4,
+      "category": "classic",
+      "word_count": 1256,
+      "content": {
+        "pages": [
+          {
+            "page_number": 1,
+            "sentences": [
+              "Long ago, in the days before Israel had a king and judges ruled, there was a famine in the land."
+            ]
+          },
+          {
+            "page_number": 2,
+            "sentences": [
+              "An Israelite named Elimelech, who lived in the town of Bethlehem in Judah, went with his wife Naomi and their two sons to live for a while in the country of Moab where there was food."
+            ]
+          },
+          {
+            "page_number": 3,
+            "sentences": [
+              "While they were living there, Elimelech died, and this left Naomi alone with her two sons."
+            ]
+          },
+          {
+            "page_number": 4,
+            "sentences": [
+              "Naomi’s sons married women from Moab.",
+              "Orpah was the name of one of them and Ruth was the name of the other."
+            ]
+          },
+          {
+            "page_number": 5,
+            "sentences": [
+              "About ten years later, Naomi’s two sons also died.",
+              "So then, this left Naomi alone with only her two Moabite daughters-in-law."
+            ]
+          },
+          {
+            "page_number": 6,
+            "sentences": [
+              "After some time, the famine passed.",
+              "Naomi heard that the Lord had blessed the Israelites with good crops.",
+              "She and her daughters-in-law left Moab and set out on the road that led back to Judah."
+            ]
+          },
+          {
+            "page_number": 7,
+            "sentences": [
+              "On the way, Naomi told them, “Go back to your mother’s homes in Moab.",
+              "May the Lord be as good to you as you have been to me.",
+              "May you marry again and have your own homes.”"
+            ]
+          },
+          {
+            "page_number": 8,
+            "sentences": [
+              "So Naomi kissed them good-bye.",
+              "But they started crying and said to her, “No!",
+              "We will go with you to your people.”"
+            ]
+          },
+          {
+            "page_number": 9,
+            "sentences": [
+              "“Go back home,” Naomi told them.",
+              "“I am too old to get married and have sons again.”"
+            ]
+          },
+          {
+            "page_number": 10,
+            "sentences": [
+              "Again, the daughters-in-law started crying.",
+              "Then Orpah kissed her mother-in-law good-bye and went back home, but Ruth held on to Naomi."
+            ]
+          },
+          {
+            "page_number": 11,
+            "sentences": [
+              "So Naomi said to Ruth, “Your sister-in-law has gone back to her people and to her gods.",
+              "Go back home with her.”"
+            ]
+          },
+          {
+            "page_number": 12,
+            "sentences": [
+              "Ruth said, \"Don't ask me to leave you!",
+              "Wherever you go, I will go; wherever you live, I will live.",
+              "Your people will be my people and your God will be my God.",
+              "Wherever you die, I will die.”"
+            ]
+          },
+          {
+            "page_number": 13,
+            "sentences": [
+              "When Naomi saw that Ruth was determined to go with her, she said nothing more.",
+              "And the two of them continued on their journey."
+            ]
+          },
+          {
+            "page_number": 14,
+            "sentences": [
+              "When they arrived in Bethlehem, the whole town became excited, and the women there exclaimed, “Is this really Naomi?”"
+            ]
+          },
+          {
+            "page_number": 15,
+            "sentences": [
+              "Naomi said, \"Don't call me 'Naomi', which means ‘pleasant’.",
+              "Call me 'Mara' which means ‘bitter’, because God Almighty has made my life very bitter.”"
+            ]
+          },
+          {
+            "page_number": 16,
+            "sentences": [
+              "“When I left here my life was full because I had a family.",
+              "But God has brought me back here empty.”"
+            ]
+          },
+          {
+            "page_number": 17,
+            "sentences": [
+              "Naomi and her daughter-in-law Ruth arrived in Bethlehem at the beginning of the barley grain harvest."
+            ]
+          },
+          {
+            "page_number": 18,
+            "sentences": [
+              "Since there was no man to provide for them, Ruth said to Naomi, \"Let me go to the fields to gather the grain that the workers leave.",
+              "\""
+            ]
+          },
+          {
+            "page_number": 19,
+            "sentences": [
+              "So with Naomi’s permission, Ruth went out to the fields."
+            ]
+          },
+          {
+            "page_number": 20,
+            "sentences": [
+              "After Ruth had been gathering awhile, the owner of the field came there.",
+              "The owner of that field was Boaz, a relative of Naomi’s dead husband."
+            ]
+          },
+          {
+            "page_number": 21,
+            "sentences": [
+              "When Boaz noticed Ruth, he asked the workers’ supervisor, “Who is that young woman?” The man answered, “She is the Moabite who came back with Naomi.",
+              "She asked me to let her follow the workers and gather grain.",
+              "She has been working since early morning and has just now stopped to rest.”"
+            ]
+          },
+          {
+            "page_number": 22,
+            "sentences": [
+              "Boaz spoke to Ruth, suggesting, “Why don’t you stay in my field?",
+              "Work close to the women.",
+              "My men won’t bother you, and when you get thirsty, you can drink from the water jugs they have filled.”"
+            ]
+          },
+          {
+            "page_number": 23,
+            "sentences": [
+              "Ruth bowed down with her face touching the ground.",
+              "She exclaimed, “Why should you be so concerned about me, a foreigner?”"
+            ]
+          },
+          {
+            "page_number": 24,
+            "sentences": [
+              "Boaz answered, “I have heard about everything that you have done for your mother-in-law.",
+              "I know how you left your country and how you came to live here among strangers.",
+              "May you have a full reward from the Lord.”"
+            ]
+          },
+          {
+            "page_number": 25,
+            "sentences": [
+              "At mealtime, Boaz said to Ruth, “Come and have a piece of bread, and dip it in the sauce.” So she sat with the workers, and Boaz passed some roasted grain to her.",
+              "She ate until she was satisfied."
+            ]
+          },
+          {
+            "page_number": 26,
+            "sentences": [
+              "After she had left to gather more grain, Boaz ordered the workers, “Let her gather grain where there is still plenty on the ground.",
+              "Also, pull out some heads of grain from the bundles and leave them for her to pick up.”"
+            ]
+          },
+          {
+            "page_number": 27,
+            "sentences": [
+              "That evening Ruth threshed the barley grain, and there was a full basket of it weighing about ten kilograms.",
+              "Naomi asked her, “Where did you gather all this grain today?",
+              "Whose field have you been working in?"
+            ]
+          },
+          {
+            "page_number": 28,
+            "sentences": [
+              "Ruth told her the field belonged to Boaz.",
+              "Naomi cried, “The Lord always keeps his promise to the living and the dead!",
+              "Boaz is a close relative of ours, one of those responsible for taking care of us.”"
+            ]
+          },
+          {
+            "page_number": 29,
+            "sentences": [
+              "Naomi continued, “Yes, daughter, it will be better for you to work in Boaz' field.",
+              "It will be safer for you there.” So Ruth worked there and gathered grain until all the barley and wheat had been harvested."
+            ]
+          },
+          {
+            "page_number": 30,
+            "sentences": [
+              "All this time Ruth lived with her mother-in-law."
+            ]
+          },
+          {
+            "page_number": 31,
+            "sentences": [
+              "Some time later Naomi said to Ruth, “I must find a husband for you.” Naomi devised a plan concerning Boaz, and Ruth agreed to do just as Naomi instructed."
+            ]
+          },
+          {
+            "page_number": 32,
+            "sentences": [
+              "Ruth went to the threshing place that evening where Boaz was threshing barley.",
+              "She did not let him know that she was there."
+            ]
+          },
+          {
+            "page_number": 33,
+            "sentences": [
+              "When Boaz had finished eating and drinking, he went to the pile of barley and lay down to sleep."
+            ]
+          },
+          {
+            "page_number": 34,
+            "sentences": [
+              "Ruth slipped over quietly, lifted the covers from his feet and lay down by his feet."
+            ]
+          },
+          {
+            "page_number": 35,
+            "sentences": [
+              "During the night, Boaz woke up suddenly, turned over, and was surprised to find a woman lying at his feet.",
+              "“Who are you?” he asked."
+            ]
+          },
+          {
+            "page_number": 36,
+            "sentences": [
+              "“It’s your servant Ruth.",
+              "Since you are my close relative, you are responsible for taking care of me.”"
+            ]
+          },
+          {
+            "page_number": 37,
+            "sentences": [
+              "“The Lord bless you,” Boaz said.",
+              "“You are showing even greater family loyalty in what you are doing now than in what you did for your mother-in-law.",
+              "I will do everything you ask; but there is a man who is a closer relative than I am so I must speak with him first."
+            ]
+          },
+          {
+            "page_number": 38,
+            "sentences": [
+              "Boaz went to the meeting place at the town gate.",
+              "When Elimelech's nearest relative came, they all sat down with ten of the town leaders."
+            ]
+          },
+          {
+            "page_number": 39,
+            "sentences": [
+              "Boaz explained, “Now that Naomi has come back from Moab, she wants to sell the field that belonged to our relative Elimelech.",
+              "You are the nearest relative, so you have the first right to buy it back.",
+              "But if you don’t want it, I do.",
+              "\""
+            ]
+          },
+          {
+            "page_number": 40,
+            "sentences": [
+              "The man replied, \"I will buy it back and, in that way, redeem the land.",
+              "\""
+            ]
+          },
+          {
+            "page_number": 41,
+            "sentences": [
+              "Boaz said, “Very well, if you buy the field from Naomi, then you will also need to marry Ruth, the Moabite widow, so that the field will stay in the dead man's family.”"
+            ]
+          },
+          {
+            "page_number": 42,
+            "sentences": [
+              "The man said to Boaz, “In that case, I will give up my right to buy the field, because it would mean that my own children would not inherit it.",
+              "You buy it; I would rather not.”"
+            ]
+          },
+          {
+            "page_number": 43,
+            "sentences": [
+              "Then Boaz said to the leaders and all the others there, “You are all witnesses today.” And they replied, \"Yes, we are.",
+              "And may the Lord give your wife many children.",
+              "\""
+            ]
+          },
+          {
+            "page_number": 44,
+            "sentences": [
+              "So Boaz married Ruth, the woman from Moab.",
+              "Later they had a baby boy, whom they named Obed.",
+              "Obed grew up to become the grandfather of David, the king of all Israel."
+            ]
+          }
+        ]
+      },
+      "cover_url": null,
+      "content_status": "published",
+      "source": "licensed_edition",
+      "attribution": {
+        "source_title": "041 The Story of Ruth",
+        "creator_credits": [
+          "Story script © 2018 Wycliffe Bible Translators, Inc.",
+          "Original illustrations by Jim Padgett, © Sweet Publishing, CC BY-SA 3.0",
+          "Wycliffe Bible Translators, Inc. adapted and skin-darkened illustrations; template and music credited to Wycliffe"
+        ],
+        "copyright_notice": "© 2020 Wycliffe Bible Translators, Inc. Story script licensed CC BY-SA 4.0.",
+        "edition_url": "https://bloomlibrary.org/book/0ZMBnMYYaI",
+        "license_url": "https://creativecommons.org/licenses/by-sa/4.0/",
+        "reformatting_note": "Text-only reformat of the English download; 44 story pages preserved in order and split into sentences. Images, audio, and non-story front/back matter omitted. This adaptation is distributed under CC BY-SA 4.0.",
+        "sourcing_notes": [
+          "The adapted story text remains ShareAlike; redistribute adaptations under CC BY-SA 4.0 or a compatible license."
+        ]
+      }
+    },
+    {
+      "id": "licensed-missing-water",
+      "title": "The Case of the Missing Water",
+      "author": "Shalini Srinivasan",
+      "level": 5,
+      "category": "mystery",
+      "word_count": 1079,
+      "content": {
+        "pages": [
+          {
+            "page_number": 2,
+            "sentences": [
+              "The tank in Ranj’s village was almost dry.",
+              "Ajji began to pray for rain.",
+              "Amma collected all the buckets and pots and vessels in the house and filled them up.",
+              "“We need to store as much water as we can,” she said.",
+              "Appa collected tools to dig a little deeper.",
+              "“We just need enough until the rains arrive,” he said."
+            ]
+          },
+          {
+            "page_number": 3,
+            "sentences": [
+              "Ranj got out her notebook and pencil.",
+              "She put on her thinking cap, and followed her parents to the tank.",
+              "She examined the tank bed closely.",
+              "It was cracked and dusty.",
+              "Ranj wondered, “Where did the water in the tank go?",
+              "Did it run away?",
+              "Was it stolen?",
+              "This is a mystery!”"
+            ]
+          },
+          {
+            "page_number": 4,
+            "sentences": [
+              "Ranj loved solving mysteries: Like the time Ajji couldn’t find her reading glasses.",
+              "Ranj had found them in her book, marking the page she was reading.",
+              "Then the other time — Why were elephants visiting the ragi fields?",
+              "Turns out it was because their long, long trunks could smell the ripening grains, all ready to eat.",
+              "“I’ll find that water,” Ranj muttered to herself."
+            ]
+          },
+          {
+            "page_number": 5,
+            "sentences": [
+              "Ranj walked to the other side of the tank, past dead fish and dried reeds.",
+              "“Do you know where the water could have gone?” Ranj asked a fisherman.",
+              "“Downstream?” the fisherman suggested."
+            ]
+          },
+          {
+            "page_number": 6,
+            "sentences": [
+              "Ranj followed the dry stream bed down the hill.",
+              "At the bottom was another tank.",
+              "It had lots of goats, but no water.",
+              "Ranj asked the goatherd, “Do you know where the water might be?” “Upstream,” the goatherd suggested.",
+              "“That’s where I came from,” Ranj said.",
+              "“No water there.” “Further up, then?” the goatherd said.",
+              "“That’s where your water comes from.”"
+            ]
+          },
+          {
+            "page_number": 8,
+            "sentences": [
+              "Ranj climbed up to the tank.",
+              "Then she climbed up some more to a tank further up the hill.",
+              "There was no water, no birds.",
+              "There was only one person there.",
+              "“Sapna, I can’t find any water.",
+              "Any idea where it’s gone?” Ranj called to her.",
+              "She knew Sapna from school."
+            ]
+          },
+          {
+            "page_number": 9,
+            "sentences": [
+              "“Downstream,” Sapna called back.",
+              "Ranj was suddenly angry.",
+              "She stomped her foot.",
+              "“NO!” she shouted.",
+              "“It’s not.",
+              "I have searched and searched.",
+              "It’s not upstream or downstream.",
+              "Got it?” “How about up there?” Sapna suggested.",
+              "Ranj and Sapna looked up at the sky.",
+              "The sun glared back at them.",
+              "Everything was white-hot and dusty.",
+              "“No,” they agreed together.",
+              "“No water there.”"
+            ]
+          },
+          {
+            "page_number": 10,
+            "sentences": [
+              "Ranj collapsed into the boat with Sapna and gnawed on a lotus stem.",
+              "She was hot and tired.",
+              "“Manju’s parents left the village,” Ranj said.",
+              "“They went to the city where they have water.",
+              "Maybe we should all go.”"
+            ]
+          },
+          {
+            "page_number": 11,
+            "sentences": [
+              "“You go,” Sapna snapped.",
+              "“No one asked you to be here.” “Fine,” Ranj said.",
+              "And she stomped back home.",
+              "But it wasn’t fine!",
+              "There was still no water, still no rain.",
+              "The next day, Ranj brushed her teeth with muddy tank water in a tiny glass.",
+              "“Thooo!” she spat.",
+              "In school, the class was half-empty.",
+              "More families had left the area."
+            ]
+          },
+          {
+            "page_number": 12,
+            "sentences": [
+              "Ranj just couldn’t bear it.",
+              "She missed all her friends!",
+              "In the middle of Environmental Studies class, she turned and ran out of school."
+            ]
+          },
+          {
+            "page_number": 13,
+            "sentences": [
+              "She ran and ran until she was panting.",
+              "She finally sat at the side of the road.",
+              "“I have to find the water!” she huffed.",
+              "“Can I help?” said a voice.",
+              "It was Sapna who had seen Ranj running away from school.",
+              "Ranj beamed.",
+              "“Yes!” “We have to do this properly,” Sapna said.",
+              "“Like real Sanitary Engineers.” “Like who…?” Ranj asked.",
+              "“Sanitary Engineers build pipes and tanks and drains.",
+              "I am going to be one when I grow up,” Sapna said.",
+              "Ranj and Sapna decided to draw a map of their village and all its tanks and streams, showing all the places where the water might have flowed."
+            ]
+          },
+          {
+            "page_number": 14,
+            "sentences": [
+              "Where could the water possibly have gone?",
+              "Finally, they sat back and pored over the map.",
+              "“We haven’t seen that tank yet,” Ranj pointed to one of the tanks they had drawn.",
+              "“Let’s go,” Sapna agreed.",
+              "Ranj and Sapna began climbing up the hill.",
+              "The stream here was dry as well.",
+              "“Maybe we shouldn’t have missed school.",
+              "This tank is probably dry as well,” Sapna said sadly."
+            ]
+          },
+          {
+            "page_number": 15,
+            "sentences": [
+              "When they reached the tank, Ranj and Sapna realised they were wrong.",
+              "This tank was full!"
+            ]
+          },
+          {
+            "page_number": 16,
+            "sentences": [
+              "Sapna pointed at a small pump at the end of the lake.",
+              "There was a tanker just below the bund, collecting water as it flowed.",
+              "A man stood by, guiding the tanker.",
+              "“Mystery solved,” Ranj spat.",
+              "She had never felt so angry after solving a mystery."
+            ]
+          },
+          {
+            "page_number": 17,
+            "sentences": [
+              "“Where are you taking our water?” Ranj wanted to know.",
+              "“The city,” the man said.",
+              "“They have more people, so they need more water.” “That’s not fair!” Sapna said.",
+              "The man shrugged, “That’s how it is.” “My friend is a Sanitary Engineer,” Ranj yelled.",
+              "“She knows what’s fair.” The man laughed.",
+              "“Sanitary Engineer it seems!",
+              "You’re just children!” Sapna said quietly, “Yes, but I know you can’t just take our water away.” “Go home,” the man said.",
+              "“You can’t change anything!”"
+            ]
+          },
+          {
+            "page_number": 18,
+            "sentences": [
+              "“We’ll break your pump!” Ranj shouted, running at the pump with a stick.",
+              "“Oho!” said the man.",
+              "“Shouldn’t Sanitary Engineers be building pumps, not breaking them?” “Yes… no… not like this…” Sapna said, unhappily.",
+              "But Ranj said, “I’m a detective!",
+              "I can do what I want.”"
+            ]
+          },
+          {
+            "page_number": 19,
+            "sentences": [
+              "Ranj had a better idea.",
+              "She hugged the pump.",
+              "“You can’t turn it on now!” Sapna ran up to hug the pump too.",
+              "“Hey!” said the man.",
+              "Now he was really angry.",
+              "“Just go home,” he said."
+            ]
+          },
+          {
+            "page_number": 20,
+            "sentences": [
+              "That was when the clouds broke.",
+              "Thunder roared, lightning slashed, rain poured.",
+              "Sapna started to laugh.",
+              "“The monsoon is here!” Ranj shouted.",
+              "“I’m going home, even if you aren’t,” the tanker man said.",
+              "It rained and rained."
+            ]
+          },
+          {
+            "page_number": 21,
+            "sentences": [
+              "WOOSH, the bund overflowed, and the stream rushed down, splashing them.",
+              "“The water has been found!",
+              "Mystery solved!” Ranj said.",
+              "“WOOOOOO!” They yowled with joy."
+            ]
+          },
+          {
+            "page_number": 22,
+            "sentences": [
+              "Water Words Tank: A name for a man-made place to collect water.",
+              "Tank sizes can vary from small pools to large lakes.",
+              "Bund: A small wall – usually made of mud or stones – to stop and hold water in a tank."
+            ]
+          },
+          {
+            "page_number": 23,
+            "sentences": [
+              "Stream: A small channel through which water flows.",
+              "Spring: A place where underground water comes up to the surface.",
+              "Water table: Level of water under the ground.",
+              "Wells have to be dug deep enough to hit the water table to get water."
+            ]
+          }
+        ]
+      },
+      "cover_url": null,
+      "content_status": "published",
+      "source": "licensed_edition",
+      "attribution": {
+        "source_title": "The Case of the Missing Water",
+        "creator_credits": [
+          "Written by Shalini Srinivasan",
+          "Illustrated by Upamanyu Bhattacharyya",
+          "Published by Pratham Books; StoryWeaver edition 34911",
+          "Development supported by Oracle; guest editor Bijal Vachharajani; art director Kaveri Gopalakrishnan"
+        ],
+        "copyright_notice": "© Pratham Books, 2018. Some rights reserved.",
+        "edition_url": "https://storyweaver.org.in/en/stories/34911",
+        "license_url": "https://creativecommons.org/licenses/by/4.0/",
+        "reformatting_note": "Text-only reformat: illustrations removed; story pages and Water Words pages retained in order, empty illustration-only page omitted, page text split into sentences.",
+        "sourcing_notes": [
+          "StoryWeaver read-along/video editions are excluded; those noncommercial/no-derivatives exports remain pending permission."
+        ]
+      }
+    }
+  ]
+}

@@ -4,5 +4,9 @@ dist/
 coverage/
 .DS_Store
 *.log
+__pycache__/
+*.py[cod]
+.pytest_cache/
+backend/*.db
 .env*
 !.env.example

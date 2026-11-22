@@ -36,11 +36,13 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenProfileModal }) => {
   const publicNavLinks = [
     { to: '/', label: 'Home', kind: 'quests' as const },
     { to: '/library', label: 'Library', kind: 'library' as const },
+    { to: '/books', label: 'Books', kind: 'library' as const },
   ];
 
   const authenticatedNavLinks = [
     { to: '/dashboard', label: 'Quests', kind: 'quests' as const },
     { to: '/library', label: 'Library', kind: 'library' as const },
+    { to: '/books', label: 'Books', kind: 'library' as const },
     { to: '/progress', label: 'Progress', kind: 'progress' as const },
     ...(user?.role === 'parent' || user?.role === 'admin'
       ? [{ to: '/parent', label: 'Parent Portal', kind: 'parent' as const }]

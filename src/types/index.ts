@@ -2,6 +2,59 @@ export type SkillCategoryId = 'letter-sounds' | 'phonics-blending' | 'sight-word
 
 export type ReadingLevelId = 'level-1' | 'level-2' | 'level-3';
 
+export type BookSource = 'original' | 'public_domain' | 'licensed_edition';
+
+export interface BookPage {
+  page_number: number;
+  sentences: string[];
+}
+
+export interface BookAttribution {
+  source_title: string;
+  creator_credits: string[];
+  copyright_notice: string;
+  edition_url: string | null;
+  license_url: string | null;
+  reformatting_note: string;
+  sourcing_notes: string[];
+}
+
+export interface BookSummary {
+  id: string;
+  title: string;
+  author: string;
+  level: number;
+  category: string;
+  word_count: number;
+  cover_url: string | null;
+  source: BookSource;
+}
+
+export interface BookDetail extends BookSummary {
+  content: {
+    pages: BookPage[];
+  };
+  attribution: BookAttribution;
+}
+
+export interface BookListResponse {
+  items: BookSummary[];
+  total: number;
+  limit: number;
+  offset: number;
+}
+
+export interface BookProgress {
+  child_id: string;
+  book_id: string;
+  status: 'started' | 'finished' | 'favorite';
+  last_page: number;
+  minutes_read: number;
+  started_at: string;
+  finished_at: string | null;
+  stars_awarded: number;
+}
+
 export interface ReadingLevel {
   id: ReadingLevelId;
   name: string;

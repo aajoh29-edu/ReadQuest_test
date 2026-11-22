@@ -1,0 +1,2622 @@
+{
+  "skills": [
+    {
+      "id": "skill-letter-sounds",
+      "code": "LETTER_SOUNDS",
+      "name": "Letter Sounds"
+    },
+    {
+      "id": "skill-short-a",
+      "code": "SHORT_A",
+      "name": "Short A Words"
+    },
+    {
+      "id": "skill-short-e",
+      "code": "SHORT_E",
+      "name": "Short E Words"
+    },
+    {
+      "id": "skill-short-i",
+      "code": "SHORT_I",
+      "name": "Short I Words"
+    },
+    {
+      "id": "skill-short-o",
+      "code": "SHORT_O",
+      "name": "Short O Words"
+    },
+    {
+      "id": "skill-cvc-blend",
+      "code": "CVC_BLEND",
+      "name": "CVC Blending"
+    },
+    {
+      "id": "skill-sight-1",
+      "code": "SIGHT_1",
+      "name": "Sight Words 1"
+    },
+    {
+      "id": "skill-sight-2",
+      "code": "SIGHT_2",
+      "name": "Sight Words 2"
+    }
+  ],
+  "reading_texts": [
+    {
+      "id": "text-act-letter_sounds-word-01",
+      "activity_id": "act-letter_sounds-word-01",
+      "skill_id": "skill-letter-sounds",
+      "activity_type": "read_aloud_word",
+      "difficulty": 1,
+      "content": {
+        "show_word_bank": true
+      },
+      "text_type": "word",
+      "text": "map",
+      "expected_words": [
+        "map"
+      ]
+    },
+    {
+      "id": "text-act-letter_sounds-word-02",
+      "activity_id": "act-letter_sounds-word-02",
+      "skill_id": "skill-letter-sounds",
+      "activity_type": "read_aloud_word",
+      "difficulty": 1,
+      "content": {
+        "show_word_bank": true
+      },
+      "text_type": "word",
+      "text": "sun",
+      "expected_words": [
+        "sun"
+      ]
+    },
+    {
+      "id": "text-act-letter_sounds-word-03",
+      "activity_id": "act-letter_sounds-word-03",
+      "skill_id": "skill-letter-sounds",
+      "activity_type": "read_aloud_word",
+      "difficulty": 1,
+      "content": {
+        "show_word_bank": true
+      },
+      "text_type": "word",
+      "text": "fox",
+      "expected_words": [
+        "fox"
+      ]
+    },
+    {
+      "id": "text-act-letter_sounds-word-04",
+      "activity_id": "act-letter_sounds-word-04",
+      "skill_id": "skill-letter-sounds",
+      "activity_type": "read_aloud_word",
+      "difficulty": 1,
+      "content": {
+        "show_word_bank": true
+      },
+      "text_type": "word",
+      "text": "leg",
+      "expected_words": [
+        "leg"
+      ]
+    },
+    {
+      "id": "text-act-letter_sounds-word-05",
+      "activity_id": "act-letter_sounds-word-05",
+      "skill_id": "skill-letter-sounds",
+      "activity_type": "read_aloud_word",
+      "difficulty": 1,
+      "content": {
+        "show_word_bank": true
+      },
+      "text_type": "word",
+      "text": "pig",
+      "expected_words": [
+        "pig"
+      ]
+    },
+    {
+      "id": "text-act-letter_sounds-word-06",
+      "activity_id": "act-letter_sounds-word-06",
+      "skill_id": "skill-letter-sounds",
+      "activity_type": "read_aloud_word",
+      "difficulty": 1,
+      "content": {
+        "show_word_bank": true
+      },
+      "text_type": "word",
+      "text": "cat",
+      "expected_words": [
+        "cat"
+      ]
+    },
+    {
+      "id": "text-act-letter_sounds-word-07",
+      "activity_id": "act-letter_sounds-word-07",
+      "skill_id": "skill-letter-sounds",
+      "activity_type": "read_aloud_word",
+      "difficulty": 1,
+      "content": {
+        "show_word_bank": true
+      },
+      "text_type": "word",
+      "text": "dog",
+      "expected_words": [
+        "dog"
+      ]
+    },
+    {
+      "id": "text-act-letter_sounds-word-08",
+      "activity_id": "act-letter_sounds-word-08",
+      "skill_id": "skill-letter-sounds",
+      "activity_type": "read_aloud_word",
+      "difficulty": 1,
+      "content": {
+        "show_word_bank": true
+      },
+      "text_type": "word",
+      "text": "hat",
+      "expected_words": [
+        "hat"
+      ]
+    },
+    {
+      "id": "text-act-letter_sounds-word-09",
+      "activity_id": "act-letter_sounds-word-09",
+      "skill_id": "skill-letter-sounds",
+      "activity_type": "read_aloud_word",
+      "difficulty": 1,
+      "content": {
+        "show_word_bank": true
+      },
+      "text_type": "word",
+      "text": "bed",
+      "expected_words": [
+        "bed"
+      ]
+    },
+    {
+      "id": "text-act-letter_sounds-word-10",
+      "activity_id": "act-letter_sounds-word-10",
+      "skill_id": "skill-letter-sounds",
+      "activity_type": "read_aloud_word",
+      "difficulty": 1,
+      "content": {
+        "show_word_bank": true
+      },
+      "text_type": "word",
+      "text": "cup",
+      "expected_words": [
+        "cup"
+      ]
+    },
+    {
+      "id": "text-act-letter_sounds-sentence-01",
+      "activity_id": "act-letter_sounds-sentence-01",
+      "skill_id": "skill-letter-sounds",
+      "activity_type": "read_aloud_sentence",
+      "difficulty": 1,
+      "content": {
+        "show_word_bank": true
+      },
+      "text_type": "sentence",
+      "text": "I can map by the sun.",
+      "expected_words": [
+        "i",
+        "can",
+        "map",
+        "by",
+        "the",
+        "sun"
+      ]
+    },
+    {
+      "id": "text-act-letter_sounds-sentence-02",
+      "activity_id": "act-letter_sounds-sentence-02",
+      "skill_id": "skill-letter-sounds",
+      "activity_type": "read_aloud_sentence",
+      "difficulty": 1,
+      "content": {
+        "show_word_bank": true
+      },
+      "text_type": "sentence",
+      "text": "The fox is in my leg.",
+      "expected_words": [
+        "the",
+        "fox",
+        "is",
+        "in",
+        "my",
+        "leg"
+      ]
+    },
+    {
+      "id": "text-act-letter_sounds-sentence-03",
+      "activity_id": "act-letter_sounds-sentence-03",
+      "skill_id": "skill-letter-sounds",
+      "activity_type": "read_aloud_sentence",
+      "difficulty": 1,
+      "content": {
+        "show_word_bank": true
+      },
+      "text_type": "sentence",
+      "text": "We pig when the cat is near.",
+      "expected_words": [
+        "we",
+        "pig",
+        "when",
+        "the",
+        "cat",
+        "is",
+        "near"
+      ]
+    },
+    {
+      "id": "text-act-letter_sounds-sentence-04",
+      "activity_id": "act-letter_sounds-sentence-04",
+      "skill_id": "skill-letter-sounds",
+      "activity_type": "read_aloud_sentence",
+      "difficulty": 1,
+      "content": {
+        "show_word_bank": true
+      },
+      "text_type": "sentence",
+      "text": "Can you see the dog and the hat?",
+      "expected_words": [
+        "can",
+        "you",
+        "see",
+        "the",
+        "dog",
+        "and",
+        "the",
+        "hat"
+      ]
+    },
+    {
+      "id": "text-act-letter_sounds-sentence-05",
+      "activity_id": "act-letter_sounds-sentence-05",
+      "skill_id": "skill-letter-sounds",
+      "activity_type": "read_aloud_sentence",
+      "difficulty": 1,
+      "content": {
+        "show_word_bank": true
+      },
+      "text_type": "sentence",
+      "text": "My bed can help your cup.",
+      "expected_words": [
+        "my",
+        "bed",
+        "can",
+        "help",
+        "your",
+        "cup"
+      ]
+    },
+    {
+      "id": "text-act-letter_sounds-passage-01",
+      "activity_id": "act-letter_sounds-passage-01",
+      "skill_id": "skill-letter-sounds",
+      "activity_type": "read_aloud_passage",
+      "difficulty": 1,
+      "content": {
+        "show_word_bank": false
+      },
+      "text_type": "passage",
+      "text": "I can map by the sun. The fox is in my leg. We pig when the cat is near.",
+      "expected_words": [
+        "i",
+        "can",
+        "map",
+        "by",
+        "the",
+        "sun",
+        "the",
+        "fox",
+        "is",
+        "in",
+        "my",
+        "leg",
+        "we",
+        "pig",
+        "when",
+        "the",
+        "cat",
+        "is",
+        "near"
+      ]
+    },
+    {
+      "id": "text-act-letter_sounds-passage-02",
+      "activity_id": "act-letter_sounds-passage-02",
+      "skill_id": "skill-letter-sounds",
+      "activity_type": "read_aloud_passage",
+      "difficulty": 1,
+      "content": {
+        "show_word_bank": false
+      },
+      "text_type": "passage",
+      "text": "Can you see the dog and the hat? My bed can help your cup. The words belong together in this short story.",
+      "expected_words": [
+        "can",
+        "you",
+        "see",
+        "the",
+        "dog",
+        "and",
+        "the",
+        "hat",
+        "my",
+        "bed",
+        "can",
+        "help",
+        "your",
+        "cup",
+        "the",
+        "words",
+        "belong",
+        "together",
+        "in",
+        "this",
+        "short",
+        "story"
+      ]
+    },
+    {
+      "id": "text-act-short_a-word-01",
+      "activity_id": "act-short_a-word-01",
+      "skill_id": "skill-short-a",
+      "activity_type": "read_aloud_word",
+      "difficulty": 1,
+      "content": {
+        "show_word_bank": true
+      },
+      "text_type": "word",
+      "text": "cat",
+      "expected_words": [
+        "cat"
+      ]
+    },
+    {
+      "id": "text-act-short_a-word-02",
+      "activity_id": "act-short_a-word-02",
+      "skill_id": "skill-short-a",
+      "activity_type": "read_aloud_word",
+      "difficulty": 1,
+      "content": {
+        "show_word_bank": true
+      },
+      "text_type": "word",
+      "text": "hat",
+      "expected_words": [
+        "hat"
+      ]
+    },
+    {
+      "id": "text-act-short_a-word-03",
+      "activity_id": "act-short_a-word-03",
+      "skill_id": "skill-short-a",
+      "activity_type": "read_aloud_word",
+      "difficulty": 1,
+      "content": {
+        "show_word_bank": true
+      },
+      "text_type": "word",
+      "text": "map",
+      "expected_words": [
+        "map"
+      ]
+    },
+    {
+      "id": "text-act-short_a-word-04",
+      "activity_id": "act-short_a-word-04",
+      "skill_id": "skill-short-a",
+      "activity_type": "read_aloud_word",
+      "difficulty": 1,
+      "content": {
+        "show_word_bank": true
+      },
+      "text_type": "word",
+      "text": "bag",
+      "expected_words": [
+        "bag"
+      ]
+    },
+    {
+      "id": "text-act-short_a-word-05",
+      "activity_id": "act-short_a-word-05",
+      "skill_id": "skill-short-a",
+      "activity_type": "read_aloud_word",
+      "difficulty": 1,
+      "content": {
+        "show_word_bank": true
+      },
+      "text_type": "word",
+      "text": "fan",
+      "expected_words": [
+        "fan"
+      ]
+    },
+    {
+      "id": "text-act-short_a-word-06",
+      "activity_id": "act-short_a-word-06",
+      "skill_id": "skill-short-a",
+      "activity_type": "read_aloud_word",
+      "difficulty": 1,
+      "content": {
+        "show_word_bank": true
+      },
+      "text_type": "word",
+      "text": "jam",
+      "expected_words": [
+        "jam"
+      ]
+    },
+    {
+      "id": "text-act-short_a-word-07",
+      "activity_id": "act-short_a-word-07",
+      "skill_id": "skill-short-a",
+      "activity_type": "read_aloud_word",
+      "difficulty": 1,
+      "content": {
+        "show_word_bank": true
+      },
+      "text_type": "word",
+      "text": "van",
+      "expected_words": [
+        "van"
+      ]
+    },
+    {
+      "id": "text-act-short_a-word-08",
+      "activity_id": "act-short_a-word-08",
+      "skill_id": "skill-short-a",
+      "activity_type": "read_aloud_word",
+      "difficulty": 1,
+      "content": {
+        "show_word_bank": true
+      },
+      "text_type": "word",
+      "text": "cap",
+      "expected_words": [
+        "cap"
+      ]
+    },
+    {
+      "id": "text-act-short_a-word-09",
+      "activity_id": "act-short_a-word-09",
+      "skill_id": "skill-short-a",
+      "activity_type": "read_aloud_word",
+      "difficulty": 1,
+      "content": {
+        "show_word_bank": true
+      },
+      "text_type": "word",
+      "text": "tap",
+      "expected_words": [
+        "tap"
+      ]
+    },
+    {
+      "id": "text-act-short_a-word-10",
+      "activity_id": "act-short_a-word-10",
+      "skill_id": "skill-short-a",
+      "activity_type": "read_aloud_word",
+      "difficulty": 1,
+      "content": {
+        "show_word_bank": true
+      },
+      "text_type": "word",
+      "text": "lap",
+      "expected_words": [
+        "lap"
+      ]
+    },
+    {
+      "id": "text-act-short_a-sentence-01",
+      "activity_id": "act-short_a-sentence-01",
+      "skill_id": "skill-short-a",
+      "activity_type": "read_aloud_sentence",
+      "difficulty": 1,
+      "content": {
+        "show_word_bank": true
+      },
+      "text_type": "sentence",
+      "text": "I can cat by the hat.",
+      "expected_words": [
+        "i",
+        "can",
+        "cat",
+        "by",
+        "the",
+        "hat"
+      ]
+    },
+    {
+      "id": "text-act-short_a-sentence-02",
+      "activity_id": "act-short_a-sentence-02",
+      "skill_id": "skill-short-a",
+      "activity_type": "read_aloud_sentence",
+      "difficulty": 1,
+      "content": {
+        "show_word_bank": true
+      },
+      "text_type": "sentence",
+      "text": "The map is in my bag.",
+      "expected_words": [
+        "the",
+        "map",
+        "is",
+        "in",
+        "my",
+        "bag"
+      ]
+    },
+    {
+      "id": "text-act-short_a-sentence-03",
+      "activity_id": "act-short_a-sentence-03",
+      "skill_id": "skill-short-a",
+      "activity_type": "read_aloud_sentence",
+      "difficulty": 1,
+      "content": {
+        "show_word_bank": true
+      },
+      "text_type": "sentence",
+      "text": "We fan when the jam is near.",
+      "expected_words": [
+        "we",
+        "fan",
+        "when",
+        "the",
+        "jam",
+        "is",
+        "near"
+      ]
+    },
+    {
+      "id": "text-act-short_a-sentence-04",
+      "activity_id": "act-short_a-sentence-04",
+      "skill_id": "skill-short-a",
+      "activity_type": "read_aloud_sentence",
+      "difficulty": 1,
+      "content": {
+        "show_word_bank": true
+      },
+      "text_type": "sentence",
+      "text": "Can you see the van and the cap?",
+      "expected_words": [
+        "can",
+        "you",
+        "see",
+        "the",
+        "van",
+        "and",
+        "the",
+        "cap"
+      ]
+    },
+    {
+      "id": "text-act-short_a-sentence-05",
+      "activity_id": "act-short_a-sentence-05",
+      "skill_id": "skill-short-a",
+      "activity_type": "read_aloud_sentence",
+      "difficulty": 1,
+      "content": {
+        "show_word_bank": true
+      },
+      "text_type": "sentence",
+      "text": "My tap can help your lap.",
+      "expected_words": [
+        "my",
+        "tap",
+        "can",
+        "help",
+        "your",
+        "lap"
+      ]
+    },
+    {
+      "id": "text-act-short_a-passage-01",
+      "activity_id": "act-short_a-passage-01",
+      "skill_id": "skill-short-a",
+      "activity_type": "read_aloud_passage",
+      "difficulty": 1,
+      "content": {
+        "show_word_bank": false
+      },
+      "text_type": "passage",
+      "text": "I can cat by the hat. The map is in my bag. We fan when the jam is near.",
+      "expected_words": [
+        "i",
+        "can",
+        "cat",
+        "by",
+        "the",
+        "hat",
+        "the",
+        "map",
+        "is",
+        "in",
+        "my",
+        "bag",
+        "we",
+        "fan",
+        "when",
+        "the",
+        "jam",
+        "is",
+        "near"
+      ]
+    },
+    {
+      "id": "text-act-short_a-passage-02",
+      "activity_id": "act-short_a-passage-02",
+      "skill_id": "skill-short-a",
+      "activity_type": "read_aloud_passage",
+      "difficulty": 1,
+      "content": {
+        "show_word_bank": false
+      },
+      "text_type": "passage",
+      "text": "Can you see the van and the cap? My tap can help your lap. The words belong together in this short story.",
+      "expected_words": [
+        "can",
+        "you",
+        "see",
+        "the",
+        "van",
+        "and",
+        "the",
+        "cap",
+        "my",
+        "tap",
+        "can",
+        "help",
+        "your",
+        "lap",
+        "the",
+        "words",
+        "belong",
+        "together",
+        "in",
+        "this",
+        "short",
+        "story"
+      ]
+    },
+    {
+      "id": "text-act-short_e-word-01",
+      "activity_id": "act-short_e-word-01",
+      "skill_id": "skill-short-e",
+      "activity_type": "read_aloud_word",
+      "difficulty": 1,
+      "content": {
+        "show_word_bank": true
+      },
+      "text_type": "word",
+      "text": "bed",
+      "expected_words": [
+        "bed"
+      ]
+    },
+    {
+      "id": "text-act-short_e-word-02",
+      "activity_id": "act-short_e-word-02",
+      "skill_id": "skill-short-e",
+      "activity_type": "read_aloud_word",
+      "difficulty": 1,
+      "content": {
+        "show_word_bank": true
+      },
+      "text_type": "word",
+      "text": "hen",
+      "expected_words": [
+        "hen"
+      ]
+    },
+    {
+      "id": "text-act-short_e-word-03",
+      "activity_id": "act-short_e-word-03",
+      "skill_id": "skill-short-e",
+      "activity_type": "read_aloud_word",
+      "difficulty": 1,
+      "content": {
+        "show_word_bank": true
+      },
+      "text_type": "word",
+      "text": "pen",
+      "expected_words": [
+        "pen"
+      ]
+    },
+    {
+      "id": "text-act-short_e-word-04",
+      "activity_id": "act-short_e-word-04",
+      "skill_id": "skill-short-e",
+      "activity_type": "read_aloud_word",
+      "difficulty": 1,
+      "content": {
+        "show_word_bank": true
+      },
+      "text_type": "word",
+      "text": "red",
+      "expected_words": [
+        "red"
+      ]
+    },
+    {
+      "id": "text-act-short_e-word-05",
+      "activity_id": "act-short_e-word-05",
+      "skill_id": "skill-short-e",
+      "activity_type": "read_aloud_word",
+      "difficulty": 1,
+      "content": {
+        "show_word_bank": true
+      },
+      "text_type": "word",
+      "text": "net",
+      "expected_words": [
+        "net"
+      ]
+    },
+    {
+      "id": "text-act-short_e-word-06",
+      "activity_id": "act-short_e-word-06",
+      "skill_id": "skill-short-e",
+      "activity_type": "read_aloud_word",
+      "difficulty": 1,
+      "content": {
+        "show_word_bank": true
+      },
+      "text_type": "word",
+      "text": "ten",
+      "expected_words": [
+        "ten"
+      ]
+    },
+    {
+      "id": "text-act-short_e-word-07",
+      "activity_id": "act-short_e-word-07",
+      "skill_id": "skill-short-e",
+      "activity_type": "read_aloud_word",
+      "difficulty": 1,
+      "content": {
+        "show_word_bank": true
+      },
+      "text_type": "word",
+      "text": "wet",
+      "expected_words": [
+        "wet"
+      ]
+    },
+    {
+      "id": "text-act-short_e-word-08",
+      "activity_id": "act-short_e-word-08",
+      "skill_id": "skill-short-e",
+      "activity_type": "read_aloud_word",
+      "difficulty": 1,
+      "content": {
+        "show_word_bank": true
+      },
+      "text_type": "word",
+      "text": "pet",
+      "expected_words": [
+        "pet"
+      ]
+    },
+    {
+      "id": "text-act-short_e-word-09",
+      "activity_id": "act-short_e-word-09",
+      "skill_id": "skill-short-e",
+      "activity_type": "read_aloud_word",
+      "difficulty": 1,
+      "content": {
+        "show_word_bank": true
+      },
+      "text_type": "word",
+      "text": "jet",
+      "expected_words": [
+        "jet"
+      ]
+    },
+    {
+      "id": "text-act-short_e-word-10",
+      "activity_id": "act-short_e-word-10",
+      "skill_id": "skill-short-e",
+      "activity_type": "read_aloud_word",
+      "difficulty": 1,
+      "content": {
+        "show_word_bank": true
+      },
+      "text_type": "word",
+      "text": "set",
+      "expected_words": [
+        "set"
+      ]
+    },
+    {
+      "id": "text-act-short_e-sentence-01",
+      "activity_id": "act-short_e-sentence-01",
+      "skill_id": "skill-short-e",
+      "activity_type": "read_aloud_sentence",
+      "difficulty": 1,
+      "content": {
+        "show_word_bank": true
+      },
+      "text_type": "sentence",
+      "text": "I can bed by the hen.",
+      "expected_words": [
+        "i",
+        "can",
+        "bed",
+        "by",
+        "the",
+        "hen"
+      ]
+    },
+    {
+      "id": "text-act-short_e-sentence-02",
+      "activity_id": "act-short_e-sentence-02",
+      "skill_id": "skill-short-e",
+      "activity_type": "read_aloud_sentence",
+      "difficulty": 1,
+      "content": {
+        "show_word_bank": true
+      },
+      "text_type": "sentence",
+      "text": "The pen is in my red.",
+      "expected_words": [
+        "the",
+        "pen",
+        "is",
+        "in",
+        "my",
+        "red"
+      ]
+    },
+    {
+      "id": "text-act-short_e-sentence-03",
+      "activity_id": "act-short_e-sentence-03",
+      "skill_id": "skill-short-e",
+      "activity_type": "read_aloud_sentence",
+      "difficulty": 1,
+      "content": {
+        "show_word_bank": true
+      },
+      "text_type": "sentence",
+      "text": "We net when the ten is near.",
+      "expected_words": [
+        "we",
+        "net",
+        "when",
+        "the",
+        "ten",
+        "is",
+        "near"
+      ]
+    },
+    {
+      "id": "text-act-short_e-sentence-04",
+      "activity_id": "act-short_e-sentence-04",
+      "skill_id": "skill-short-e",
+      "activity_type": "read_aloud_sentence",
+      "difficulty": 1,
+      "content": {
+        "show_word_bank": true
+      },
+      "text_type": "sentence",
+      "text": "Can you see the wet and the pet?",
+      "expected_words": [
+        "can",
+        "you",
+        "see",
+        "the",
+        "wet",
+        "and",
+        "the",
+        "pet"
+      ]
+    },
+    {
+      "id": "text-act-short_e-sentence-05",
+      "activity_id": "act-short_e-sentence-05",
+      "skill_id": "skill-short-e",
+      "activity_type": "read_aloud_sentence",
+      "difficulty": 1,
+      "content": {
+        "show_word_bank": true
+      },
+      "text_type": "sentence",
+      "text": "My jet can help your set.",
+      "expected_words": [
+        "my",
+        "jet",
+        "can",
+        "help",
+        "your",
+        "set"
+      ]
+    },
+    {
+      "id": "text-act-short_e-passage-01",
+      "activity_id": "act-short_e-passage-01",
+      "skill_id": "skill-short-e",
+      "activity_type": "read_aloud_passage",
+      "difficulty": 1,
+      "content": {
+        "show_word_bank": false
+      },
+      "text_type": "passage",
+      "text": "I can bed by the hen. The pen is in my red. We net when the ten is near.",
+      "expected_words": [
+        "i",
+        "can",
+        "bed",
+        "by",
+        "the",
+        "hen",
+        "the",
+        "pen",
+        "is",
+        "in",
+        "my",
+        "red",
+        "we",
+        "net",
+        "when",
+        "the",
+        "ten",
+        "is",
+        "near"
+      ]
+    },
+    {
+      "id": "text-act-short_e-passage-02",
+      "activity_id": "act-short_e-passage-02",
+      "skill_id": "skill-short-e",
+      "activity_type": "read_aloud_passage",
+      "difficulty": 1,
+      "content": {
+        "show_word_bank": false
+      },
+      "text_type": "passage",
+      "text": "Can you see the wet and the pet? My jet can help your set. The words belong together in this short story.",
+      "expected_words": [
+        "can",
+        "you",
+        "see",
+        "the",
+        "wet",
+        "and",
+        "the",
+        "pet",
+        "my",
+        "jet",
+        "can",
+        "help",
+        "your",
+        "set",
+        "the",
+        "words",
+        "belong",
+        "together",
+        "in",
+        "this",
+        "short",
+        "story"
+      ]
+    },
+    {
+      "id": "text-act-short_i-word-01",
+      "activity_id": "act-short_i-word-01",
+      "skill_id": "skill-short-i",
+      "activity_type": "read_aloud_word",
+      "difficulty": 2,
+      "content": {
+        "show_word_bank": true
+      },
+      "text_type": "word",
+      "text": "sit",
+      "expected_words": [
+        "sit"
+      ]
+    },
+    {
+      "id": "text-act-short_i-word-02",
+      "activity_id": "act-short_i-word-02",
+      "skill_id": "skill-short-i",
+      "activity_type": "read_aloud_word",
+      "difficulty": 2,
+      "content": {
+        "show_word_bank": true
+      },
+      "text_type": "word",
+      "text": "pig",
+      "expected_words": [
+        "pig"
+      ]
+    },
+    {
+      "id": "text-act-short_i-word-03",
+      "activity_id": "act-short_i-word-03",
+      "skill_id": "skill-short-i",
+      "activity_type": "read_aloud_word",
+      "difficulty": 2,
+      "content": {
+        "show_word_bank": true
+      },
+      "text_type": "word",
+      "text": "fin",
+      "expected_words": [
+        "fin"
+      ]
+    },
+    {
+      "id": "text-act-short_i-word-04",
+      "activity_id": "act-short_i-word-04",
+      "skill_id": "skill-short-i",
+      "activity_type": "read_aloud_word",
+      "difficulty": 2,
+      "content": {
+        "show_word_bank": true
+      },
+      "text_type": "word",
+      "text": "tip",
+      "expected_words": [
+        "tip"
+      ]
+    },
+    {
+      "id": "text-act-short_i-word-05",
+      "activity_id": "act-short_i-word-05",
+      "skill_id": "skill-short-i",
+      "activity_type": "read_aloud_word",
+      "difficulty": 2,
+      "content": {
+        "show_word_bank": true
+      },
+      "text_type": "word",
+      "text": "lip",
+      "expected_words": [
+        "lip"
+      ]
+    },
+    {
+      "id": "text-act-short_i-word-06",
+      "activity_id": "act-short_i-word-06",
+      "skill_id": "skill-short-i",
+      "activity_type": "read_aloud_word",
+      "difficulty": 2,
+      "content": {
+        "show_word_bank": true
+      },
+      "text_type": "word",
+      "text": "zip",
+      "expected_words": [
+        "zip"
+      ]
+    },
+    {
+      "id": "text-act-short_i-word-07",
+      "activity_id": "act-short_i-word-07",
+      "skill_id": "skill-short-i",
+      "activity_type": "read_aloud_word",
+      "difficulty": 2,
+      "content": {
+        "show_word_bank": true
+      },
+      "text_type": "word",
+      "text": "pin",
+      "expected_words": [
+        "pin"
+      ]
+    },
+    {
+      "id": "text-act-short_i-word-08",
+      "activity_id": "act-short_i-word-08",
+      "skill_id": "skill-short-i",
+      "activity_type": "read_aloud_word",
+      "difficulty": 2,
+      "content": {
+        "show_word_bank": true
+      },
+      "text_type": "word",
+      "text": "win",
+      "expected_words": [
+        "win"
+      ]
+    },
+    {
+      "id": "text-act-short_i-word-09",
+      "activity_id": "act-short_i-word-09",
+      "skill_id": "skill-short-i",
+      "activity_type": "read_aloud_word",
+      "difficulty": 2,
+      "content": {
+        "show_word_bank": true
+      },
+      "text_type": "word",
+      "text": "big",
+      "expected_words": [
+        "big"
+      ]
+    },
+    {
+      "id": "text-act-short_i-word-10",
+      "activity_id": "act-short_i-word-10",
+      "skill_id": "skill-short-i",
+      "activity_type": "read_aloud_word",
+      "difficulty": 2,
+      "content": {
+        "show_word_bank": true
+      },
+      "text_type": "word",
+      "text": "dip",
+      "expected_words": [
+        "dip"
+      ]
+    },
+    {
+      "id": "text-act-short_i-sentence-01",
+      "activity_id": "act-short_i-sentence-01",
+      "skill_id": "skill-short-i",
+      "activity_type": "read_aloud_sentence",
+      "difficulty": 2,
+      "content": {
+        "show_word_bank": true
+      },
+      "text_type": "sentence",
+      "text": "I can sit by the pig.",
+      "expected_words": [
+        "i",
+        "can",
+        "sit",
+        "by",
+        "the",
+        "pig"
+      ]
+    },
+    {
+      "id": "text-act-short_i-sentence-02",
+      "activity_id": "act-short_i-sentence-02",
+      "skill_id": "skill-short-i",
+      "activity_type": "read_aloud_sentence",
+      "difficulty": 2,
+      "content": {
+        "show_word_bank": true
+      },
+      "text_type": "sentence",
+      "text": "The fin is in my tip.",
+      "expected_words": [
+        "the",
+        "fin",
+        "is",
+        "in",
+        "my",
+        "tip"
+      ]
+    },
+    {
+      "id": "text-act-short_i-sentence-03",
+      "activity_id": "act-short_i-sentence-03",
+      "skill_id": "skill-short-i",
+      "activity_type": "read_aloud_sentence",
+      "difficulty": 2,
+      "content": {
+        "show_word_bank": true
+      },
+      "text_type": "sentence",
+      "text": "We lip when the zip is near.",
+      "expected_words": [
+        "we",
+        "lip",
+        "when",
+        "the",
+        "zip",
+        "is",
+        "near"
+      ]
+    },
+    {
+      "id": "text-act-short_i-sentence-04",
+      "activity_id": "act-short_i-sentence-04",
+      "skill_id": "skill-short-i",
+      "activity_type": "read_aloud_sentence",
+      "difficulty": 2,
+      "content": {
+        "show_word_bank": true
+      },
+      "text_type": "sentence",
+      "text": "Can you see the pin and the win?",
+      "expected_words": [
+        "can",
+        "you",
+        "see",
+        "the",
+        "pin",
+        "and",
+        "the",
+        "win"
+      ]
+    },
+    {
+      "id": "text-act-short_i-sentence-05",
+      "activity_id": "act-short_i-sentence-05",
+      "skill_id": "skill-short-i",
+      "activity_type": "read_aloud_sentence",
+      "difficulty": 2,
+      "content": {
+        "show_word_bank": true
+      },
+      "text_type": "sentence",
+      "text": "My big can help your dip.",
+      "expected_words": [
+        "my",
+        "big",
+        "can",
+        "help",
+        "your",
+        "dip"
+      ]
+    },
+    {
+      "id": "text-act-short_i-passage-01",
+      "activity_id": "act-short_i-passage-01",
+      "skill_id": "skill-short-i",
+      "activity_type": "read_aloud_passage",
+      "difficulty": 2,
+      "content": {
+        "show_word_bank": false
+      },
+      "text_type": "passage",
+      "text": "I can sit by the pig. The fin is in my tip. We lip when the zip is near.",
+      "expected_words": [
+        "i",
+        "can",
+        "sit",
+        "by",
+        "the",
+        "pig",
+        "the",
+        "fin",
+        "is",
+        "in",
+        "my",
+        "tip",
+        "we",
+        "lip",
+        "when",
+        "the",
+        "zip",
+        "is",
+        "near"
+      ]
+    },
+    {
+      "id": "text-act-short_i-passage-02",
+      "activity_id": "act-short_i-passage-02",
+      "skill_id": "skill-short-i",
+      "activity_type": "read_aloud_passage",
+      "difficulty": 2,
+      "content": {
+        "show_word_bank": false
+      },
+      "text_type": "passage",
+      "text": "Can you see the pin and the win? My big can help your dip. The words belong together in this short story.",
+      "expected_words": [
+        "can",
+        "you",
+        "see",
+        "the",
+        "pin",
+        "and",
+        "the",
+        "win",
+        "my",
+        "big",
+        "can",
+        "help",
+        "your",
+        "dip",
+        "the",
+        "words",
+        "belong",
+        "together",
+        "in",
+        "this",
+        "short",
+        "story"
+      ]
+    },
+    {
+      "id": "text-act-short_o-word-01",
+      "activity_id": "act-short_o-word-01",
+      "skill_id": "skill-short-o",
+      "activity_type": "read_aloud_word",
+      "difficulty": 2,
+      "content": {
+        "show_word_bank": true
+      },
+      "text_type": "word",
+      "text": "dog",
+      "expected_words": [
+        "dog"
+      ]
+    },
+    {
+      "id": "text-act-short_o-word-02",
+      "activity_id": "act-short_o-word-02",
+      "skill_id": "skill-short-o",
+      "activity_type": "read_aloud_word",
+      "difficulty": 2,
+      "content": {
+        "show_word_bank": true
+      },
+      "text_type": "word",
+      "text": "log",
+      "expected_words": [
+        "log"
+      ]
+    },
+    {
+      "id": "text-act-short_o-word-03",
+      "activity_id": "act-short_o-word-03",
+      "skill_id": "skill-short-o",
+      "activity_type": "read_aloud_word",
+      "difficulty": 2,
+      "content": {
+        "show_word_bank": true
+      },
+      "text_type": "word",
+      "text": "pot",
+      "expected_words": [
+        "pot"
+      ]
+    },
+    {
+      "id": "text-act-short_o-word-04",
+      "activity_id": "act-short_o-word-04",
+      "skill_id": "skill-short-o",
+      "activity_type": "read_aloud_word",
+      "difficulty": 2,
+      "content": {
+        "show_word_bank": true
+      },
+      "text_type": "word",
+      "text": "top",
+      "expected_words": [
+        "top"
+      ]
+    },
+    {
+      "id": "text-act-short_o-word-05",
+      "activity_id": "act-short_o-word-05",
+      "skill_id": "skill-short-o",
+      "activity_type": "read_aloud_word",
+      "difficulty": 2,
+      "content": {
+        "show_word_bank": true
+      },
+      "text_type": "word",
+      "text": "hot",
+      "expected_words": [
+        "hot"
+      ]
+    },
+    {
+      "id": "text-act-short_o-word-06",
+      "activity_id": "act-short_o-word-06",
+      "skill_id": "skill-short-o",
+      "activity_type": "read_aloud_word",
+      "difficulty": 2,
+      "content": {
+        "show_word_bank": true
+      },
+      "text_type": "word",
+      "text": "hop",
+      "expected_words": [
+        "hop"
+      ]
+    },
+    {
+      "id": "text-act-short_o-word-07",
+      "activity_id": "act-short_o-word-07",
+      "skill_id": "skill-short-o",
+      "activity_type": "read_aloud_word",
+      "difficulty": 2,
+      "content": {
+        "show_word_bank": true
+      },
+      "text_type": "word",
+      "text": "mop",
+      "expected_words": [
+        "mop"
+      ]
+    },
+    {
+      "id": "text-act-short_o-word-08",
+      "activity_id": "act-short_o-word-08",
+      "skill_id": "skill-short-o",
+      "activity_type": "read_aloud_word",
+      "difficulty": 2,
+      "content": {
+        "show_word_bank": true
+      },
+      "text_type": "word",
+      "text": "box",
+      "expected_words": [
+        "box"
+      ]
+    },
+    {
+      "id": "text-act-short_o-word-09",
+      "activity_id": "act-short_o-word-09",
+      "skill_id": "skill-short-o",
+      "activity_type": "read_aloud_word",
+      "difficulty": 2,
+      "content": {
+        "show_word_bank": true
+      },
+      "text_type": "word",
+      "text": "fox",
+      "expected_words": [
+        "fox"
+      ]
+    },
+    {
+      "id": "text-act-short_o-word-10",
+      "activity_id": "act-short_o-word-10",
+      "skill_id": "skill-short-o",
+      "activity_type": "read_aloud_word",
+      "difficulty": 2,
+      "content": {
+        "show_word_bank": true
+      },
+      "text_type": "word",
+      "text": "pop",
+      "expected_words": [
+        "pop"
+      ]
+    },
+    {
+      "id": "text-act-short_o-sentence-01",
+      "activity_id": "act-short_o-sentence-01",
+      "skill_id": "skill-short-o",
+      "activity_type": "read_aloud_sentence",
+      "difficulty": 2,
+      "content": {
+        "show_word_bank": true
+      },
+      "text_type": "sentence",
+      "text": "I can dog by the log.",
+      "expected_words": [
+        "i",
+        "can",
+        "dog",
+        "by",
+        "the",
+        "log"
+      ]
+    },
+    {
+      "id": "text-act-short_o-sentence-02",
+      "activity_id": "act-short_o-sentence-02",
+      "skill_id": "skill-short-o",
+      "activity_type": "read_aloud_sentence",
+      "difficulty": 2,
+      "content": {
+        "show_word_bank": true
+      },
+      "text_type": "sentence",
+      "text": "The pot is in my top.",
+      "expected_words": [
+        "the",
+        "pot",
+        "is",
+        "in",
+        "my",
+        "top"
+      ]
+    },
+    {
+      "id": "text-act-short_o-sentence-03",
+      "activity_id": "act-short_o-sentence-03",
+      "skill_id": "skill-short-o",
+      "activity_type": "read_aloud_sentence",
+      "difficulty": 2,
+      "content": {
+        "show_word_bank": true
+      },
+      "text_type": "sentence",
+      "text": "We hot when the hop is near.",
+      "expected_words": [
+        "we",
+        "hot",
+        "when",
+        "the",
+        "hop",
+        "is",
+        "near"
+      ]
+    },
+    {
+      "id": "text-act-short_o-sentence-04",
+      "activity_id": "act-short_o-sentence-04",
+      "skill_id": "skill-short-o",
+      "activity_type": "read_aloud_sentence",
+      "difficulty": 2,
+      "content": {
+        "show_word_bank": true
+      },
+      "text_type": "sentence",
+      "text": "Can you see the mop and the box?",
+      "expected_words": [
+        "can",
+        "you",
+        "see",
+        "the",
+        "mop",
+        "and",
+        "the",
+        "box"
+      ]
+    },
+    {
+      "id": "text-act-short_o-sentence-05",
+      "activity_id": "act-short_o-sentence-05",
+      "skill_id": "skill-short-o",
+      "activity_type": "read_aloud_sentence",
+      "difficulty": 2,
+      "content": {
+        "show_word_bank": true
+      },
+      "text_type": "sentence",
+      "text": "My fox can help your pop.",
+      "expected_words": [
+        "my",
+        "fox",
+        "can",
+        "help",
+        "your",
+        "pop"
+      ]
+    },
+    {
+      "id": "text-act-short_o-passage-01",
+      "activity_id": "act-short_o-passage-01",
+      "skill_id": "skill-short-o",
+      "activity_type": "read_aloud_passage",
+      "difficulty": 2,
+      "content": {
+        "show_word_bank": false
+      },
+      "text_type": "passage",
+      "text": "I can dog by the log. The pot is in my top. We hot when the hop is near.",
+      "expected_words": [
+        "i",
+        "can",
+        "dog",
+        "by",
+        "the",
+        "log",
+        "the",
+        "pot",
+        "is",
+        "in",
+        "my",
+        "top",
+        "we",
+        "hot",
+        "when",
+        "the",
+        "hop",
+        "is",
+        "near"
+      ]
+    },
+    {
+      "id": "text-act-short_o-passage-02",
+      "activity_id": "act-short_o-passage-02",
+      "skill_id": "skill-short-o",
+      "activity_type": "read_aloud_passage",
+      "difficulty": 2,
+      "content": {
+        "show_word_bank": false
+      },
+      "text_type": "passage",
+      "text": "Can you see the mop and the box? My fox can help your pop. The words belong together in this short story.",
+      "expected_words": [
+        "can",
+        "you",
+        "see",
+        "the",
+        "mop",
+        "and",
+        "the",
+        "box",
+        "my",
+        "fox",
+        "can",
+        "help",
+        "your",
+        "pop",
+        "the",
+        "words",
+        "belong",
+        "together",
+        "in",
+        "this",
+        "short",
+        "story"
+      ]
+    },
+    {
+      "id": "text-act-cvc_blend-word-01",
+      "activity_id": "act-cvc_blend-word-01",
+      "skill_id": "skill-cvc-blend",
+      "activity_type": "read_aloud_word",
+      "difficulty": 2,
+      "content": {
+        "show_word_bank": true
+      },
+      "text_type": "word",
+      "text": "stop",
+      "expected_words": [
+        "stop"
+      ]
+    },
+    {
+      "id": "text-act-cvc_blend-word-02",
+      "activity_id": "act-cvc_blend-word-02",
+      "skill_id": "skill-cvc-blend",
+      "activity_type": "read_aloud_word",
+      "difficulty": 2,
+      "content": {
+        "show_word_bank": true
+      },
+      "text_type": "word",
+      "text": "step",
+      "expected_words": [
+        "step"
+      ]
+    },
+    {
+      "id": "text-act-cvc_blend-word-03",
+      "activity_id": "act-cvc_blend-word-03",
+      "skill_id": "skill-cvc-blend",
+      "activity_type": "read_aloud_word",
+      "difficulty": 2,
+      "content": {
+        "show_word_bank": true
+      },
+      "text_type": "word",
+      "text": "frog",
+      "expected_words": [
+        "frog"
+      ]
+    },
+    {
+      "id": "text-act-cvc_blend-word-04",
+      "activity_id": "act-cvc_blend-word-04",
+      "skill_id": "skill-cvc-blend",
+      "activity_type": "read_aloud_word",
+      "difficulty": 2,
+      "content": {
+        "show_word_bank": true
+      },
+      "text_type": "word",
+      "text": "flag",
+      "expected_words": [
+        "flag"
+      ]
+    },
+    {
+      "id": "text-act-cvc_blend-word-05",
+      "activity_id": "act-cvc_blend-word-05",
+      "skill_id": "skill-cvc-blend",
+      "activity_type": "read_aloud_word",
+      "difficulty": 2,
+      "content": {
+        "show_word_bank": true
+      },
+      "text_type": "word",
+      "text": "clap",
+      "expected_words": [
+        "clap"
+      ]
+    },
+    {
+      "id": "text-act-cvc_blend-word-06",
+      "activity_id": "act-cvc_blend-word-06",
+      "skill_id": "skill-cvc-blend",
+      "activity_type": "read_aloud_word",
+      "difficulty": 2,
+      "content": {
+        "show_word_bank": true
+      },
+      "text_type": "word",
+      "text": "trip",
+      "expected_words": [
+        "trip"
+      ]
+    },
+    {
+      "id": "text-act-cvc_blend-word-07",
+      "activity_id": "act-cvc_blend-word-07",
+      "skill_id": "skill-cvc-blend",
+      "activity_type": "read_aloud_word",
+      "difficulty": 2,
+      "content": {
+        "show_word_bank": true
+      },
+      "text_type": "word",
+      "text": "spin",
+      "expected_words": [
+        "spin"
+      ]
+    },
+    {
+      "id": "text-act-cvc_blend-word-08",
+      "activity_id": "act-cvc_blend-word-08",
+      "skill_id": "skill-cvc-blend",
+      "activity_type": "read_aloud_word",
+      "difficulty": 2,
+      "content": {
+        "show_word_bank": true
+      },
+      "text_type": "word",
+      "text": "snap",
+      "expected_words": [
+        "snap"
+      ]
+    },
+    {
+      "id": "text-act-cvc_blend-word-09",
+      "activity_id": "act-cvc_blend-word-09",
+      "skill_id": "skill-cvc-blend",
+      "activity_type": "read_aloud_word",
+      "difficulty": 2,
+      "content": {
+        "show_word_bank": true
+      },
+      "text_type": "word",
+      "text": "drop",
+      "expected_words": [
+        "drop"
+      ]
+    },
+    {
+      "id": "text-act-cvc_blend-word-10",
+      "activity_id": "act-cvc_blend-word-10",
+      "skill_id": "skill-cvc-blend",
+      "activity_type": "read_aloud_word",
+      "difficulty": 2,
+      "content": {
+        "show_word_bank": true
+      },
+      "text_type": "word",
+      "text": "drum",
+      "expected_words": [
+        "drum"
+      ]
+    },
+    {
+      "id": "text-act-cvc_blend-sentence-01",
+      "activity_id": "act-cvc_blend-sentence-01",
+      "skill_id": "skill-cvc-blend",
+      "activity_type": "read_aloud_sentence",
+      "difficulty": 2,
+      "content": {
+        "show_word_bank": true
+      },
+      "text_type": "sentence",
+      "text": "I can stop by the step.",
+      "expected_words": [
+        "i",
+        "can",
+        "stop",
+        "by",
+        "the",
+        "step"
+      ]
+    },
+    {
+      "id": "text-act-cvc_blend-sentence-02",
+      "activity_id": "act-cvc_blend-sentence-02",
+      "skill_id": "skill-cvc-blend",
+      "activity_type": "read_aloud_sentence",
+      "difficulty": 2,
+      "content": {
+        "show_word_bank": true
+      },
+      "text_type": "sentence",
+      "text": "The frog is in my flag.",
+      "expected_words": [
+        "the",
+        "frog",
+        "is",
+        "in",
+        "my",
+        "flag"
+      ]
+    },
+    {
+      "id": "text-act-cvc_blend-sentence-03",
+      "activity_id": "act-cvc_blend-sentence-03",
+      "skill_id": "skill-cvc-blend",
+      "activity_type": "read_aloud_sentence",
+      "difficulty": 2,
+      "content": {
+        "show_word_bank": true
+      },
+      "text_type": "sentence",
+      "text": "We clap when the trip is near.",
+      "expected_words": [
+        "we",
+        "clap",
+        "when",
+        "the",
+        "trip",
+        "is",
+        "near"
+      ]
+    },
+    {
+      "id": "text-act-cvc_blend-sentence-04",
+      "activity_id": "act-cvc_blend-sentence-04",
+      "skill_id": "skill-cvc-blend",
+      "activity_type": "read_aloud_sentence",
+      "difficulty": 2,
+      "content": {
+        "show_word_bank": true
+      },
+      "text_type": "sentence",
+      "text": "Can you see the spin and the snap?",
+      "expected_words": [
+        "can",
+        "you",
+        "see",
+        "the",
+        "spin",
+        "and",
+        "the",
+        "snap"
+      ]
+    },
+    {
+      "id": "text-act-cvc_blend-sentence-05",
+      "activity_id": "act-cvc_blend-sentence-05",
+      "skill_id": "skill-cvc-blend",
+      "activity_type": "read_aloud_sentence",
+      "difficulty": 2,
+      "content": {
+        "show_word_bank": true
+      },
+      "text_type": "sentence",
+      "text": "My drop can help your drum.",
+      "expected_words": [
+        "my",
+        "drop",
+        "can",
+        "help",
+        "your",
+        "drum"
+      ]
+    },
+    {
+      "id": "text-act-cvc_blend-passage-01",
+      "activity_id": "act-cvc_blend-passage-01",
+      "skill_id": "skill-cvc-blend",
+      "activity_type": "read_aloud_passage",
+      "difficulty": 2,
+      "content": {
+        "show_word_bank": false
+      },
+      "text_type": "passage",
+      "text": "I can stop by the step. The frog is in my flag. We clap when the trip is near.",
+      "expected_words": [
+        "i",
+        "can",
+        "stop",
+        "by",
+        "the",
+        "step",
+        "the",
+        "frog",
+        "is",
+        "in",
+        "my",
+        "flag",
+        "we",
+        "clap",
+        "when",
+        "the",
+        "trip",
+        "is",
+        "near"
+      ]
+    },
+    {
+      "id": "text-act-cvc_blend-passage-02",
+      "activity_id": "act-cvc_blend-passage-02",
+      "skill_id": "skill-cvc-blend",
+      "activity_type": "read_aloud_passage",
+      "difficulty": 2,
+      "content": {
+        "show_word_bank": false
+      },
+      "text_type": "passage",
+      "text": "Can you see the spin and the snap? My drop can help your drum. The words belong together in this short story.",
+      "expected_words": [
+        "can",
+        "you",
+        "see",
+        "the",
+        "spin",
+        "and",
+        "the",
+        "snap",
+        "my",
+        "drop",
+        "can",
+        "help",
+        "your",
+        "drum",
+        "the",
+        "words",
+        "belong",
+        "together",
+        "in",
+        "this",
+        "short",
+        "story"
+      ]
+    },
+    {
+      "id": "text-act-sight_1-word-01",
+      "activity_id": "act-sight_1-word-01",
+      "skill_id": "skill-sight-1",
+      "activity_type": "read_aloud_word",
+      "difficulty": 1,
+      "content": {
+        "show_word_bank": true
+      },
+      "text_type": "word",
+      "text": "the",
+      "expected_words": [
+        "the"
+      ]
+    },
+    {
+      "id": "text-act-sight_1-word-02",
+      "activity_id": "act-sight_1-word-02",
+      "skill_id": "skill-sight-1",
+      "activity_type": "read_aloud_word",
+      "difficulty": 1,
+      "content": {
+        "show_word_bank": true
+      },
+      "text_type": "word",
+      "text": "a",
+      "expected_words": [
+        "a"
+      ]
+    },
+    {
+      "id": "text-act-sight_1-word-03",
+      "activity_id": "act-sight_1-word-03",
+      "skill_id": "skill-sight-1",
+      "activity_type": "read_aloud_word",
+      "difficulty": 1,
+      "content": {
+        "show_word_bank": true
+      },
+      "text_type": "word",
+      "text": "see",
+      "expected_words": [
+        "see"
+      ]
+    },
+    {
+      "id": "text-act-sight_1-word-04",
+      "activity_id": "act-sight_1-word-04",
+      "skill_id": "skill-sight-1",
+      "activity_type": "read_aloud_word",
+      "difficulty": 1,
+      "content": {
+        "show_word_bank": true
+      },
+      "text_type": "word",
+      "text": "can",
+      "expected_words": [
+        "can"
+      ]
+    },
+    {
+      "id": "text-act-sight_1-word-05",
+      "activity_id": "act-sight_1-word-05",
+      "skill_id": "skill-sight-1",
+      "activity_type": "read_aloud_word",
+      "difficulty": 1,
+      "content": {
+        "show_word_bank": true
+      },
+      "text_type": "word",
+      "text": "is",
+      "expected_words": [
+        "is"
+      ]
+    },
+    {
+      "id": "text-act-sight_1-word-06",
+      "activity_id": "act-sight_1-word-06",
+      "skill_id": "skill-sight-1",
+      "activity_type": "read_aloud_word",
+      "difficulty": 1,
+      "content": {
+        "show_word_bank": true
+      },
+      "text_type": "word",
+      "text": "and",
+      "expected_words": [
+        "and"
+      ]
+    },
+    {
+      "id": "text-act-sight_1-word-07",
+      "activity_id": "act-sight_1-word-07",
+      "skill_id": "skill-sight-1",
+      "activity_type": "read_aloud_word",
+      "difficulty": 1,
+      "content": {
+        "show_word_bank": true
+      },
+      "text_type": "word",
+      "text": "my",
+      "expected_words": [
+        "my"
+      ]
+    },
+    {
+      "id": "text-act-sight_1-word-08",
+      "activity_id": "act-sight_1-word-08",
+      "skill_id": "skill-sight-1",
+      "activity_type": "read_aloud_word",
+      "difficulty": 1,
+      "content": {
+        "show_word_bank": true
+      },
+      "text_type": "word",
+      "text": "we",
+      "expected_words": [
+        "we"
+      ]
+    },
+    {
+      "id": "text-act-sight_1-word-09",
+      "activity_id": "act-sight_1-word-09",
+      "skill_id": "skill-sight-1",
+      "activity_type": "read_aloud_word",
+      "difficulty": 1,
+      "content": {
+        "show_word_bank": true
+      },
+      "text_type": "word",
+      "text": "to",
+      "expected_words": [
+        "to"
+      ]
+    },
+    {
+      "id": "text-act-sight_1-word-10",
+      "activity_id": "act-sight_1-word-10",
+      "skill_id": "skill-sight-1",
+      "activity_type": "read_aloud_word",
+      "difficulty": 1,
+      "content": {
+        "show_word_bank": true
+      },
+      "text_type": "word",
+      "text": "you",
+      "expected_words": [
+        "you"
+      ]
+    },
+    {
+      "id": "text-act-sight_1-sentence-01",
+      "activity_id": "act-sight_1-sentence-01",
+      "skill_id": "skill-sight-1",
+      "activity_type": "read_aloud_sentence",
+      "difficulty": 1,
+      "content": {
+        "show_word_bank": true
+      },
+      "text_type": "sentence",
+      "text": "I can the by the a.",
+      "expected_words": [
+        "i",
+        "can",
+        "the",
+        "by",
+        "the",
+        "a"
+      ]
+    },
+    {
+      "id": "text-act-sight_1-sentence-02",
+      "activity_id": "act-sight_1-sentence-02",
+      "skill_id": "skill-sight-1",
+      "activity_type": "read_aloud_sentence",
+      "difficulty": 1,
+      "content": {
+        "show_word_bank": true
+      },
+      "text_type": "sentence",
+      "text": "The see is in my can.",
+      "expected_words": [
+        "the",
+        "see",
+        "is",
+        "in",
+        "my",
+        "can"
+      ]
+    },
+    {
+      "id": "text-act-sight_1-sentence-03",
+      "activity_id": "act-sight_1-sentence-03",
+      "skill_id": "skill-sight-1",
+      "activity_type": "read_aloud_sentence",
+      "difficulty": 1,
+      "content": {
+        "show_word_bank": true
+      },
+      "text_type": "sentence",
+      "text": "We is when the and is near.",
+      "expected_words": [
+        "we",
+        "is",
+        "when",
+        "the",
+        "and",
+        "is",
+        "near"
+      ]
+    },
+    {
+      "id": "text-act-sight_1-sentence-04",
+      "activity_id": "act-sight_1-sentence-04",
+      "skill_id": "skill-sight-1",
+      "activity_type": "read_aloud_sentence",
+      "difficulty": 1,
+      "content": {
+        "show_word_bank": true
+      },
+      "text_type": "sentence",
+      "text": "Can you see the my and the we?",
+      "expected_words": [
+        "can",
+        "you",
+        "see",
+        "the",
+        "my",
+        "and",
+        "the",
+        "we"
+      ]
+    },
+    {
+      "id": "text-act-sight_1-sentence-05",
+      "activity_id": "act-sight_1-sentence-05",
+      "skill_id": "skill-sight-1",
+      "activity_type": "read_aloud_sentence",
+      "difficulty": 1,
+      "content": {
+        "show_word_bank": true
+      },
+      "text_type": "sentence",
+      "text": "My to can help your you.",
+      "expected_words": [
+        "my",
+        "to",
+        "can",
+        "help",
+        "your",
+        "you"
+      ]
+    },
+    {
+      "id": "text-act-sight_1-passage-01",
+      "activity_id": "act-sight_1-passage-01",
+      "skill_id": "skill-sight-1",
+      "activity_type": "read_aloud_passage",
+      "difficulty": 1,
+      "content": {
+        "show_word_bank": false
+      },
+      "text_type": "passage",
+      "text": "I can the by the a. The see is in my can. We is when the and is near.",
+      "expected_words": [
+        "i",
+        "can",
+        "the",
+        "by",
+        "the",
+        "a",
+        "the",
+        "see",
+        "is",
+        "in",
+        "my",
+        "can",
+        "we",
+        "is",
+        "when",
+        "the",
+        "and",
+        "is",
+        "near"
+      ]
+    },
+    {
+      "id": "text-act-sight_1-passage-02",
+      "activity_id": "act-sight_1-passage-02",
+      "skill_id": "skill-sight-1",
+      "activity_type": "read_aloud_passage",
+      "difficulty": 1,
+      "content": {
+        "show_word_bank": false
+      },
+      "text_type": "passage",
+      "text": "Can you see the my and the we? My to can help your you. The words belong together in this short story.",
+      "expected_words": [
+        "can",
+        "you",
+        "see",
+        "the",
+        "my",
+        "and",
+        "the",
+        "we",
+        "my",
+        "to",
+        "can",
+        "help",
+        "your",
+        "you",
+        "the",
+        "words",
+        "belong",
+        "together",
+        "in",
+        "this",
+        "short",
+        "story"
+      ]
+    },
+    {
+      "id": "text-act-sight_2-word-01",
+      "activity_id": "act-sight_2-word-01",
+      "skill_id": "skill-sight-2",
+      "activity_type": "read_aloud_word",
+      "difficulty": 3,
+      "content": {
+        "show_word_bank": true
+      },
+      "text_type": "word",
+      "text": "where",
+      "expected_words": [
+        "where"
+      ]
+    },
+    {
+      "id": "text-act-sight_2-word-02",
+      "activity_id": "act-sight_2-word-02",
+      "skill_id": "skill-sight-2",
+      "activity_type": "read_aloud_word",
+      "difficulty": 3,
+      "content": {
+        "show_word_bank": true
+      },
+      "text_type": "word",
+      "text": "little",
+      "expected_words": [
+        "little"
+      ]
+    },
+    {
+      "id": "text-act-sight_2-word-03",
+      "activity_id": "act-sight_2-word-03",
+      "skill_id": "skill-sight-2",
+      "activity_type": "read_aloud_word",
+      "difficulty": 3,
+      "content": {
+        "show_word_bank": true
+      },
+      "text_type": "word",
+      "text": "because",
+      "expected_words": [
+        "because"
+      ]
+    },
+    {
+      "id": "text-act-sight_2-word-04",
+      "activity_id": "act-sight_2-word-04",
+      "skill_id": "skill-sight-2",
+      "activity_type": "read_aloud_word",
+      "difficulty": 3,
+      "content": {
+        "show_word_bank": true
+      },
+      "text_type": "word",
+      "text": "friend",
+      "expected_words": [
+        "friend"
+      ]
+    },
+    {
+      "id": "text-act-sight_2-word-05",
+      "activity_id": "act-sight_2-word-05",
+      "skill_id": "skill-sight-2",
+      "activity_type": "read_aloud_word",
+      "difficulty": 3,
+      "content": {
+        "show_word_bank": true
+      },
+      "text_type": "word",
+      "text": "together",
+      "expected_words": [
+        "together"
+      ]
+    },
+    {
+      "id": "text-act-sight_2-word-06",
+      "activity_id": "act-sight_2-word-06",
+      "skill_id": "skill-sight-2",
+      "activity_type": "read_aloud_word",
+      "difficulty": 3,
+      "content": {
+        "show_word_bank": true
+      },
+      "text_type": "word",
+      "text": "after",
+      "expected_words": [
+        "after"
+      ]
+    },
+    {
+      "id": "text-act-sight_2-word-07",
+      "activity_id": "act-sight_2-word-07",
+      "skill_id": "skill-sight-2",
+      "activity_type": "read_aloud_word",
+      "difficulty": 3,
+      "content": {
+        "show_word_bank": true
+      },
+      "text_type": "word",
+      "text": "before",
+      "expected_words": [
+        "before"
+      ]
+    },
+    {
+      "id": "text-act-sight_2-word-08",
+      "activity_id": "act-sight_2-word-08",
+      "skill_id": "skill-sight-2",
+      "activity_type": "read_aloud_word",
+      "difficulty": 3,
+      "content": {
+        "show_word_bank": true
+      },
+      "text_type": "word",
+      "text": "around",
+      "expected_words": [
+        "around"
+      ]
+    },
+    {
+      "id": "text-act-sight_2-word-09",
+      "activity_id": "act-sight_2-word-09",
+      "skill_id": "skill-sight-2",
+      "activity_type": "read_aloud_word",
+      "difficulty": 3,
+      "content": {
+        "show_word_bank": true
+      },
+      "text_type": "word",
+      "text": "under",
+      "expected_words": [
+        "under"
+      ]
+    },
+    {
+      "id": "text-act-sight_2-word-10",
+      "activity_id": "act-sight_2-word-10",
+      "skill_id": "skill-sight-2",
+      "activity_type": "read_aloud_word",
+      "difficulty": 3,
+      "content": {
+        "show_word_bank": true
+      },
+      "text_type": "word",
+      "text": "every",
+      "expected_words": [
+        "every"
+      ]
+    },
+    {
+      "id": "text-act-sight_2-sentence-01",
+      "activity_id": "act-sight_2-sentence-01",
+      "skill_id": "skill-sight-2",
+      "activity_type": "read_aloud_sentence",
+      "difficulty": 3,
+      "content": {
+        "show_word_bank": true
+      },
+      "text_type": "sentence",
+      "text": "I can where by the little.",
+      "expected_words": [
+        "i",
+        "can",
+        "where",
+        "by",
+        "the",
+        "little"
+      ]
+    },
+    {
+      "id": "text-act-sight_2-sentence-02",
+      "activity_id": "act-sight_2-sentence-02",
+      "skill_id": "skill-sight-2",
+      "activity_type": "read_aloud_sentence",
+      "difficulty": 3,
+      "content": {
+        "show_word_bank": true
+      },
+      "text_type": "sentence",
+      "text": "The because is in my friend.",
+      "expected_words": [
+        "the",
+        "because",
+        "is",
+        "in",
+        "my",
+        "friend"
+      ]
+    },
+    {
+      "id": "text-act-sight_2-sentence-03",
+      "activity_id": "act-sight_2-sentence-03",
+      "skill_id": "skill-sight-2",
+      "activity_type": "read_aloud_sentence",
+      "difficulty": 3,
+      "content": {
+        "show_word_bank": true
+      },
+      "text_type": "sentence",
+      "text": "We together when the after is near.",
+      "expected_words": [
+        "we",
+        "together",
+        "when",
+        "the",
+        "after",
+        "is",
+        "near"
+      ]
+    },
+    {
+      "id": "text-act-sight_2-sentence-04",
+      "activity_id": "act-sight_2-sentence-04",
+      "skill_id": "skill-sight-2",
+      "activity_type": "read_aloud_sentence",
+      "difficulty": 3,
+      "content": {
+        "show_word_bank": true
+      },
+      "text_type": "sentence",
+      "text": "Can you see the before and the around?",
+      "expected_words": [
+        "can",
+        "you",
+        "see",
+        "the",
+        "before",
+        "and",
+        "the",
+        "around"
+      ]
+    },
+    {
+      "id": "text-act-sight_2-sentence-05",
+      "activity_id": "act-sight_2-sentence-05",
+      "skill_id": "skill-sight-2",
+      "activity_type": "read_aloud_sentence",
+      "difficulty": 3,
+      "content": {
+        "show_word_bank": true
+      },
+      "text_type": "sentence",
+      "text": "My under can help your every.",
+      "expected_words": [
+        "my",
+        "under",
+        "can",
+        "help",
+        "your",
+        "every"
+      ]
+    },
+    {
+      "id": "text-act-sight_2-passage-01",
+      "activity_id": "act-sight_2-passage-01",
+      "skill_id": "skill-sight-2",
+      "activity_type": "read_aloud_passage",
+      "difficulty": 3,
+      "content": {
+        "show_word_bank": false
+      },
+      "text_type": "passage",
+      "text": "I can where by the little. The because is in my friend. We together when the after is near.",
+      "expected_words": [
+        "i",
+        "can",
+        "where",
+        "by",
+        "the",
+        "little",
+        "the",
+        "because",
+        "is",
+        "in",
+        "my",
+        "friend",
+        "we",
+        "together",
+        "when",
+        "the",
+        "after",
+        "is",
+        "near"
+      ]
+    },
+    {
+      "id": "text-act-sight_2-passage-02",
+      "activity_id": "act-sight_2-passage-02",
+      "skill_id": "skill-sight-2",
+      "activity_type": "read_aloud_passage",
+      "difficulty": 3,
+      "content": {
+        "show_word_bank": false
+      },
+      "text_type": "passage",
+      "text": "Can you see the before and the around? My under can help your every. The words belong together in this short story.",
+      "expected_words": [
+        "can",
+        "you",
+        "see",
+        "the",
+        "before",
+        "and",
+        "the",
+        "around",
+        "my",
+        "under",
+        "can",
+        "help",
+        "your",
+        "every",
+        "the",
+        "words",
+        "belong",
+        "together",
+        "in",
+        "this",
+        "short",
+        "story"
+      ]
+    }
+  ]
+}

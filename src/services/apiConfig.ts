@@ -157,6 +157,10 @@ export const API_ENDPOINTS = {
     `/teacher/classes/${encodeURIComponent(classId)}/export.csv`,
   ASSIGNMENTS: '/assignments',
   ASSIGNMENT_COMPLETE: (id: string) => `/assignments/${encodeURIComponent(id)}/complete`,
+  BOOKS: '/books',
+  BOOK_BY_ID: (id: string) => `/books/${encodeURIComponent(id)}`,
+  BOOK_PROGRESS: (childId: string, bookId: string) =>
+    `/children/${encodeURIComponent(childId)}/books/${encodeURIComponent(bookId)}/progress`,
 } as const;
 
 export type FetchLike = typeof fetch;

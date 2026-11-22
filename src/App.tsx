@@ -10,6 +10,8 @@ import { Footer } from './components/landing/Footer';
 import { WelcomeView } from './views/WelcomeView';
 import { DashboardView } from './views/DashboardView';
 import { LibraryView } from './views/LibraryView';
+import { BookLibraryView } from './views/BookLibraryView';
+import { BookReaderView } from './views/BookReaderView';
 import { ActivityPlayerView } from './views/ActivityPlayerView';
 import { SessionSummaryView } from './views/SessionSummaryView';
 import { ProgressView } from './views/ProgressView';
@@ -54,6 +56,8 @@ function AppShell() {
           <Route path="/" element={<WelcomeView />} />
           <Route path="/welcome" element={<WelcomeView />} />
           <Route path="/library" element={<LibraryView />} />
+          <Route path="/books" element={<BookLibraryView />} />
+          <Route path="/books/:bookId" element={<BookReaderView />} />
           <Route path="/privacy" element={<PrivacyPolicyView />} />
           <Route path="/terms" element={<TermsView />} />
 

@@ -2,6 +2,9 @@ import {
   AdaptiveRecommendation,
   Assignment,
   Attempt,
+  BookDetail,
+  BookListResponse,
+  BookProgress,
   Classroom,
   DateFilterOption,
   GradedAnswer,
@@ -59,6 +62,22 @@ export interface IReadingQuestRepository {
   getRecommendedLesson(learnerId?: string): Promise<Lesson | null>;
   getRecommendations(learnerId?: string): Promise<Recommendation[]>;
   getAdaptiveRecommendation(learnerId?: string): Promise<AdaptiveRecommendation | null>;
+  getBooks(options?: {
+    level?: number;
+    category?: string;
+    searchQuery?: string;
+    limit?: number;
+    offset?: number;
+  }): Promise<BookListResponse>;
+  getBook(bookId: string): Promise<BookDetail | null>;
+  updateBookProgress(
+    bookId: string,
+    update: {
+      status: 'started' | 'finished' | 'favorite';
+      last_page: number;
+      minutes_read: number;
+    }
+  ): Promise<BookProgress>;
 
   // Session & activity methods (authenticated only)
   getActiveSession(lessonId?: string): Promise<SessionRecord | null>;
@@ -223,6 +242,52 @@ export class ApiReadingQuestRepository implements IReadingQuestRepository {
   }
 
   // --- Public Curriculum Catalog Methods ---
+  public async getBooks(options: {
+    level?: number;
+    category?: string;
+    searchQuery?: string;
+    limit?: number;
+    offset?: number;
+  } = {}): Promise<BookListResponse> {
+    const params = new URLSearchParams();
+    if (options.level) params.set('level', String(options.level));
+    if (options.category) params.set('category', options.category);
+    if (options.searchQuery?.trim()) params.set('q', options.searchQuery.trim());
+    if (options.limit !== undefined) params.set('limit', String(options.limit));
+    if (options.offset !== undefined) params.set('offset', String(options.offset));
+    const query = params.toString();
+    return apiFetch<BookListResponse>(
+      query ? `${API_ENDPOINTS.BOOKS}?${query}` : API_ENDPOINTS.BOOKS,
+      { method: 'GET' }
+    );
+  }
+
+  public async getBook(bookId: string): Promise<BookDetail | null> {
+    try {
+      return await apiFetch<BookDetail>(API_ENDPOINTS.BOOK_BY_ID(bookId), { method: 'GET' });
+    } catch (err) {
+      if (err instanceof ApiClientError && err.code === 'NOT_FOUND') {
+        return null;
+      }
+      throw err;
+    }
+  }
+
+  public async updateBookProgress(
+    bookId: string,
+    update: {
+      status: 'started' | 'finished' | 'favorite';
+      last_page: number;
+      minutes_read: number;
+    }
+  ): Promise<BookProgress> {
+    const childId = this.requireChildId();
+    return apiFetch<BookProgress>(API_ENDPOINTS.BOOK_PROGRESS(childId, bookId), {
+      method: 'POST',
+      body: JSON.stringify(update),
+    });
+  }
+
   public async getReadingLevels(): Promise<ReadingLevel[]> {
     try {
       return await apiFetch<ReadingLevel[]>(API_ENDPOINTS.CURRICULUM_LEVELS, { method: 'GET' });
