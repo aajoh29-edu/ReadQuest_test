@@ -59,6 +59,24 @@ def test_health() -> None:
     assert response.json() == {"status": "ok"}
 
 
+def test_demo_activity_and_attempt_flow() -> None:
+    _factory, client = database()
+    activities = client.get("/demo/activities")
+    assert activities.status_code == 200
+    activity = activities.json()[0]
+    assert all("isCorrect" not in option for option in activity["content"]["options"])
+    attempt = client.post(
+        "/demo/attempts",
+        json={
+            "activity_id": activity["id"],
+            "selected_option_id": activity["content"]["options"][0]["id"],
+        },
+    )
+    assert attempt.status_code == 200
+    assert attempt.json()["activityId"] == activity["id"]
+    assert isinstance(attempt.json()["isCorrect"], bool)
+
+
 def create_learner(client: TestClient) -> dict:
     response = client.post(
         "/api/v1/learners",
