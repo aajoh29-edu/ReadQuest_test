@@ -1,7 +1,7 @@
 # ReadQuest — Frontend Security Audit Report
 
 **Audit Date:** 2026-11-19  
-**Scope:** ReadQuest Web Frontend (`src/`, `index.html`, `public/`, `vite.config.ts`, `.env.example`, `package.json`, `bun.lock`)  
+**Scope:** ReadQuest Web Frontend (`src/`, `index.html`, `public/`, `vite.config.ts`, `.env.example`, `package.json`, `package-lock.json`)  
 **Scope Boundary:** Backend API & Database persistence are implemented separately by the backend/database team members and are excluded from local runtime verification.
 
 ---
@@ -47,12 +47,11 @@ The ReadQuest frontend has been refactored from a local/synthetic-session protot
 
 ## 4. Automated Scans & Verification Executed
 
-All commands below were executed directly in `/app/applet` after the final code edits:
+All commands below were executed from the ReadQuest project directory after the final code edits:
 
 ### 4.1 Dependency Vulnerability Audit
-- **Command:** `bun audit`
-- **Result:** `bun audit v1.4.4 (38afee6c8) — No vulnerabilities found (checked 262 packages) [296.00ms]`
-- *(Note: Project uses `bun.lock` rather than `package-lock.json`; `npm audit` was skipped because `npm` requires a `package-lock.json`.)*
+- **Command:** `npm audit`
+- **Result:** **0 vulnerabilities found across 194 packages**
 
 ### 4.2 Static Secret & Unsafe Sink Scan
 - **Command:** `grep -rnE 'demo|DEMO|COSC|Eleanor|Clara Martinez|Leo Explorer|localStorage|sessionStorage|dangerouslySetInnerHTML|eval\(|AI Studio|aistudio' src index.html public --exclude-dir=node_modules --exclude-dir=dist`

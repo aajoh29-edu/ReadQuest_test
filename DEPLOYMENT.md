@@ -79,15 +79,15 @@ If hosting the backend on a separate subdomain (`https://api.readquest.org`), up
 
 ## 4. Build & Deployment Steps
 
-1. Install dependencies using the lockfile:
+1. Install dependencies using the npm lockfile:
    ```bash
-   bun install --frozen-lockfile
+   npm ci
    ```
 2. Run verification checks before building:
    ```bash
    npm run lint
    npx tsx --test src/services/authAndSecurity.test.ts
-   bun audit
+   npm audit
    ```
 3. Set production environment variables (e.g., `VITE_API_BASE_URL="/api/v1"`) and build:
    ```bash

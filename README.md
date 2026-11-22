@@ -59,18 +59,16 @@
 ## Getting Started
 
 ### Prerequisites
-- [Bun](https://bun.sh/) or Node.js `20.19+` (or `22.12+`)
+- Node.js `20.19+` (or `22.12+`) with npm
 - Python `3.11+`
 
 Run all commands below from the `ReadQuest` project directory unless a step says otherwise.
 
 ### 1. Install frontend dependencies
 
-The repository includes a Bun lockfile. Choose one package manager:
+Install the lockfile-pinned npm dependencies:
 
 ```powershell
-bun install --frozen-lockfile
-# or
 npm install
 ```
 
@@ -135,8 +133,6 @@ Leave that terminal running. In a second terminal, return to the `ReadQuest` dir
 
 ```powershell
 npm run dev
-# or
-bun run dev
 ```
 
 Open:
@@ -169,7 +165,7 @@ The backend requires the frontend's double-submit CSRF cookie/header pair on sta
 | `npm run preview` | Preview the production build locally |
 | `npm run lint` | Run TypeScript type checking (`tsc --noEmit`) |
 | `npx tsx --test src/services/authAndSecurity.test.ts` | Run automated auth validation, security, API transport, and 22 deterministic adaptive engine tests |
-| `bun audit` | Scan dependencies in `bun.lock` for known vulnerabilities |
+| `npm audit` | Scan dependencies in `package-lock.json` for known vulnerabilities |
 | `npm run clean` | Remove build artifacts on macOS/Linux (`dist` and `server.js`) |
 | `cd backend; python -m pytest -q` | Run the complete backend authentication, curriculum, learning, books, voice, and portal test suite |
 

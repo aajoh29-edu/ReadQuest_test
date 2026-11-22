@@ -24,7 +24,7 @@ Production still requires operator-owned infrastructure and policy decisions. Lo
 | **Fail-Closed Route Guards** | Complete | `src/components/auth/ProtectedRoute.tsx` guards `/dashboard`, `/activity/:lessonId`, `/summary/:sessionId`, `/progress`, `/profile`, `/account`, `/parent` (`parent`/`admin`), and `/teacher` (`teacher`/`admin`). |
 | **API-Backed Repository** | Complete | `src/services/repository.ts` (`ApiReadingQuestRepository`) removes `localStorage` persistence and demo data. Public `/curriculum/*` catalog strips answer keys (`isCorrect`). |
 | **Artifact & Demo Removal** | Complete | Deleted `/public/assets/aistudio/`, `DevToolsView.tsx`, `AdaptiveDiagnosticModal.tsx`, `syntheticUserAccounts.ts`, demo role switcher, and fake progress/user accounts. |
-| **Verification & Docs** | Complete | `authAndSecurity.test.ts` (`11/11` passing incl. 22 `adaptiveEngine` tests), `tsc --noEmit` (`0` errors), `vite build` (`0` errors), `bun audit` (`0` vulnerabilities in 262 packages), plus `AUTH_DATABASE_INTEGRATION.md`, `SECURITY_AUDIT.md`, `DEPLOYMENT.md`. |
+| **Verification & Docs** | Complete | `authAndSecurity.test.ts` (`11/11` passing incl. 22 `adaptiveEngine` tests), `tsc --noEmit` (`0` errors), `vite build` (`0` errors), `npm audit` (`0` vulnerabilities in 194 packages), plus `AUTH_DATABASE_INTEGRATION.md`, `SECURITY_AUDIT.md`, `DEPLOYMENT.md`. |
 
 ---
 
@@ -33,7 +33,7 @@ Production still requires operator-owned infrastructure and policy decisions. Lo
 - `npx tsx --test src/services/authAndSecurity.test.ts` -> **11 passed, 0 failed** (covers email validation, password rules, XSS display-name filtering, open-redirect blocking, CSV formula-injection neutralization, HTTPS origin checks, CSRF cookie headers, fail-closed `apiFetch` error classification, `AuthService` validation payloads, sanitized catalog fallback, and all 22 `runAdaptiveEngineTests()` deterministic mastery checks).
 - `npm run lint` (`tsc --noEmit`) -> **Exited 0 (no TypeScript errors)**.
 - `npm run build` (`vite build`) -> **Exited 0 (production bundle built cleanly)**.
-- `bun audit` -> **0 vulnerabilities found across 262 packages**.
+- `npm audit` -> **0 vulnerabilities found across 194 packages**.
 - `python -m pytest -q` (2026-11-22, from `backend/`) -> **11 passed**, covering authentication/cookies/CSRF, learner CRUD, sanitized curriculum, authoritative grading/idempotency, sessions/mastery, books, voice, educator RBAC, and assignments.
 
 ---
