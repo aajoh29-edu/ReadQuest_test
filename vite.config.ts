@@ -40,7 +40,7 @@ export default defineConfig(() => {
                 name: 'ui-vendor',
                 test: /node_modules[\\/](motion|lucide-react)[\\/]/,
                 priority: 10,
-                maxSize: 400 * 1024,
+                // Splitting this group can create circular chunks that initialize motion as undefined.
               },
             ],
           },
