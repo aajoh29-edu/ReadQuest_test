@@ -12,3 +12,6 @@ __pycache__/
 backend/*.db
 .env*
 !.env.example
+
+.venv/
+__pycache__/
