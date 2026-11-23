@@ -2,6 +2,7 @@ import React from 'react';
 import { Star, CheckCircle, Target, Award, Trophy } from 'lucide-react';
 import { LearnerProfile, ReadingProgressSummary } from '../../types';
 import { ProgressBar } from '../common/ProgressBar';
+import { formatAccuracy } from '../../utils/formatAccuracy';
 
 interface SessionProgressWidgetProps {
   profile: LearnerProfile;
@@ -68,7 +69,7 @@ export const SessionProgressWidget: React.FC<SessionProgressWidgetProps> = ({
 
         <div className="bg-[#FAF8FD] p-3 rounded-2xl border border-[#EDE7F6]">
           <span className="block text-2xl font-black text-[#FF8A65]">
-            {progress.averageAccuracy}%
+            {formatAccuracy(progress.averageAccuracy)}
           </span>
           <span className="text-[11px] font-bold text-[#6D5D8A] uppercase">
             Accuracy

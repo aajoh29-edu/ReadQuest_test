@@ -117,18 +117,39 @@ The demo seed is idempotent.
 
 ### Production-like local run
 
-Set a production database password through the environment or `.env`, then run:
+Set `PROD_POSTGRES_PASSWORD` in the untracked `.env` or your shell. Keep the
+same password for an existing database volume; generating a new value on every
+run does not change the stored PostgreSQL password. Then run:
 
 ```bash
-export PROD_POSTGRES_PASSWORD="$(openssl rand -hex 24)"
 make prod
-curl http://localhost:8081/
-curl http://localhost:8081/api/v1/curriculum/levels
+docker compose -f compose.production.yaml ps
+curl http://localhost:8001/health
+curl http://localhost:8081/api/v1/books
 ```
 
 The production frontend is on `http://localhost:8081`, and the production
-backend health endpoint is on `http://localhost:8001/health`. Production images
-contain no bind mounts or development dependencies.
+backend is on `http://localhost:8001`. The frontend proxies `/api/` to the
+backend; the books request above verifies that connection. A healthy, unseeded
+database returns an empty `items` list.
+
+To load the demo catalog into this **production-like local** database, after
+the backend is running:
+
+```bash
+docker compose -f compose.production.yaml exec -T backend python -m app.seeds.demo
+```
+
+Refresh `http://localhost:8081/books` to see the 16 books. This seed also loads
+demo skills, activities, and reading texts, and updates records with matching
+fixture IDs. Do not run it against real production data without reviewing those
+changes. `make seed` uses the separate development database, not this one.
+Production images contain no bind mounts or development dependencies.
+
+For local HTTP account testing only, set `READQUEST_COOKIE_SECURE=false` and
+`READQUEST_AUTO_VERIFY_EMAIL=true` in `.env` before `make prod`. For a real
+deployment, use HTTPS with secure cookies and configure email verification and
+SMTP as described in the [backend README](./backend/README.md).
 
 ### Resetting the database
 

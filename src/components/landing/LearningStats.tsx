@@ -1,6 +1,7 @@
 import React from 'react';
 import { Learner, ReadingLevel, ReadingProgressSummary } from '../../types';
 import { AdventureProgressTrack } from '../common/AdventureProgressTrack';
+import { formatAccuracy } from '../../utils/formatAccuracy';
 import {
   CompletedQuestIcon,
   ReadingIcon,
@@ -91,7 +92,7 @@ export const LearningStats: React.FC<LearningStatsProps> = ({
           </div>
           {progressSummary && progressSummary.totalQuestionsAnswered > 0 && (
             <div className="text-xs sm:text-sm font-bold text-[#5843C4] tabular-nums">
-              {progressSummary.totalQuestionsAnswered} activities practiced · {progressSummary.averageAccuracy}% accuracy
+              {progressSummary.totalQuestionsAnswered} activities practiced · {formatAccuracy(progressSummary.averageAccuracy)} accuracy
             </div>
           )}
         </div>

@@ -7,6 +7,8 @@ import { Learner, Mastery, ReadingLevel, ReadingProgressSummary, Reward, SkillCa
 import { Trophy3DIllustration } from '../components/illustrations/ReadingIllustrations';
 import { Button } from '../components/common/Button';
 import { ProgressBar } from '../components/common/ProgressBar';
+import { formatAccuracy } from '../utils/formatAccuracy';
+import { formatDuration } from '../utils/formatDuration';
 
 export const ProgressView: React.FC = () => {
   const navigate = useNavigate();
@@ -92,9 +94,6 @@ export const ProgressView: React.FC = () => {
     );
   }
 
-  const activeMinutes = Math.floor((progress.totalActivePracticeSeconds || 0) / 60);
-  const activeSecondsRemainder = (progress.totalActivePracticeSeconds || 0) % 60;
-
   const allPossibleBadges = [
     { title: 'Star Scout', category: 'Milestone', desc: 'Completed your very first reading quest (+10 stars)', icon: '🌟' },
     { title: 'Trail Trekker', category: 'Milestone', desc: 'Completed 3 unique reading quests (+15 stars)', icon: '🥾' },
@@ -136,7 +135,7 @@ export const ProgressView: React.FC = () => {
               Greatness in the Making!
             </h2>
             <p className="text-xs sm:text-sm font-semibold text-[#DED5FF]">
-              You have answered {progress.totalQuestionsAnswered} activities across 12 lessons with {progress.averageAccuracy}% accuracy.
+              You have answered {progress.totalQuestionsAnswered} activities across 12 lessons with {formatAccuracy(progress.averageAccuracy)} accuracy.
             </p>
 
             <div className="pt-2">
@@ -162,9 +161,9 @@ export const ProgressView: React.FC = () => {
       {/* 4 Metric Cards */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
         <div className="bg-white border-2 border-[#DED5FF] rounded-3xl p-4 text-center shadow-xs">
-          <div className="flex items-center justify-center gap-1 text-2xl font-black text-[#171B37]">
-            <Clock className="w-5 h-5 text-[#8274D8]" />
-            <span>{activeMinutes}m {activeSecondsRemainder}s</span>
+          <div className="flex flex-wrap items-center justify-center gap-1 text-lg sm:text-xl font-black text-[#171B37]">
+            <Clock className="w-5 h-5 shrink-0 text-[#8274D8]" />
+            <span className="break-all">{formatDuration(progress.totalActivePracticeSeconds)}</span>
           </div>
           <span className="text-[11px] font-bold text-[#6B6E8A] uppercase mt-1 block">
             Active Practice Time

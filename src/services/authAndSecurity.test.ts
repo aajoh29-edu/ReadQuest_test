@@ -17,6 +17,22 @@ import {
   buildTeacherClassCSV,
 } from './repository';
 import { runAdaptiveEngineTests } from './adaptiveEngine.test';
+import { formatAccuracy } from '../utils/formatAccuracy';
+import { formatDuration } from '../utils/formatDuration';
+
+test('accuracy fractions display as percentages rounded to at most one decimal', () => {
+  assert.equal(formatAccuracy(8 / 9), '88.9%');
+  assert.equal(formatAccuracy(0.885), '88.5%');
+  assert.equal(formatAccuracy(0), '0%');
+  assert.equal(formatAccuracy(1), '100%');
+});
+
+test('active practice time rounds seconds to two decimal places and carries minutes', () => {
+  assert.equal(formatDuration(40.632999999999996), '0m 40.63s');
+  assert.equal(formatDuration(59.999), '1m 0.00s');
+  assert.equal(formatDuration(125.5), '2m 5.50s');
+  assert.equal(formatDuration(0), '0m 0.00s');
+});
 
 test('validateEmail normalizes valid addresses and rejects malformed inputs', () => {
   const valid = validateEmail('  Parent.Reader@Example.ORG  ');

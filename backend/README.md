@@ -21,9 +21,11 @@ The API listens on `http://127.0.0.1:8000`. Check
 ## Database
 
 PostgreSQL is the supported Docker database. Compose runs Alembic migrations in
-the separate `migrate` service before FastAPI starts. Seed data is loaded only
-when `make seed` runs; it imports 12 lessons, 60 frontend activities, 16 books,
-and all read-aloud fixtures. The seed is idempotent.
+the separate `migrate` service before FastAPI starts. `make seed` loads the
+development database with 12 lessons, 60 frontend activities, 16 books, and
+read-aloud fixtures. The seed is idempotent but updates records with matching
+fixture IDs. For the separate production-like database, see the opt-in seed
+and connectivity checks in the [main README](../README.md#production-like-local-run).
 
 ## Authentication and email configuration
 

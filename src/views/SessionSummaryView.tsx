@@ -16,6 +16,7 @@ import { questRepository } from '../services/repository';
 import { AdaptiveRecommendation, LearnerProfile, Lesson, SessionRecord } from '../types';
 import { Trophy3DIllustration } from '../components/illustrations/ReadingIllustrations';
 import { Button } from '../components/common/Button';
+import { formatAccuracy } from '../utils/formatAccuracy';
 
 export const SessionSummaryView: React.FC = () => {
   const { sessionId } = useParams<{ sessionId: string }>();
@@ -84,7 +85,7 @@ export const SessionSummaryView: React.FC = () => {
   }
 
   const isPerfectScore = session.score === session.totalQuestions;
-  const isPassed = session.accuracy >= 60;
+  const isPassed = session.accuracy >= 0.6;
   const starsEarnedThisSession = session.score * 3 + (isPerfectScore ? 5 : 0);
 
   return (
@@ -124,7 +125,7 @@ export const SessionSummaryView: React.FC = () => {
 
           <div className="bg-[#EAF5F7] border border-[#DED5FF] rounded-2xl p-3 sm:p-4 text-center">
             <span className="block text-2xl sm:text-3xl font-black text-[#8274D8]">
-              {session.accuracy}%
+              {formatAccuracy(session.accuracy)}
             </span>
             <span className="text-[11px] font-black text-[#6B6E8A] uppercase tracking-wider">
               Accuracy

@@ -30,6 +30,7 @@ import {
 } from '../types';
 import { questRepository, downloadCSV } from '../services/repository';
 import { Button } from '../components/common/Button';
+import { formatAccuracy } from '../utils/formatAccuracy';
 
 export const ParentDashboardView: React.FC = () => {
   const navigate = useNavigate();
@@ -319,7 +320,7 @@ export const ParentDashboardView: React.FC = () => {
             <TrendingUp className="w-4 h-4" />
           </div>
           <div className="text-2xl sm:text-3xl font-black text-[#171B37]">
-            {progressSummary?.averageAccuracy ?? 0}%
+            {formatAccuracy(progressSummary?.averageAccuracy ?? 0)}
           </div>
           <div className="text-[11px] text-[#6B6E8A] mt-1 font-bold">
             {progressSummary?.totalCorrectAnswers ?? 0} of{' '}
@@ -418,7 +419,7 @@ export const ParentDashboardView: React.FC = () => {
                       : 'bg-[#FFC38E] group-hover:bg-[#ffb06e]'
                   }`}
                   style={{ height: day.activeMinutes === 0 ? '6px' : `${Math.max(12, heightPct)}%` }}
-                  title={`${day.dayLabel} (${day.date}): ${day.activeMinutes} min active, ${day.questionsAnswered} activities answered, ${day.accuracy}% accuracy`}
+                  title={`${day.dayLabel} (${day.date}): ${day.activeMinutes} min active, ${day.questionsAnswered} activities answered, ${formatAccuracy(day.accuracy)} accuracy`}
                 />
                 <span className="text-[11px] font-black text-[#171B37] mt-2 select-none">
                   {day.dayLabel}
@@ -450,7 +451,7 @@ export const ParentDashboardView: React.FC = () => {
                   <td>{d.date}</td>
                   <td>{d.activeMinutes} min</td>
                   <td>{d.questionsAnswered}</td>
-                  <td>{d.accuracy}%</td>
+                  <td>{formatAccuracy(d.accuracy)}</td>
                 </tr>
               ))}
             </tbody>
