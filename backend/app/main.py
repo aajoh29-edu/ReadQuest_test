@@ -8,6 +8,7 @@ from app.api.routes.demo import router as demo_router
 from app.api.routes.learning import router as learning_router
 from app.api.routes.portals import router as portals_router
 from app.api.routes.production import router as production_router
+from app.api.routes.tailored import router as tailored_router
 from app.api.routes.voice import router as voice_router
 
 app = FastAPI(title="ReadQuest API")
@@ -17,6 +18,7 @@ app.include_router(curriculum_router, prefix="/api/v1")
 app.include_router(learning_router, prefix="/api/v1")
 app.include_router(portals_router, prefix="/api/v1")
 app.include_router(production_router, prefix="/api/v1")
+app.include_router(tailored_router, prefix="/api/v1")
 app.include_router(voice_router, prefix="/api/v1")
 
 
