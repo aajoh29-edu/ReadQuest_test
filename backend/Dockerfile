@@ -40,7 +40,12 @@ COPY alembic.ini ./
 RUN python -m pip install --no-cache-dir /wheels/readquest_backend-*.whl \
     && groupadd --gid 10001 readquest \
     && useradd --uid 10001 --gid readquest --create-home --shell /usr/sbin/nologin readquest \
+    && mkdir -p /var/lib/readquest/models \
+    && chown -R readquest:readquest /var/lib/readquest \
     && rm -rf /wheels
+
+ENV READQUEST_MODEL_DIR=/var/lib/readquest/models
+VOLUME ["/var/lib/readquest/models"]
 
 USER readquest
 EXPOSE 8000

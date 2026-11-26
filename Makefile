@@ -5,7 +5,7 @@ TEST_COMPOSE := docker compose -f compose.test.yaml
 PRODUCTION_COMPOSE := docker compose -f compose.production.yaml
 CLEAN_IMAGE := node:22-bookworm-slim@sha256:e9f565d32859f0cbfb52125eafe8be39390f24dac302dc3cdf566e8ba3ab21ee
 
-.PHONY: up down build seed test audit clean logs prod
+.PHONY: up down build seed train e2e test audit clean logs prod
 
 up:
 	$(COMPOSE) up --build -d db migrate backend frontend
@@ -14,17 +14,26 @@ down:
 	$(COMPOSE) down --remove-orphans
 
 build:
-	$(COMPOSE) --profile seed build
-	$(TEST_COMPOSE) build backend-test frontend-test backend-audit frontend-audit
+	$(COMPOSE) --profile seed --profile ml build
+	$(TEST_COMPOSE) build e2e backend-test frontend-test backend-audit frontend-audit
 	PROD_POSTGRES_PASSWORD=$${PROD_POSTGRES_PASSWORD:-build-placeholder} $(PRODUCTION_COMPOSE) build
 
 seed:
 	$(COMPOSE) --profile seed run --rm seed
 
+train:
+	$(COMPOSE) --profile ml run --rm train
+
+e2e:
+	@set -eu; \
+	trap '$(TEST_COMPOSE) down --remove-orphans --volumes >/dev/null 2>&1 || true' EXIT; \
+	$(TEST_COMPOSE) run --build --rm e2e
+
 test:
 	@set -eu; \
 	trap '$(TEST_COMPOSE) down --remove-orphans --volumes >/dev/null 2>&1 || true' EXIT; \
 	$(TEST_COMPOSE) run --build --rm backend-test; \
+	$(TEST_COMPOSE) run --build --rm e2e; \
 	$(TEST_COMPOSE) run --build --rm frontend-test
 
 audit:

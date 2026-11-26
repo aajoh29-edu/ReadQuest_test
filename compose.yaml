@@ -30,6 +30,7 @@ services:
       SMTP_FROM: ${SMTP_FROM:-no-reply@readquest.local}
       SMTP_USERNAME: ${SMTP_USERNAME:-}
       SMTP_PASSWORD: ${SMTP_PASSWORD:-}
+      READQUEST_MODEL_DIR: /var/lib/readquest/models
     command: ["alembic", "upgrade", "head"]
     depends_on:
       db:
@@ -61,6 +62,7 @@ services:
     volumes:
       - ./backend:/app
       - backend-venv:/app/.venv
+      - readquest-models:/var/lib/readquest/models
 
   frontend:
     build:
@@ -96,7 +98,25 @@ services:
       - ./backend:/app
       - backend-venv:/app/.venv
 
+  # One-shot: trains the lesson-tailoring models on the current database
+  # (docker compose --profile ml run --rm train). Seed first for a demo corpus.
+  train:
+    profiles: ["ml"]
+    build:
+      context: ./backend
+      target: dev
+    environment: *backend-environment
+    command: ["python", "-m", "app.ml.train", "--report"]
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+    volumes:
+      - ./backend:/app
+      - backend-venv:/app/.venv
+      - readquest-models:/var/lib/readquest/models
+
 volumes:
+  readquest-models:
   readquest-postgres:
   backend-venv:
   frontend-node-modules:

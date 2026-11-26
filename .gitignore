@@ -15,3 +15,4 @@ backend/*.db
 
 .venv/
 __pycache__/
+backend/model_artifacts/

@@ -26,6 +26,38 @@ services:
       test-db:
         condition: service_healthy
 
+  # End-to-end journeys over HTTP against a migrated, seeded Postgres stack.
+  e2e-backend:
+    build:
+      context: ./backend
+      target: dev
+    environment: &e2e-environment
+      DATABASE_URL: postgresql+psycopg://readquest_test:readquest_test_only@test-db:5432/readquest_test
+      READQUEST_AUTO_VERIFY_EMAIL: "true"
+      READQUEST_COOKIE_SECURE: "false"
+      READQUEST_MODEL_DIR: /tmp/models
+    command:
+      ["sh", "-c", "alembic upgrade head && python -m app.seeds.demo && python -m app.ml.train && uvicorn app.main:app --host 0.0.0.0 --port 8000"]
+    depends_on:
+      test-db:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/health', timeout=3)"]
+      interval: 3s
+      timeout: 5s
+      retries: 30
+
+  e2e:
+    build:
+      context: ./backend
+      target: test
+    environment:
+      READQUEST_E2E_BASE_URL: http://e2e-backend:8000
+    command: ["python", "-m", "pytest", "-q", "tests/e2e"]
+    depends_on:
+      e2e-backend:
+        condition: service_healthy
+
   frontend-test:
     build:
       context: .

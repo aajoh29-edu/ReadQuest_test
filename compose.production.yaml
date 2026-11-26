@@ -31,6 +31,7 @@ services:
       SMTP_FROM: ${SMTP_FROM:-}
       SMTP_USERNAME: ${SMTP_USERNAME:-}
       SMTP_PASSWORD: ${SMTP_PASSWORD:-}
+      READQUEST_MODEL_DIR: /var/lib/readquest/models
     command: ["alembic", "upgrade", "head"]
     depends_on:
       db:
@@ -48,6 +49,22 @@ services:
     ports:
       - "${PROD_BACKEND_PORT:-8001}:8000"
     restart: unless-stopped
+    volumes:
+      - readquest-models-production:/var/lib/readquest/models:ro
+
+  train:
+    profiles: ["ml"]
+    build:
+      context: ./backend
+      target: runtime
+    environment: *backend-environment
+    command: ["python", "-m", "app.ml.train", "--report"]
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+    restart: "no"
+    volumes:
+      - readquest-models-production:/var/lib/readquest/models
 
   frontend:
     build:
@@ -64,4 +81,5 @@ services:
     restart: unless-stopped
 
 volumes:
+  readquest-models-production:
   readquest-postgres-production:
