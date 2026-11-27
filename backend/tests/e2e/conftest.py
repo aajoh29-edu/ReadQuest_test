@@ -12,7 +12,7 @@ import os
 from collections.abc import Callable, Generator
 from uuid import uuid4
 
-import httpx
+import httpx2 as httpx
 import pytest
 from fastapi.testclient import TestClient
 from sqlalchemy import create_engine

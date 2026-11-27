@@ -106,14 +106,15 @@ The demo seed is idempotent.
 | Command | Action |
 | --- | --- |
 | `make up` | Build and start PostgreSQL, migrations, FastAPI, and Vite with hot reload |
-| `make down` | Stop development containers without deleting database data |
-| `make logs` | Follow development service logs |
 | `make seed` | Load or refresh the idempotent demo data |
+| `make logs` | Follow development service logs |
+| `make logs` | Follow development service logs |
 | `make test` | Run backend pytest plus frontend type, security, build, and audit checks in isolated containers |
 | `make audit` | Run `npm audit --audit-level=high` and `pip-audit` in containers; the unpublished backend package itself is excluded, but its installed dependencies are audited |
 | `make build` | Build development, test, audit, and production image targets |
-| `make clean` | Remove project containers/volumes and delete generated `dist/` and `server.js` in a container |
 | `make prod` | Stop development and run the non-root Nginx/FastAPI production stack |
+| `make down` | Stop development containers without deleting database data |
+| `make clean` | Remove project containers/volumes and delete generated `dist/` and `server.js` in a container |
 
 ### Production-like local run
 
