@@ -72,6 +72,13 @@ export const TeacherDashboardView: React.FC = () => {
   const [newAssignDueDate, setNewAssignDueDate] = useState('');
   const [newAssignInstructions, setNewAssignInstructions] = useState('');
   const [newAssignSelectedLearners, setNewAssignSelectedLearners] = useState<string[]>([]);
+  const [newAssignClassId, setNewAssignClassId] = useState('');
+  const [assignmentLearners, setAssignmentLearners] = useState<Learner[]>([]);
+  const [assignmentRosterLoading, setAssignmentRosterLoading] = useState(false);
+  const [assignmentRosterError, setAssignmentRosterError] = useState('');
+  const [assignmentRosterRetry, setAssignmentRosterRetry] = useState(0);
+  const [assignmentSaveError, setAssignmentSaveError] = useState('');
+  const [isPublishing, setIsPublishing] = useState(false);
 
   // UI state
   const [isLoading, setIsLoading] = useState(true);
@@ -127,6 +134,27 @@ export const TeacherDashboardView: React.FC = () => {
     loadData();
   }, []);
 
+  useEffect(() => {
+    if (!showCreateAssignmentModal || !newAssignClassId) return;
+    let cancelled = false;
+    setAssignmentRosterLoading(true);
+    setAssignmentRosterError('');
+    setAssignmentLearners([]);
+    setNewAssignSelectedLearners([]);
+    questRepository.getClassLearners(newAssignClassId).then((learners) => {
+      if (cancelled) return;
+      setAssignmentLearners(learners);
+      setNewAssignSelectedLearners(learners.map((learner) => learner.id));
+    }).catch((err) => {
+      if (cancelled) return;
+      console.error('Failed to load assignment roster:', err);
+      setAssignmentRosterError('Unable to load students for this class. Please try again.');
+    }).finally(() => {
+      if (!cancelled) setAssignmentRosterLoading(false);
+    });
+    return () => { cancelled = true; };
+  }, [showCreateAssignmentModal, newAssignClassId, assignmentRosterRetry]);
+
   const handleClassChange = async (classId: string) => {
     setSelectedClassId(classId);
     const cls = classes.find((c) => c.id === classId) || null;
@@ -164,17 +192,21 @@ export const TeacherDashboardView: React.FC = () => {
         new Date(Date.now() + 4 * 86400000).toISOString().split('T')[0]
       );
       setNewAssignInstructions('Please practice this quest before Friday small group reading.');
-      // Select all students by default
-      setNewAssignSelectedLearners(matrixData.map((m) => m.learner.id));
     }
+    setNewAssignClassId(selectedClassId);
+    setAssignmentLearners([]);
+    setNewAssignSelectedLearners([]);
+    setAssignmentRosterError('');
+    setAssignmentRosterLoading(Boolean(selectedClassId));
+    setAssignmentSaveError('');
     setShowCreateAssignmentModal(true);
   };
 
   const handleToggleSelectAllStudents = () => {
-    if (newAssignSelectedLearners.length === matrixData.length) {
+    if (newAssignSelectedLearners.length === assignmentLearners.length) {
       setNewAssignSelectedLearners([]);
     } else {
-      setNewAssignSelectedLearners(matrixData.map((m) => m.learner.id));
+      setNewAssignSelectedLearners(assignmentLearners.map((learner) => learner.id));
     }
   };
 
@@ -186,26 +218,41 @@ export const TeacherDashboardView: React.FC = () => {
 
   const handleSaveAssignment = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!newAssignLessonId || newAssignSelectedLearners.length === 0) return;
+    if (!newAssignClassId || !newAssignLessonId || !newAssignSelectedLearners.length || assignmentRosterLoading || isPublishing) return;
 
     const targetLesson = lessons.find((l) => l.id === newAssignLessonId);
-
-    await questRepository.createAssignment({
-      title: newAssignTitle || `Assignment: ${targetLesson?.title}`,
-      classId: selectedClassId,
-      teacherId: teacher?.id,
-      lessonId: newAssignLessonId,
-      lessonTitle: targetLesson?.title || 'Assigned Lesson',
-      skillId: targetLesson?.activities[0]?.primarySkillId,
-      assignedLearnerIds: newAssignSelectedLearners,
-      dueDate: newAssignDueDate,
-      instructions: newAssignInstructions,
-    });
-
+    setIsPublishing(true);
+    setAssignmentSaveError('');
+    try {
+      await questRepository.createAssignment({
+        title: newAssignTitle || `Assignment: ${targetLesson?.title}`,
+        classId: newAssignClassId,
+        teacherId: teacher?.id,
+        lessonId: newAssignLessonId,
+        lessonTitle: targetLesson?.title || 'Assigned Lesson',
+        skillId: targetLesson?.activities[0]?.primarySkillId,
+        assignedLearnerIds: newAssignSelectedLearners,
+        dueDate: newAssignDueDate,
+        instructions: newAssignInstructions,
+      });
+    } catch (err) {
+      console.error('Failed to publish assignment:', err);
+      setAssignmentSaveError('Unable to publish the assignment. Please try again.');
+      setIsPublishing(false);
+      return;
+    }
+    setIsPublishing(false);
     setShowCreateAssignmentModal(false);
     setAssignmentSuccessMsg('Assignment published to students! Visible in student dashboards.');
     setTimeout(() => setAssignmentSuccessMsg(''), 4000);
-    await refreshClassData(selectedClassId);
+    if (newAssignClassId === selectedClassId) {
+      try {
+        await refreshClassData(selectedClassId);
+      } catch (err) {
+        console.error('Failed to refresh classroom after publishing:', err);
+        setLoadError('The assignment was published, but classroom data could not be refreshed.');
+      }
+    }
   };
 
   // Filter matrix students by search
@@ -864,6 +911,8 @@ export const TeacherDashboardView: React.FC = () => {
               </h3>
               <button
                 onClick={() => setShowCreateAssignmentModal(false)}
+                disabled={isPublishing}
+                aria-label="Close assignment dialog"
                 className="p-1 rounded-xl hover:bg-[#F2EEFF] text-[#6B6E8A] hover:text-[#171B37] cursor-pointer"
               >
                 <X className="w-5 h-5" />
@@ -904,35 +953,74 @@ export const TeacherDashboardView: React.FC = () => {
                 </select>
               </div>
 
+              <div>
+                <label htmlFor="assignment-class" className="block font-black text-[#171B37] mb-1">Classroom</label>
+                <select
+                  id="assignment-class"
+                  value={newAssignClassId}
+                  disabled={classes.length === 0 || isPublishing}
+                  onChange={(e) => {
+                    setAssignmentLearners([]);
+                    setNewAssignSelectedLearners([]);
+                    setAssignmentRosterError('');
+                    setAssignmentRosterLoading(Boolean(e.target.value));
+                    setNewAssignClassId(e.target.value);
+                  }}
+                  className="w-full p-2.5 rounded-xl border border-[#DED5FF] font-bold text-[#171B37] focus:outline-none focus:ring-2 focus:ring-[#8274D8] bg-[#F2EEFF]"
+                >
+                  {classes.length === 0 && <option value="">No classrooms available</option>}
+                  {classes.map((classroom) => (
+                    <option key={classroom.id} value={classroom.id}>
+                      {classroom.name} ({classroom.grade})
+                    </option>
+                  ))}
+                </select>
+              </div>
+
               {/* Target Learners Selector */}
               <div>
                 <div className="flex items-center justify-between mb-1">
-                  <label className="font-black text-[#171B37]">Assign To Students</label>
-                  <button
-                    type="button"
-                    onClick={handleToggleSelectAllStudents}
-                    className="text-[#8274D8] font-bold text-[11px] underline cursor-pointer"
-                  >
-                    {newAssignSelectedLearners.length === matrixData.length ? 'Deselect All' : 'Select All'}
-                  </button>
+                  <span className="font-black text-[#171B37]">Assign To Students</span>
+                  {assignmentLearners.length > 0 && (
+                    <button
+                      type="button"
+                      disabled={isPublishing}
+                      onClick={handleToggleSelectAllStudents}
+                      className="text-[#8274D8] font-bold text-[11px] underline cursor-pointer"
+                    >
+                      {newAssignSelectedLearners.length === assignmentLearners.length ? 'Deselect All' : 'Select All'}
+                    </button>
+                  )}
                 </div>
 
-                <div className="grid grid-cols-2 gap-2 max-h-36 overflow-y-auto p-2 bg-[#F2EEFF]/40 rounded-xl border border-[#DED5FF]">
-                  {matrixData.map((m) => {
-                    const isChecked = newAssignSelectedLearners.includes(m.learner.id);
+                <div className="grid grid-cols-2 gap-2 max-h-36 overflow-y-auto p-2 bg-[#F2EEFF]/40 rounded-xl border border-[#DED5FF]" aria-live="polite">
+                  {!newAssignClassId && <p className="col-span-2 text-[#6B6E8A]">No classrooms available. Contact an administrator to set up a classroom and enroll students.</p>}
+                  {newAssignClassId && assignmentRosterLoading && <p className="col-span-2 text-[#6B6E8A]">Loading students...</p>}
+                  {newAssignClassId && !assignmentRosterLoading && assignmentRosterError && (
+                    <div className="col-span-2 text-rose-700">
+                      <p>{assignmentRosterError}</p>
+                      <button type="button" className="underline font-bold" onClick={() => setAssignmentRosterRetry((n) => n + 1)}>Retry</button>
+                    </div>
+                  )}
+                  {newAssignClassId && !assignmentRosterLoading && !assignmentRosterError && assignmentLearners.length === 0 && (
+                    <p className="col-span-2 text-[#6B6E8A]">No students are enrolled in this class. Contact an administrator to enroll students.</p>
+                  )}
+                  {assignmentLearners.map((learner) => {
+                    const isChecked = newAssignSelectedLearners.includes(learner.id);
                     return (
                       <label
-                        key={m.learner.id}
+                        key={learner.id}
                         className="flex items-center gap-2 p-1.5 rounded-lg hover:bg-white cursor-pointer select-none"
                       >
                         <input
                           type="checkbox"
                           checked={isChecked}
-                          onChange={() => handleToggleStudentSelection(m.learner.id)}
+                          disabled={isPublishing}
+                          onChange={() => handleToggleStudentSelection(learner.id)}
                           className="rounded text-[#8274D8] focus:ring-[#8274D8] w-4 h-4 cursor-pointer"
                         />
                         <span className="font-bold text-[#171B37] text-xs">
-                          {m.learner.name}
+                          {learner.name}
                         </span>
                       </label>
                     );
@@ -964,9 +1052,12 @@ export const TeacherDashboardView: React.FC = () => {
                 />
               </div>
 
+              {assignmentSaveError && <p role="alert" className="text-rose-700 font-semibold">{assignmentSaveError}</p>}
+
               <div className="flex items-center justify-end gap-2 pt-2 border-t border-[#DED5FF]">
                 <button
                   type="button"
+                  disabled={isPublishing}
                   onClick={() => setShowCreateAssignmentModal(false)}
                   className="px-3 py-1.5 text-xs font-bold text-[#6B6E8A] hover:text-[#171B37] cursor-pointer"
                 >
@@ -976,7 +1067,8 @@ export const TeacherDashboardView: React.FC = () => {
                   type="submit"
                   variant="primary"
                   size="sm"
-                  disabled={newAssignSelectedLearners.length === 0}
+                  disabled={!newAssignClassId || !newAssignLessonId || assignmentRosterLoading || newAssignSelectedLearners.length === 0}
+                  isLoading={isPublishing}
                 >
                   Publish Assignment ({newAssignSelectedLearners.length} Students)
                 </Button>

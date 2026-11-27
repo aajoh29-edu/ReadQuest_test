@@ -84,9 +84,11 @@ container and database connection instead.
 
    Repeat for each learner. Repeating an enrollment is safe.
 
-4. Sign in as the teacher and open `http://localhost:8080/teacher`. Select the
-   class and create a quest under **Assignments**. The parent selects the child
-   and starts the assigned quest from the learner dashboard.
+4. Sign in as the teacher and open `http://localhost:8080/teacher`. Create an
+   assignment, choose a classroom, and select its enrolled students. Publishing
+   requires at least one selected student; an empty roster means an administrator
+   must enroll students first. The parent selects the child and starts the assigned
+   quest from the learner dashboard.
 
 When the learner answers every activity and completes the quest, the backend
 marks all pending assignments for that learner and lesson complete, including
