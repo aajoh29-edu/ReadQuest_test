@@ -1,0 +1,93 @@
+SHELL := /bin/sh
+
+COMPOSE := docker compose
+TEST_COMPOSE := docker compose -f compose.test.yaml
+PRODUCTION_COMPOSE := docker compose -f compose.production.yaml
+CLEAN_IMAGE := node:22-bookworm-slim@sha256:e9f565d32859f0cbfb52125eafe8be39390f24dac302dc3cdf566e8ba3ab21ee
+
+# Overridable CLI flags
+SERVICE     ?=
+TAIL        ?= 100
+NO_CACHE    ?= 0
+PULL        ?= 0
+PROGRESS    ?= auto
+NO_BUILD    ?= 0
+FORCE       ?= 0
+
+# Derived Docker flags
+BUILD_FLAGS := --parallel --progress=$(PROGRESS)
+ifeq ($(NO_CACHE),1)
+  BUILD_FLAGS += --no-cache
+endif
+ifeq ($(PULL),1)
+  BUILD_FLAGS += --pull
+endif
+
+RUN_BUILD_FLAG := --build
+ifeq ($(NO_BUILD),1)
+  RUN_BUILD_FLAG :=
+endif
+
+.PHONY: help setup up down build seed train e2e test audit clean logs prod
+
+help: ## Show available targets and flags
+	@grep -E '^[a-zA-Z0-9_-]+:.*?## .*$$' $(MAKEFILE_LIST) | \
+		awk 'BEGIN {FS = ":.*?## "}; {printf "  %-10s %s\n", $$1, $$2}'
+
+up: ## Start dev stack and wait for healthchecks (NO_BUILD=1 to skip build)
+	$(COMPOSE) up $(RUN_BUILD_FLAG) -d --wait --remove-orphans db migrate backend frontend
+
+down: ## Stop dev containers without deleting volumes
+	$(COMPOSE) down --remove-orphans
+
+build: ## Build all dev, test, audit, and prod images (NO_CACHE=1, PULL=1, PROGRESS=plain)
+	$(COMPOSE) --profile seed --profile ml build $(BUILD_FLAGS)
+	$(TEST_COMPOSE) build $(BUILD_FLAGS) e2e backend-test frontend-test backend-audit frontend-audit
+	PROD_POSTGRES_PASSWORD=$${PROD_POSTGRES_PASSWORD:-build-placeholder} $(PRODUCTION_COMPOSE) build $(BUILD_FLAGS)
+
+seed: ## Load or refresh idempotent demo data
+	$(COMPOSE) --profile seed run --rm seed
+
+train: ## Train ML models in the dev environment
+	$(COMPOSE) --profile ml run --rm train
+
+e2e: ## Run end-to-end tests in isolated containers (NO_BUILD=1 to skip build)
+	@set -eu; \
+	trap '$(TEST_COMPOSE) down --remove-orphans --volumes >/dev/null 2>&1 || true' EXIT; \
+	$(TEST_COMPOSE) run $(RUN_BUILD_FLAG) --rm e2e
+
+test: ## Run backend, e2e, and frontend tests (NO_BUILD=1 to skip build)
+	@set -eu; \
+	trap '$(TEST_COMPOSE) down --remove-orphans --volumes >/dev/null 2>&1 || true' EXIT; \
+	$(TEST_COMPOSE) run $(RUN_BUILD_FLAG) --rm backend-test; \
+	$(TEST_COMPOSE) run $(RUN_BUILD_FLAG) --rm e2e; \
+	$(TEST_COMPOSE) run $(RUN_BUILD_FLAG) --rm frontend-test
+
+audit: ## Run npm and pip security audits (NO_BUILD=1 to skip build)
+	@set -eu; \
+	trap '$(TEST_COMPOSE) down --remove-orphans --volumes >/dev/null 2>&1 || true' EXIT; \
+	$(TEST_COMPOSE) run $(RUN_BUILD_FLAG) --rm frontend-audit; \
+	$(TEST_COMPOSE) run $(RUN_BUILD_FLAG) --rm backend-audit
+
+clean: ## Wipe all containers, volumes (dev/test/prod), and build artifacts (FORCE=1 to skip prompt)
+	@if [ "$(FORCE)" != "1" ]; then \
+		printf "This deletes dev, test, and prod volumes plus dist/ and server.js. Continue? [y/N] "; \
+		read ans; \
+		case "$$ans" in y|Y|yes|YES) ;; *) exit 1 ;; esac; \
+	fi
+	docker compose -p readquest down --remove-orphans --volumes
+	$(COMPOSE) down --remove-orphans --volumes
+	$(TEST_COMPOSE) down --remove-orphans --volumes
+	PROD_POSTGRES_PASSWORD=$${PROD_POSTGRES_PASSWORD:-clean-placeholder} $(PRODUCTION_COMPOSE) down --remove-orphans --volumes
+	docker run --rm -v "$$(pwd):/workspace" -w /workspace $(CLEAN_IMAGE) sh -c 'rm -rf dist server.js'
+
+logs: ## Follow dev logs (SERVICE=backend TAIL=50)
+	@status=0; \
+	$(COMPOSE) logs --follow --tail=$(TAIL) $(SERVICE) || status=$$?; \
+	[ "$$status" -eq 0 ] || [ "$$status" -eq 130 ]
+
+prod: ## Stop dev and start production stack (NO_BUILD=1 to skip build)
+	$(COMPOSE) down --remove-orphans
+	$(PRODUCTION_COMPOSE) up $(RUN_BUILD_FLAG) -d --wait --remove-orphans db migrate backend frontend
+
+setup: up seed train ## Start dev stack, seed demo data, and train ML models

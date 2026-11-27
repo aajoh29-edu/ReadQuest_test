@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { AlertCircle, CheckCircle2, Eye, EyeOff, Lock, Mail, User } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { ApiClientError } from '../services/apiConfig';
@@ -14,6 +14,8 @@ import { AdventureButton } from '../components/common/ReadQuestButtons';
 
 export const SignupView: React.FC = () => {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const isTeacherSetup = searchParams.get('account') === 'teacher';
   const { register, status } = useAuth();
 
   const [fullName, setFullName] = useState('');
@@ -28,6 +30,7 @@ export const SignupView: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
   const [verificationPendingEmail, setVerificationPendingEmail] = useState<string | null>(null);
+  const [teacherAccountCreated, setTeacherAccountCreated] = useState(false);
 
   const strength = evaluatePasswordStrength(password);
 
@@ -85,6 +88,8 @@ export const SignupView: React.FC = () => {
 
       if (response.requiresEmailVerification) {
         setVerificationPendingEmail(emailCheck.normalized);
+      } else if (isTeacherSetup) {
+        setTeacherAccountCreated(true);
       } else {
         navigate('/dashboard', { replace: true });
       }
@@ -108,8 +113,8 @@ export const SignupView: React.FC = () => {
     return (
       <AuthLayout
         title="Check Your Inbox!"
-        subtitle="One quick step before your child starts reading."
-        mascotMessage="Verify your email address so your family’s progress stays protected."
+        subtitle={isTeacherSetup ? 'Verify your email before requesting teacher access.' : 'One quick step before your child starts reading.'}
+        mascotMessage={isTeacherSetup ? 'Verify your email to keep your account secure.' : 'Verify your email address so your family’s progress stays protected.'}
       >
         <div className="bg-[#E3F9F1] border border-[#65D7B2] rounded-2xl p-5 space-y-3">
           <div className="flex items-center gap-2.5 text-[#189B73] font-black text-base">
@@ -117,7 +122,10 @@ export const SignupView: React.FC = () => {
             <span>Verification Link Sent</span>
           </div>
           <p className="text-sm font-semibold text-[#171B3A] leading-relaxed">
-            We sent a verification link to <span className="font-black">{verificationPendingEmail}</span>. Open the link in your inbox to activate your ReadQuest parent account, then add your child’s nickname and reading level.
+            We sent a verification link to <span className="font-black">{verificationPendingEmail}</span>.{' '}
+            {isTeacherSetup
+              ? 'Open the link to verify your account, then contact your administrator to request teacher access. No request is sent automatically.'
+              : 'Open the link in your inbox to activate your ReadQuest parent account, then add your child’s nickname and reading level.'}
           </p>
         </div>
 
@@ -133,12 +141,37 @@ export const SignupView: React.FC = () => {
     );
   }
 
+  if (teacherAccountCreated) {
+    return (
+      <AuthLayout
+        title="Account Created"
+        subtitle="Teacher access requires administrator approval."
+        mascotMessage="Your administrator can help you get started with your classroom."
+      >
+        <div className="bg-[#E3F9F1] border border-[#65D7B2] rounded-2xl p-5 space-y-3">
+          <p className="text-sm font-semibold text-[#171B3A] leading-relaxed">
+            Contact your administrator and ask them to grant teacher access to the email address you registered.
+            No request is sent automatically. Once approved, sign in again to open the Classroom.
+          </p>
+        </div>
+        <Link to="/login" className="text-sm font-black text-[#5843C4] hover:underline">
+          Return to Sign In
+        </Link>
+      </AuthLayout>
+    );
+  }
+
   return (
     <AuthLayout
-      title="Create a Parent Account"
-      subtitle="Set up your family account first, then add parent-managed child reader profiles inside."
-      mascotMessage="We only ask for a parent or guardian email — never a child’s personal details!"
+      title={isTeacherSetup ? 'Teacher Account Setup' : 'Create a Parent Account'}
+      subtitle={isTeacherSetup ? 'Create an account, then contact your administrator to request teacher access.' : 'Set up your family account first, then add parent-managed child reader profiles inside.'}
+      mascotMessage={isTeacherSetup ? 'Your administrator must approve teacher access before you can open the Classroom.' : 'We only ask for a parent or guardian email — never a child’s personal details!'}
     >
+      {isTeacherSetup && (
+        <p className="text-xs font-semibold text-[#5C5E7B]">
+          Accounts initially have parent access. Teacher access is granted by an administrator; this form does not send an approval request.
+        </p>
+      )}
       {status === 'unavailable' && !error && (
         <div
           role="alert"
@@ -168,7 +201,7 @@ export const SignupView: React.FC = () => {
             htmlFor="signup-name"
             className="block text-xs font-black uppercase tracking-wider text-[#171B3A] mb-1.5"
           >
-            Parent or Guardian Name
+            {isTeacherSetup ? 'Educator Name' : 'Parent or Guardian Name'}
           </label>
           <div className="relative">
             <User className="w-4 h-4 text-[#7C65E8] absolute left-3.5 top-1/2 -translate-y-1/2" />
@@ -209,7 +242,7 @@ export const SignupView: React.FC = () => {
               onChange={(e) => setEmail(e.target.value)}
               aria-invalid={Boolean(fieldErrors.email)}
               required
-              placeholder="parent@example.com"
+              placeholder={isTeacherSetup ? 'teacher@example.com' : 'parent@example.com'}
               className="w-full pl-10 pr-4 py-3 rounded-2xl border-2 border-[#DED5FF] focus:border-[#7C65E8] focus:outline-hidden text-sm font-bold text-[#171B3A]"
             />
           </div>
@@ -343,7 +376,7 @@ export const SignupView: React.FC = () => {
             className="w-full justify-center"
             showArrow
           >
-            {isSubmitting ? 'Creating Account...' : 'Create Parent Account'}
+            {isSubmitting ? 'Creating Account...' : isTeacherSetup ? 'Create Account' : 'Create Parent Account'}
           </AdventureButton>
         </div>
       </form>
@@ -353,6 +386,13 @@ export const SignupView: React.FC = () => {
         <Link to="/login" className="text-sm font-black text-[#5843C4] hover:underline">
           Sign In
         </Link>
+      </div>
+      <div className="text-center text-xs font-bold text-[#5C5E7B]">
+        {isTeacherSetup ? (
+          <Link to="/signup" className="text-[#5843C4] hover:underline">Create a parent account instead</Link>
+        ) : (
+          <Link to="/signup?account=teacher" className="text-[#5843C4] hover:underline">Set up a teacher account</Link>
+        )}
       </div>
     </AuthLayout>
   );

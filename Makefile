@@ -57,3 +57,5 @@ logs:
 prod:
 	$(COMPOSE) down --remove-orphans
 	$(PRODUCTION_COMPOSE) up --build -d db migrate backend frontend
+
+setup: up seed train ## Start dev stack, seed demo data, and train ML models

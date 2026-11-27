@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Question, QuestionOption } from '../../types';
-import { Volume2, Play, Sparkles } from 'lucide-react';
+import { Play, Sparkles } from 'lucide-react';
+import { speakText, stopSpeechSynthesis } from '../../utils/speechSynthesis';
 
 interface PhonicsBlendingQuestionProps {
   question: Question;
@@ -19,30 +20,58 @@ export const PhonicsBlendingQuestion: React.FC<PhonicsBlendingQuestionProps> = (
 }) => {
   const [activeTileIndex, setActiveTileIndex] = useState<number | null>(null);
   const [isBlendingSequence, setIsBlendingSequence] = useState(false);
+  const blendTimeoutsRef = useRef<number[]>([]);
 
   const tiles = question.phonicsTiles || [];
 
+  const clearBlendTimeouts = () => {
+    blendTimeoutsRef.current.forEach((timeoutId) => window.clearTimeout(timeoutId));
+    blendTimeoutsRef.current = [];
+  };
+
+  useEffect(
+    () => () => {
+      clearBlendTimeouts();
+      stopSpeechSynthesis();
+    },
+    []
+  );
+
   const handleTileClick = (index: number) => {
+    const tile = tiles[index];
+    if (!tile) return;
+    clearBlendTimeouts();
+    setIsBlendingSequence(false);
+    speakText(tile.audioLabel || tile.sound || tile.letter, { rate: 0.84 });
     setActiveTileIndex(index);
-    setTimeout(() => {
+    const timeoutId = window.setTimeout(() => {
       setActiveTileIndex((prev) => (prev === index ? null : prev));
     }, 1200);
+    blendTimeoutsRef.current.push(timeoutId);
   };
 
   const handleBlendSequence = () => {
     if (isBlendingSequence || tiles.length === 0) return;
+    clearBlendTimeouts();
+    stopSpeechSynthesis();
     setIsBlendingSequence(true);
 
-    tiles.forEach((_, idx) => {
-      setTimeout(() => {
+    tiles.forEach((tile, idx) => {
+      const timeoutId = window.setTimeout(() => {
         setActiveTileIndex(idx);
-      }, idx * 600);
+        speakText(tile.audioLabel || tile.sound || tile.letter, {
+          rate: 0.84,
+          cancelOngoing: false,
+        });
+      }, idx * 850);
+      blendTimeoutsRef.current.push(timeoutId);
     });
 
-    setTimeout(() => {
+    const doneTimeoutId = window.setTimeout(() => {
       setActiveTileIndex(null);
       setIsBlendingSequence(false);
-    }, tiles.length * 600 + 400);
+    }, tiles.length * 850 + 450);
+    blendTimeoutsRef.current.push(doneTimeoutId);
   };
 
   return (

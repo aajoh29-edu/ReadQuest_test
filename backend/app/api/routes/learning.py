@@ -2,7 +2,7 @@ from datetime import UTC, datetime, timedelta
 from uuid import uuid4
 
 from fastapi import APIRouter, Depends, HTTPException, Query
-from sqlalchemy import desc, select
+from sqlalchemy import desc, select, update
 from sqlalchemy.orm import Session
 
 from app.api.dependencies import require_current_user, require_session
@@ -10,6 +10,7 @@ from app.database import get_db
 from app.models.account import AuthSession, User
 from app.models.curriculum import Learner
 from app.models.learning import LearningSession
+from app.models.portal import Assignment, AssignmentTarget
 from app.models.progress import Attempt, SkillMastery
 from app.schemas.learning import AttemptRequest, SessionRequest
 from app.services.curriculum import curriculum, find_activity, find_lesson, find_skill
@@ -270,6 +271,28 @@ def complete_session(
         item.is_completed = True
         item.completed_at = datetime.now(UTC)
         item.earned_badge = lesson["badgeReward"] if lesson else None
+        if lesson:
+            activity_ids = {activity["id"] for activity in lesson["activities"]}
+            attempted_ids = set(
+                db.scalars(
+                    select(Attempt.activity_id).where(Attempt.session_id == item.id)
+                )
+            )
+            if activity_ids and activity_ids.issubset(attempted_ids):
+                db.execute(
+                    update(AssignmentTarget)
+                    .where(
+                        AssignmentTarget.learner_id == item.learner_id,
+                        AssignmentTarget.completed_at.is_(None),
+                        AssignmentTarget.assignment_id.in_(
+                            select(Assignment.id).where(
+                                Assignment.lesson_id == item.lesson_id,
+                                Assignment.created_at <= item.completed_at,
+                            )
+                        ),
+                    )
+                    .values(completed_at=item.completed_at)
+                )
         learner = db.get(Learner, item.learner_id)
         if learner is not None:
             learner.stars_earned += 1

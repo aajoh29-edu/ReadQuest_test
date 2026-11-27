@@ -191,12 +191,14 @@ export const LoginView: React.FC = () => {
 
       <div className="pt-4 border-t border-[#EEE9FF] flex flex-col sm:flex-row items-center justify-between gap-2 text-xs font-bold text-[#5C5E7B]">
         <span>New to ReadQuest?</span>
-        <Link
-          to="/signup"
-          className="text-sm font-black text-[#5843C4] hover:underline"
-        >
-          Create Parent Account
-        </Link>
+        <div className="flex flex-wrap justify-center gap-4">
+          <Link to="/signup" className="text-sm font-black text-[#5843C4] hover:underline">
+            Create Parent Account
+          </Link>
+          <Link to="/signup?account=teacher" className="text-sm font-black text-[#5843C4] hover:underline">
+            Teacher Account Setup
+          </Link>
+        </div>
       </div>
     </AuthLayout>
   );

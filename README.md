@@ -81,7 +81,7 @@ polling configuration used by Vite and Uvicorn.
 cp .env.example .env
 make build
 make up
-make seed
+make seed 
 ```
 
 Edit `.env` before starting a shared or production-like environment. Keep all
@@ -105,9 +105,9 @@ The demo seed is idempotent.
 
 | Command | Action |
 | --- | --- |
+| `make setup` | Start the development stack, load demo data, and train ML models in one step |
 | `make up` | Build and start PostgreSQL, migrations, FastAPI, and Vite with hot reload |
 | `make seed` | Load or refresh the idempotent demo data |
-| `make logs` | Follow development service logs |
 | `make logs` | Follow development service logs |
 | `make test` | Run backend pytest plus frontend type, security, build, and audit checks in isolated containers |
 | `make audit` | Run `npm audit --audit-level=high` and `pip-audit` in containers; the unpublished backend package itself is excluded, but its installed dependencies are audited |

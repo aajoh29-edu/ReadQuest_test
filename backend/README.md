@@ -49,6 +49,54 @@ Set `READQUEST_COOKIE_SECURE=true` behind HTTPS. Registration always creates a
 `parent`; promote teacher/admin users through a controlled administrative or
 database onboarding process rather than accepting roles from client requests.
 
+## Teacher and classroom setup
+
+These commands are for a trusted administrator with access to the development
+database, not for learners or public users. Run them from the repository root
+after `make up` and `make seed`. For another environment, use its own backend
+container and database connection instead.
+
+1. Register a separate account using **Teacher Account Setup** on the sign-in
+   page (`http://localhost:8080/signup?account=teacher`) and verify its email if
+   email verification is enabled. The teacher must contact an administrator;
+   the form does not send an approval request. Promote that account:
+
+   ```bash
+   docker compose exec backend python -m app.teacher_setup promote-teacher --email teacher@example.org
+   ```
+
+   Promotion changes the account's role from `parent` to `teacher`; it does not
+   create an account or grant the parent dashboard role.
+
+2. Create a classroom and save the `classId` in the output:
+
+   ```bash
+   docker compose exec backend python -m app.teacher_setup create-class --teacher-email teacher@example.org --name "Room 1" --grade "Grade 1" --school "Example School"
+   ```
+
+3. A parent creates a child profile in **Account**. With the appropriate
+   authorization to enroll that child, find its `learnerId` and enroll it:
+
+   ```bash
+   docker compose exec backend python -m app.teacher_setup list-learners --parent-email parent@example.org
+   docker compose exec backend python -m app.teacher_setup enroll --class-id CLASS_ID --learner-id LEARNER_ID
+   ```
+
+   Repeat for each learner. Repeating an enrollment is safe.
+
+4. Sign in as the teacher and open `http://localhost:8080/teacher`. Select the
+   class and create a quest under **Assignments**. The parent selects the child
+   and starts the assigned quest from the learner dashboard.
+
+When the learner answers every activity and completes the quest, the backend
+marks all pending assignments for that learner and lesson complete, including
+assignments from different classes. It does not award completion for a partial
+quest or for assignments created afterward. Reload the teacher dashboard to see
+the updated **Student Completion** count and percentage. Existing completed
+sessions are not backfilled; learners must finish a new quest to update
+previously pending assignments. The existing assignment completion API remains
+available for explicit completion by the learner's account owner.
+
 ## Tests
 
 ```bash

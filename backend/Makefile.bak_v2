@@ -1,0 +1,66 @@
+SHELL := /bin/sh
+.DEFAULT_GOAL := help
+
+COMPOSE ?= docker compose
+TEST_COMPOSE := $(COMPOSE) -p readquest-test -f compose.test.yaml
+PRODUCTION_COMPOSE := $(COMPOSE) -p readquest-prod -f compose.production.yaml
+CLEAN_IMAGE := node:22-bookworm-slim@sha256:e9f565d32859f0cbfb52125eafe8be39390f24dac302dc3cdf566e8ba3ab21ee
+
+define run_in_test
+	@set -eu; \
+	trap '$(TEST_COMPOSE) down --remove-orphans --volumes >/dev/null 2>&1 || true' EXIT; \
+	$(1)
+endef
+
+.PHONY: help up down build seed train e2e test audit clean logs prod
+
+help: ## Show available targets
+	@grep -E '^[a-zA-Z0-9_-]+:.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-12s\033[0m %s\n", $$1, $$2}'
+
+up: ## Build and start PostgreSQL, migrations, FastAPI, and Vite with hot reload
+	$(COMPOSE) up --build -d db migrate backend frontend
+
+down: ## Stop development containers without deleting database data
+	$(COMPOSE) down --remove-orphans
+
+logs: ## Follow development service logs
+	@status=0; \
+	$(COMPOSE) logs --follow || status=$$?; \
+	[ "$$status" -eq 0 ] || [ "$$status" -eq 130 ]
+
+seed: ## Load or refresh the idempotent demo data
+	$(COMPOSE) --profile seed run --rm seed
+
+train: ## Train/update ML models in a one-off container
+	$(COMPOSE) --profile ml run --rm train
+
+build: ## Build development, test, audit, and production image targets
+	$(COMPOSE) --profile seed --profile ml build
+	$(TEST_COMPOSE) build e2e backend-test frontend-test backend-audit frontend-audit
+	PROD_POSTGRES_PASSWORD=$${PROD_POSTGRES_PASSWORD:-build-placeholder} $(PRODUCTION_COMPOSE) build
+
+e2e: ## Run end-to-end tests in an isolated test stack
+	$(call run_in_test,$(TEST_COMPOSE) run --build --rm e2e)
+
+test: ## Run backend, e2e, and frontend test suites in isolated containers
+	$(call run_in_test,\
+		$(TEST_COMPOSE) run --build --rm backend-test; \
+		$(TEST_COMPOSE) run --build --rm e2e; \
+		$(TEST_COMPOSE) run --build --rm frontend-test)
+
+audit: ## Run npm and pip dependency security audits in containers
+	$(call run_in_test,\
+		$(TEST_COMPOSE) run --build --rm frontend-audit; \
+		$(TEST_COMPOSE) run --build --rm backend-audit)
+
+prod: ## Stop development and run the non-root Nginx/FastAPI production stack
+	@test -n "$${PROD_POSTGRES_PASSWORD:-}" || { echo "Error: PROD_POSTGRES_PASSWORD must be set" >&2; exit 1; }
+	$(COMPOSE) down --remove-orphans
+	$(PRODUCTION_COMPOSE) up --build -d db migrate backend frontend
+
+clean: ## Remove all project containers/volumes and generated build artifacts
+	$(COMPOSE) -p readquest down --remove-orphans --volumes
+	$(COMPOSE) down --remove-orphans --volumes
+	$(TEST_COMPOSE) down --remove-orphans --volumes
+	PROD_POSTGRES_PASSWORD=$${PROD_POSTGRES_PASSWORD:-clean-placeholder} $(PRODUCTION_COMPOSE) down --remove-orphans --volumes
+	docker run --rm -v "$$(pwd):/workspace" -w /workspace $(CLEAN_IMAGE) sh -c 'rm -rf dist server.js'
