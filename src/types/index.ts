@@ -274,6 +274,7 @@ export interface Session {
   updatedAt: string;
   completedAt?: string;
   currentActivityIndex: number; // 0 to 4
+  activities?: Activity[];
   attempts: Attempt[];
   isCompleted: boolean;
   score: number;

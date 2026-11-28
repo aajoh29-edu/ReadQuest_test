@@ -49,7 +49,7 @@ def test_learner_journey_with_tailoring_and_read_aloud(new_api) -> None:
     session = api.post(
         "/api/v1/sessions", json={"lessonId": lesson["id"], "learnerId": learner_id}
     ).json()
-    activity = lesson["activities"][0]
+    activity = session["activities"][0]
     skill_id = activity["primarySkillId"]
 
     # Find one wrong and one right option through server grading.

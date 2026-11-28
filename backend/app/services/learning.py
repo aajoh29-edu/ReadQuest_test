@@ -1,11 +1,13 @@
 from collections import defaultdict
 from datetime import UTC, datetime, timedelta
 from itertools import pairwise
+from random import Random
 
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from app.models.curriculum import Learner
+from app.adapters.question_repository import VARIED_ACTIVITY_PREFIX
+from app.models.curriculum import Activity, Learner
 from app.models.learning import LearningSession
 from app.models.progress import Attempt
 from app.services.curriculum import curriculum, find_lesson
@@ -35,6 +37,38 @@ def attempt_payload(attempt: Attempt) -> dict:
     return payload
 
 
+def build_practice_activities(db: Session, lesson: dict) -> list[dict]:
+    authored = lesson["activities"]
+    candidates = db.scalars(
+        select(Activity).where(
+            Activity.primary_skill_id.in_({activity["primarySkillId"] for activity in authored}),
+            Activity.id.startswith(VARIED_ACTIVITY_PREFIX),
+        ).order_by(Activity.id)
+    )
+    variants = defaultdict(list)
+    for candidate in candidates:
+        content = candidate.content
+        if content.get("lessonId") == lesson["id"]:
+            variants[(candidate.primary_skill_id, content["order"])].append(content)
+
+    rng = Random()
+    activities = []
+    for original in authored:
+        pool = variants[(original["primarySkillId"], original["order"])]
+        activity = rng.choice(pool) if pool else original
+        options = list(activity["options"])
+        rng.shuffle(options)
+        activities.append({**activity, "options": options})
+    rng.shuffle(activities)
+    return activities
+
+
+def session_activities(item: LearningSession, lesson: dict | None) -> list[dict]:
+    if item.practice_activities is not None:
+        return item.practice_activities
+    return lesson["activities"] if lesson else []
+
+
 def session_payload(db: Session, item: LearningSession) -> dict:
     lesson = find_lesson(item.lesson_id)
     attempts = list(
@@ -58,6 +92,16 @@ def session_payload(db: Session, item: LearningSession) -> dict:
         "completedAt": iso(item.completed_at),
         "currentActivityIndex": item.current_activity_index,
         "attempts": serialized_attempts,
+        "activities": [
+            {
+                **activity,
+                "options": [
+                    {key: value for key, value in option.items() if key != "isCorrect"}
+                    for option in activity["options"]
+                ],
+            }
+            for activity in session_activities(item, lesson)
+        ],
         "isCompleted": item.is_completed,
         "score": item.score,
         "totalActivities": total,

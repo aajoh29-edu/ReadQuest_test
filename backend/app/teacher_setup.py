@@ -62,8 +62,15 @@ def main(argv: list[str] | None = None) -> None:
                 result = {"userId": user.id, "role": user.role}
             elif args.command == "create-class":
                 teacher = _account(db, args.teacher_email)
-                if teacher.role not in {"teacher", "admin"} or not teacher.email_verified:
-                    raise ValueError("The classroom owner must be a verified teacher or admin.")
+                if not teacher.email_verified:
+                    raise ValueError("Verify the classroom owner's email before creating a classroom.")
+                if teacher.role == "parent":
+                    raise ValueError(
+                        "The classroom owner has the parent role. Run promote-teacher "
+                        "with the same email before creating a classroom."
+                    )
+                if teacher.role not in {"teacher", "admin"}:
+                    raise ValueError("The classroom owner must have the teacher or admin role.")
                 school = args.school.strip()
                 if len(school) > 240:
                     raise ValueError("School name cannot exceed 240 characters.")

@@ -55,7 +55,14 @@ def test_seed_is_idempotent_and_complete() -> None:
         activity_ids = {text.activity_id for text in texts}
         all_activity_ids = set(session.scalars(select(Activity.id)))
         assert activity_ids.issubset(all_activity_ids)
-        assert len(all_activity_ids) == 196
+        varied = session.scalars(select(Activity).where(Activity.id.startswith("varied-"))).all()
+        assert second["varied_activities"] == len(varied) == 144
+        assert len(all_activity_ids) == second["activities"] == 340
+        assert len({activity.primary_skill_id for activity in varied}) == 12
+        for activity in varied:
+            options = activity.content["options"]
+            assert len({option["label"] for option in options}) == 3
+            assert sum(option["isCorrect"] for option in options) == 1
 
 
 def test_licensed_book_levels_pages_and_attribution() -> None:

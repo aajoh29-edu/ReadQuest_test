@@ -5,6 +5,7 @@ from sqlalchemy import Boolean, DateTime, Float, ForeignKey, Integer, String
 from sqlalchemy.orm import Mapped, mapped_column
 
 from app.models.base import Base
+from app.models.curriculum import JsonType
 
 
 class LearningSession(Base):
@@ -31,6 +32,7 @@ class LearningSession(Base):
     current_activity_index: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
     score: Mapped[float] = mapped_column(Float, default=0.0, nullable=False)
     total_activities: Mapped[int] = mapped_column(Integer, nullable=False)
+    practice_activities: Mapped[list[dict] | None] = mapped_column(JsonType)
     accuracy: Mapped[float] = mapped_column(Float, default=0.0, nullable=False)
     total_active_duration_seconds: Mapped[float] = mapped_column(
         Float, default=0.0, nullable=False

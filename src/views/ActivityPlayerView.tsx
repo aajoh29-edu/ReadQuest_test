@@ -64,7 +64,7 @@ export const ActivityPlayerView: React.FC = () => {
       setSession(activeSession);
 
       // Safe resume index
-      const activitiesList = loadedLesson.activities || loadedLesson.questions || [];
+      const activitiesList = activeSession.activities ?? loadedLesson.activities ?? loadedLesson.questions ?? [];
       const resumeIndex = Math.min(
         activeSession.currentActivityIndex ?? activeSession.currentQuestionIndex ?? 0,
         Math.max(0, activitiesList.length - 1)
@@ -95,7 +95,7 @@ export const ActivityPlayerView: React.FC = () => {
     initSession();
   }, [initSession]);
 
-  const activities = lesson?.activities || lesson?.questions || [];
+  const activities = session?.activities ?? lesson?.activities ?? lesson?.questions ?? [];
   const currentActivity: Activity | undefined = activities[currentActivityIndex];
   const isLastActivity = Boolean(activities.length > 0 && currentActivityIndex === activities.length - 1);
   const isSubmitted = Boolean(gradedAnswer);

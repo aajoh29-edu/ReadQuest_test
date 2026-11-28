@@ -57,7 +57,7 @@ after `make up` and `make seed`. For another environment, use its own backend
 container and database connection instead.
 
 1. Register a separate account using **Teacher Account Setup** on the sign-in
-   page (`http://localhost:8080/signup?account=teacher`) and verify its email if
+   page (`http://localhost:8081/signup?account=teacher`) and verify its email if
    email verification is enabled. The teacher must contact an administrator;
    the form does not send an approval request. Promote that account:
 

@@ -265,7 +265,7 @@ export const SessionSummaryView: React.FC = () => {
         </div>
 
         <div className="space-y-3">
-          {(lesson.activities || lesson.questions || []).map((question, index) => {
+          {(session.activities ?? lesson.activities ?? lesson.questions ?? []).map((question, index) => {
             const answer = session.answers.find((a) => a.questionId === question.id);
             const isCorrect = Boolean(answer?.isCorrect);
             const selectedOpt = question.options.find((o) => o.id === answer?.selectedOptionId);

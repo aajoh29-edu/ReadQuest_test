@@ -13,13 +13,15 @@ from app.models.learning import LearningSession
 from app.models.portal import Assignment, AssignmentTarget
 from app.models.progress import Attempt, SkillMastery
 from app.schemas.learning import AttemptRequest, SessionRequest
-from app.services.curriculum import curriculum, find_activity, find_lesson, find_skill
+from app.services.curriculum import curriculum, find_lesson, find_skill
 from app.services.learning import (
     attempt_payload,
+    build_practice_activities,
     calculate_mastery,
     mastery_payloads,
     progress_summary,
     require_learner_access,
+    session_activities,
     session_payload,
 )
 
@@ -100,10 +102,12 @@ def start_session(
         )
     )
     if existing is None:
+        activities = build_practice_activities(db, lesson)
         existing = LearningSession(
             learner_id=learner.id,
             lesson_id=lesson["id"],
-            total_activities=lesson["totalActivities"],
+            total_activities=len(activities),
+            practice_activities=activities,
         )
         db.add(existing)
     auth_session.active_learner_id = learner.id
@@ -135,10 +139,12 @@ def submit_attempt(
     if learning_session.is_completed:
         raise HTTPException(status_code=409, detail="Session is already complete.")
     lesson = find_lesson(learning_session.lesson_id)
-    found = find_activity(payload.activity_id)
-    if lesson is None or found is None or found[0]["id"] != lesson["id"]:
-        raise HTTPException(status_code=422, detail="Activity does not belong to this lesson.")
-    activity = found[1]
+    activity = next(
+        (item for item in session_activities(learning_session, lesson) if item["id"] == payload.activity_id),
+        None,
+    )
+    if activity is None:
+        raise HTTPException(status_code=422, detail="Activity does not belong to this session.")
     idempotency_key = payload.idempotency_key or uuid4().hex
     prior = db.scalar(
         select(Attempt).where(
@@ -272,7 +278,7 @@ def complete_session(
         item.completed_at = datetime.now(UTC)
         item.earned_badge = lesson["badgeReward"] if lesson else None
         if lesson:
-            activity_ids = {activity["id"] for activity in lesson["activities"]}
+            activity_ids = {activity["id"] for activity in session_activities(item, lesson)}
             attempted_ids = set(
                 db.scalars(
                     select(Attempt.activity_id).where(Attempt.session_id == item.id)

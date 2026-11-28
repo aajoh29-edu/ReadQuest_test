@@ -1,4 +1,5 @@
 import json
+import sys
 from collections import defaultdict
 from decimal import Decimal
 from pathlib import Path
@@ -8,6 +9,7 @@ from sqlalchemy.orm import Session
 
 from app.models.curriculum import Activity, Book, BookSkill, ReadingText, Skill
 from app.models.enums import ActivityType, BookSource, ContentStatus, ReadingTextType
+from app.seeds.varied_questions import seed_varied_questions
 from app.utils.tokenizer import tokenize_pages, tokenize_text
 
 DATA_DIR = Path(__file__).with_name("data")
@@ -97,6 +99,9 @@ def seed_demo(session: Session) -> dict[str, int]:
             )
     session.flush()
 
+    print("Generating and seeding relational question bank activities...", file=sys.stderr)
+    varied_activities = seed_varied_questions(session, per_skill=12, seed=20261130)["total"]
+
     for row in books:
         _upsert(
             session,
@@ -151,7 +156,8 @@ def seed_demo(session: Session) -> dict[str, int]:
     return {
         "books": len(books),
         "skills": len(skills) + len(frontend_skills),
-        "activities": len(reading_texts) + frontend_activities,
+        "activities": len(reading_texts) + frontend_activities + varied_activities,
+        "varied_activities": varied_activities,
         "reading_texts": len(reading_texts),
     }
 

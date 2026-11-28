@@ -1,5 +1,6 @@
 from collections.abc import Generator
 import json
+from random import Random
 
 import pytest
 from fastapi.testclient import TestClient
@@ -11,6 +12,7 @@ from app.db import get_db
 from app.main import app
 from app.models import Base
 from app.models.account import User
+from app.models.curriculum import Activity
 from app.models.portal import Assignment, AssignmentTarget, Classroom, ClassroomEnrollment
 from app.services.security import create_session, hash_password
 from app.seeds.demo import seed_demo
@@ -143,8 +145,12 @@ def test_auth_session_cookie_csrf_and_learner_crud() -> None:
     assert client.get("/api/v1/auth/me").status_code == 401
 
 
-def test_public_curriculum_is_sanitized_and_sessions_are_server_graded() -> None:
-    _factory, client = database()
+def test_public_curriculum_is_sanitized_and_sessions_are_server_graded(monkeypatch) -> None:
+    from app.services import learning
+
+    seeds = iter((1, 2))
+    monkeypatch.setattr(learning, "Random", lambda: Random(next(seeds)))
+    factory, client = database()
     register(client)
     learner = create_learner(client)
 
@@ -175,13 +181,33 @@ def test_public_curriculum_is_sanitized_and_sessions_are_server_graded() -> None
     assert session["currentActivityIndex"] == 0
     assert session["attempts"] == []
 
-    activity = lesson["activities"][0]
+    assert len(session["activities"]) == 5
+    assert len({activity["order"] for activity in session["activities"]}) == 5
+    assert all(activity["id"].startswith("varied-") for activity in session["activities"])
+    assert all(
+        "isCorrect" not in option
+        for activity in session["activities"]
+        for option in activity["options"]
+    )
+    resumed = client.post(
+        "/api/v1/sessions",
+        headers=csrf_headers(client),
+        json={"lessonId": lesson["id"], "learnerId": learner["id"]},
+    ).json()
+    assert resumed["id"] == session["id"]
+    assert resumed["activities"] == session["activities"]
+
+    activity = session["activities"][0]
+    with factory() as db:
+        stored_options = db.get(Activity, activity["id"]).content["options"]
+        correct_id = next(option["id"] for option in stored_options if option["isCorrect"])
+        wrong_id = next(option["id"] for option in stored_options if not option["isCorrect"])
     submitted = client.post(
         f"/api/v1/sessions/{session['id']}/attempts",
         headers=csrf_headers(client),
         json={
             "activityId": activity["id"],
-            "selectedOptionId": activity["options"][0]["id"],
+            "selectedOptionId": correct_id,
             "idempotencyKey": "first-attempt",
             "activeDurationSeconds": 12,
         },
@@ -196,7 +222,7 @@ def test_public_curriculum_is_sanitized_and_sessions_are_server_graded() -> None
         headers=csrf_headers(client),
         json={
             "activityId": activity["id"],
-            "selectedOptionId": activity["options"][1]["id"],
+            "selectedOptionId": wrong_id,
             "idempotencyKey": "first-attempt",
             "activeDurationSeconds": 99,
         },
@@ -221,6 +247,22 @@ def test_public_curriculum_is_sanitized_and_sessions_are_server_graded() -> None
     assert completed.status_code == 200
     assert completed.json()["isCompleted"] is True
     assert completed.json()["earnedBadge"] == lesson["badgeReward"]
+    replay = client.post(
+        "/api/v1/sessions",
+        headers=csrf_headers(client),
+        json={"lessonId": lesson["id"], "learnerId": learner["id"]},
+    ).json()
+    assert replay["id"] != session["id"]
+    assert [activity["order"] for activity in replay["activities"]] != [
+        activity["order"] for activity in session["activities"]
+    ]
+    assert any(
+        [option["label"] for option in before["options"]] != [option["label"] for option in after["options"]]
+        for before, after in zip(
+            sorted(session["activities"], key=lambda activity: activity["order"]),
+            sorted(replay["activities"], key=lambda activity: activity["order"]),
+        )
+    )
 
     mastery = client.get(f"/api/v1/learners/{learner['id']}/mastery")
     assert mastery.status_code == 200
@@ -435,7 +477,7 @@ def test_finished_quest_completes_matching_assignments_for_only_that_learner() -
         headers=csrf_headers(client),
         json={"lessonId": lesson["id"], "learnerId": learner["id"]},
     ).json()
-    for activity in lesson["activities"]:
+    for activity in session["activities"]:
         response = client.post(
             f"/api/v1/sessions/{session['id']}/attempts",
             headers=csrf_headers(client),
@@ -493,7 +535,7 @@ def test_incomplete_quest_does_not_complete_assignment() -> None:
         headers=csrf_headers(client),
         json={"lessonId": lesson["id"], "learnerId": learner["id"]},
     ).json()
-    activity = lesson["activities"][0]
+    activity = session["activities"][0]
     for _ in range(len(lesson["activities"])):
         assert client.post(
             f"/api/v1/sessions/{session['id']}/attempts",
@@ -538,7 +580,7 @@ def test_administrator_teacher_setup(monkeypatch, capsys) -> None:
             "--name", "Room 1", "--grade", "Grade 1",
         ])
     assert failure.value.code == 2
-    assert "verified teacher or admin" in capsys.readouterr().err
+    assert "Run promote-teacher with the same email" in capsys.readouterr().err
     with factory() as db:
         db.get(User, teacher_id).email_verified = False
         db.commit()
