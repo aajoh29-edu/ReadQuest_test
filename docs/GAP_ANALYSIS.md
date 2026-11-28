@@ -17,7 +17,7 @@ rows are grouped by theme and should be checked against the PDF wording before s
 | Mastery and adaptive recommendation | Met | `services/learning.py` (window 10, accuracy/recency/consistency); `/adaptive-recommendation` | None |
 | Explainable recommendations (UR-15) | Met | Tailored items carry `reason`, band and predicted success | None |
 | Transport security (SR-N01) | Gap | `nginx.conf` has no TLS or HTTP redirect | Terminate TLS at the proxy or the platform load balancer |
-| Recommendation latency (SR-N04, p95 < 1 s) | Gap | No performance test | Add a latency test for `/adaptive-recommendation` and `/tailored-lesson` |
+| Recommendation latency (SR-N04, p95 < 1 s) | Partial | `backend/tests/e2e/test_recommendation_latency.py` checks p95 for both endpoints over 40 sequential requests each after warmup | Measure latency under representative production load |
 | Accessibility (keyboard, layout) | Gap | No automated accessibility or keyboard tests | Add Playwright checks |
 | End-to-end coverage | Met (new) | `backend/tests/e2e/` runs in-process, or over HTTP against a stack via `READQUEST_E2E_BASE_URL` (`make e2e`) | Add frontend browser journeys |
 | Speech recognition, read-aloud (UR-20 / SR-F15 defer these) | Beyond MVP | `ReadAloudView.tsx`, `services/voice.py`, consent endpoints | Record a scope change in the requirements |
@@ -37,8 +37,7 @@ and audio is never stored. `GET /api/v1/read-aloud/capabilities` reports this at
 a perfect read gives accuracy 1.0 and an injected misread lowers it.
 
 Limits: recognition quality depends on the browser (unavailable in some, and often
-cloud-based); there is no server-side ASR, TTS or pronunciation scoring; it is not a
-validated fluency assessment.
+cloud-based); there is no server-side ASR, TTS or pronunciation scoring; it is not a validated fluency assessment.
 
 ## Machine-learning design
 

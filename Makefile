@@ -5,7 +5,7 @@ TEST_COMPOSE := docker compose -f compose.test.yaml
 PRODUCTION_COMPOSE := docker compose -f compose.production.yaml
 CLEAN_IMAGE := node:22-bookworm-slim@sha256:e9f565d32859f0cbfb52125eafe8be39390f24dac302dc3cdf566e8ba3ab21ee
 
-.PHONY: up down build seed train e2e test audit clean logs prod
+.PHONY: up down build seed train e2e test audit clean logs prod setup
 
 up:
 	$(COMPOSE) up --build -d db migrate backend frontend
@@ -58,4 +58,6 @@ prod:
 	$(COMPOSE) down --remove-orphans
 	$(PRODUCTION_COMPOSE) up --build -d db migrate backend frontend
 
-setup: up seed train ## Start dev stack, seed demo data, and train ML models
+setup: up ## Start dev stack, seed demo data, and train ML models
+	$(MAKE) seed
+	$(MAKE) train

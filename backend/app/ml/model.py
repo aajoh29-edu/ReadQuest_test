@@ -23,6 +23,10 @@ MODEL_FILE = "readquest_model.json"
 SCHEMA_VERSION = 1
 
 
+class NoTrainingContentError(ValueError):
+    """The configured database has no published, trainable curriculum."""
+
+
 def model_dir() -> Path:
     return Path(os.getenv("READQUEST_MODEL_DIR", "model_artifacts"))
 
@@ -93,7 +97,7 @@ class ReadQuestModel:
 def train_model(db: Session) -> ReadQuestModel:
     documents = build_documents(db)
     if not documents:
-        raise ValueError("The database contains no published content to train on.")
+        raise NoTrainingContentError("The database contains no published content to train on.")
     lm = NgramLanguageModel(order=3).fit(
         sentence for document in documents for sentence in document.sentences
     )

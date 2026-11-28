@@ -9,7 +9,7 @@ import json
 from pathlib import Path
 
 from app.database import SessionLocal
-from app.ml.model import model_dir, train_model
+from app.ml.model import NoTrainingContentError, model_dir, train_model
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -17,8 +17,15 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--output", type=Path, default=None, help="artifact directory")
     parser.add_argument("--report", action="store_true", help="print training metadata")
     args = parser.parse_args(argv)
-    with SessionLocal() as db:
-        model = train_model(db)
+    try:
+        with SessionLocal() as db:
+            model = train_model(db)
+    except NoTrainingContentError as error:
+        parser.exit(
+            1,
+            f"{error} Load published curriculum and retry. "
+            "For the Docker development stack, run `make seed` first.\n",
+        )
     path = model.save(args.output or model_dir())
     print(f"Saved {model.metadata['version']} to {path}")
     if args.report:
