@@ -6,9 +6,11 @@ near the prior while a busy one is dominated by observed learner behaviour.
 """
 
 import math
+import random
 from collections import defaultdict
 from collections.abc import Sequence
 from dataclasses import dataclass
+from itertools import groupby
 
 from sqlalchemy import select
 from sqlalchemy.orm import Session
@@ -24,6 +26,7 @@ MIN_TRAINING_ATTEMPTS = 30
 class Sample:
     features: list[float]
     label: int
+    child_id: str | None = None
 
 
 def feature_vector(
@@ -99,7 +102,41 @@ def build_samples(
                     difficulty_by_activity.get(attempt.activity_id, 0.5),
                 ),
                 int(attempt.is_correct),
+                str(attempt.child_id),
             )
         )
         history[key].append(attempt.is_correct)
     return samples
+
+
+def split_by_learner(
+    samples: Sequence[Sample], fraction: float = 0.2, seed: int = 42
+) -> tuple[list[Sample], list[Sample]]:
+    learners = sorted({sample.child_id for sample in samples if sample.child_id is not None})
+    if len(learners) < 2:
+        return list(samples), []
+    random.Random(seed).shuffle(learners)
+    count = min(len(learners) - 1, max(1, int(len(learners) * fraction)))
+    held_out = set(learners[:count])
+    return (
+        [sample for sample in samples if sample.child_id not in held_out],
+        [sample for sample in samples if sample.child_id in held_out],
+    )
+
+
+def auc(model: SuccessModel, samples: Sequence[Sample]) -> float | None:
+    positives = sum(sample.label for sample in samples)
+    negatives = len(samples) - positives
+    if not positives or not negatives:
+        return None
+
+    scores = sorted((model.predict(sample.features), sample.label) for sample in samples)
+    lower_negatives = 0
+    wins = 0.0
+    for _, tied in groupby(scores, key=lambda pair: pair[0]):
+        labels = [label for _, label in tied]
+        tied_positives = sum(labels)
+        tied_negatives = len(labels) - tied_positives
+        wins += tied_positives * (lower_negatives + 0.5 * tied_negatives)
+        lower_negatives += tied_negatives
+    return wins / (positives * negatives)
