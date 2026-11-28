@@ -5,7 +5,7 @@ from sqlalchemy import and_, func, select
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
-from app.database import get_db
+from app.db import get_db
 from app.api.dependencies import require_current_user
 from app.models.account import AuthSession, User
 from app.models.curriculum import Book, ChildBook, Learner

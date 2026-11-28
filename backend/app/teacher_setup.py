@@ -6,7 +6,7 @@ import json
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from app.database import SessionLocal
+from app.db import SessionLocal
 from app.models.account import User
 from app.models.curriculum import Learner
 from app.models.portal import Classroom, ClassroomEnrollment

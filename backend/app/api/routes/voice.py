@@ -6,7 +6,7 @@ from sqlalchemy import delete, desc, select
 from sqlalchemy.orm import Session
 
 from app.api.dependencies import require_current_user, require_session
-from app.database import get_db
+from app.db import get_db
 from app.models.account import AuthSession, User
 from app.models.curriculum import Activity, Learner, ReadingText
 from app.models.enums import (

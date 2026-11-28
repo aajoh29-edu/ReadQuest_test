@@ -157,7 +157,7 @@ def seed_demo(session: Session) -> dict[str, int]:
 
 
 if __name__ == "__main__":
-    from app.database import SessionLocal, engine
+    from app.db import SessionLocal, engine
     from app.models import Base
 
     Base.metadata.create_all(engine)

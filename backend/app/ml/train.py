@@ -8,7 +8,7 @@ import argparse
 import json
 from pathlib import Path
 
-from app.database import SessionLocal
+from app.db import SessionLocal
 from app.ml.model import NoTrainingContentError, model_dir, train_model
 
 

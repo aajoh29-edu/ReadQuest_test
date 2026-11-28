@@ -7,7 +7,7 @@ from sqlalchemy import delete, select
 from sqlalchemy.orm import Session
 
 from app.api.dependencies import require_current_user, require_session
-from app.database import get_db
+from app.db import get_db
 from app.models.account import AuthSession, AuthToken, User
 from app.models.curriculum import Learner
 from app.schemas.accounts import (

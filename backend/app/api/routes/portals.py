@@ -6,7 +6,7 @@ from sqlalchemy.orm import Session
 
 from app.api.dependencies import require_current_user, require_session
 from app.api.routes.auth import learner_payload, owned_learners
-from app.database import get_db
+from app.db import get_db
 from app.models.account import AuthSession, User
 from app.models.curriculum import Learner
 from app.models.portal import Assignment, AssignmentTarget, Classroom, ClassroomEnrollment

@@ -1,7 +1,7 @@
 from fastapi import Depends, HTTPException, Request, status
 from sqlalchemy.orm import Session
 
-from app.database import get_db
+from app.db import get_db
 from app.models.account import AuthSession, User
 from app.services.security import csrf_valid, current_session
 

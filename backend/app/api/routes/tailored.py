@@ -3,7 +3,7 @@ from sqlalchemy import func, select
 from sqlalchemy.orm import Session
 
 from app.api.dependencies import require_session
-from app.database import get_db
+from app.db import get_db
 from app.ml.model import current_model
 from app.ml.tailor import tailored_lesson
 from app.models.account import AuthSession, User

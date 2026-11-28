@@ -3,7 +3,7 @@ from pydantic import BaseModel
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from app.database import get_db
+from app.db import get_db
 from app.models.curriculum import Activity
 
 router = APIRouter(prefix="/demo", tags=["demo"])
